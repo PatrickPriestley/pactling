@@ -21,6 +21,12 @@ impl Db {
         Ok(Self { pool })
     }
 
+    /// The raw pool, for tests and migrations only; application code goes through the
+    /// methods on `Db`.
+    pub fn pool(&self) -> &SqlitePool {
+        &self.pool
+    }
+
     pub async fn migrate(&self) -> sqlx::Result<()> {
         sqlx::migrate!("./migrations")
             .run(&self.pool)
