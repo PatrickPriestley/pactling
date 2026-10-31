@@ -634,3 +634,48 @@ async fn options_advertise_the_ruby_brokers_methods() {
         assert_eq!(r.headers()["allow"], allowed, "HEAD {path}");
     }
 }
+
+#[tokio::test]
+async fn bulk_branch_delete_keeps_the_excluded_branches_and_reports_202() {
+    // Probed on Ruby 2.121.2: 202 with a notice listing the remaining branches in creation
+    // order; an unknown pacticipant is the HAL 404.
+    let s = common::start().await;
+    put_empty(&s, "/pacticipants/BulkC/branches/main/versions/1").await;
+    put_empty(&s, "/pacticipants/BulkC/branches/feat/versions/2").await;
+    put_empty(&s, "/pacticipants/BulkC/branches/old/versions/3").await;
+    let r = delete(
+        &s,
+        "/pacticipants/BulkC/branches?exclude%5B%5D=main&exclude%5B%5D=feat",
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::ACCEPTED);
+    assert_eq!(content_type(&r), HAL);
+    assert_eq!(
+        r.json::<Value>().await.unwrap(),
+        json!({"notices": [{"type": "success", "text": "Scheduled deletion of 1 branches for pacticipant BulkC. Remaining branches are: main, feat"}]})
+    );
+    let names: Vec<String> = get(&s, "/pacticipants/BulkC/branches")
+        .await
+        .json::<Value>()
+        .await
+        .unwrap()["_embedded"]["branches"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|b| b["name"].as_str().unwrap().to_owned())
+        .collect();
+    assert_eq!(names, ["feat", "main"]);
+    let r = delete(&s, "/pacticipants/BulkC/branches").await;
+    assert_eq!(r.status(), StatusCode::ACCEPTED);
+    assert_eq!(
+        r.json::<Value>().await.unwrap()["notices"][0]["text"],
+        "Scheduled deletion of 2 branches for pacticipant BulkC. Remaining branches are: "
+    );
+    let r = delete(&s, "/pacticipants/Nope/branches").await;
+    assert_eq!(r.status(), StatusCode::NOT_FOUND);
+    assert_eq!(content_type(&r), HAL);
+    assert_eq!(
+        r.json::<Value>().await.unwrap(),
+        json!({"error": "No pacticipant with name 'Nope' found"})
+    );
+}

@@ -691,3 +691,78 @@ async fn pact_resource_methods_and_delete() {
         StatusCode::OK
     );
 }
+
+#[tokio::test]
+async fn concurrent_identical_publishes_all_succeed() {
+    let s = common::start().await;
+    let body = serde_json::to_string(&pact()).unwrap();
+    let mut handles = vec![];
+    for _ in 0..32 {
+        let client = s.client.clone();
+        let url = format!(
+            "{}/pacts/provider/Provider/consumer/Consumer/version/9.9.9",
+            s.base_url
+        );
+        let body = body.clone();
+        handles.push(tokio::spawn(async move {
+            client
+                .put(url)
+                .header("content-type", "application/json")
+                .body(body)
+                .send()
+                .await
+                .unwrap()
+                .status()
+        }));
+    }
+    let mut statuses = vec![];
+    for h in handles {
+        statuses.push(h.await.unwrap());
+    }
+    assert!(statuses.iter().all(|st| st.is_success()), "{statuses:?}");
+    assert_eq!(
+        statuses
+            .iter()
+            .filter(|st| **st == StatusCode::CREATED)
+            .count(),
+        1,
+        "exactly one creates: {statuses:?}"
+    );
+}
+
+#[tokio::test]
+async fn two_contracts_for_the_same_provider_in_one_request_last_one_wins() {
+    // Probed on Ruby 2.121.2: 200, and the second contract's content is what is stored.
+    let s = common::start().await;
+    let r = publish(
+        &s,
+        &request(
+            "Consumer",
+            "dup1",
+            None,
+            None,
+            vec![
+                contract("Consumer", "Provider", &pact()),
+                contract("Consumer", "Provider", &changed_pact()),
+            ],
+        ),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::OK);
+    let stored: Value = s
+        .client
+        .get(format!(
+            "{}/pacts/provider/Provider/consumer/Consumer/version/dup1",
+            s.base_url
+        ))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(
+        stored["interactions"][0]["response"]["body"]["status"],
+        "closed"
+    );
+}

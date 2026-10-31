@@ -367,14 +367,22 @@ pub async fn integration_versions(
             .await
         }
         Method::DELETE => {
-            if state
+            // Verified: 204 even when nothing is left to delete; unknown names are the
+            // HAL 404 naming the role.
+            if state.db.find_pacticipant(&provider).await?.is_none() {
+                return Err(Error::NotFound(format!(
+                    "No provider with name '{provider}' found"
+                )));
+            }
+            if state.db.find_pacticipant(&consumer).await?.is_none() {
+                return Err(Error::NotFound(format!(
+                    "No consumer with name '{consumer}' found"
+                )));
+            }
+            state
                 .db
                 .delete_integration_pacts(&provider, &consumer)
-                .await?
-                == 0
-            {
-                return Err(Error::NoRoute);
-            }
+                .await?;
             Ok(StatusCode::NO_CONTENT.into_response())
         }
         Method::OPTIONS => Ok(method::options(VERSIONS_ALLOWED)),

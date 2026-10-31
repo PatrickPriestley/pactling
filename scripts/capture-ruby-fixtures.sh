@@ -288,6 +288,20 @@ cap DELETE_version_9.0.0_again "${J[@]}" -X DELETE $B/pacticipants/Consumer/vers
 cap DELETE_branch_version_release_10.0.0 "${J[@]}" -X DELETE $B/pacticipants/Consumer/branches/release/versions/10.0.0
 cap DELETE_branch_release "${J[@]}" -X DELETE $B/pacticipants/Consumer/branches/release
 cap DELETE_pacticipant_Web "${J[@]}" -X DELETE $B/pacticipants/Web
+# bulk deletes (added after review): branches with exclusions, an integration's pacts
+for v in 1 2 3; do cap "PUT_bulk_branch_$v" "${J[@]}" -X PUT "$B/pacticipants/BulkC/branches/b$v/versions/$v"; done
+cap DELETE_branches_exclude -X DELETE "$B/pacticipants/BulkC/branches?exclude%5B%5D=b1&exclude%5B%5D=b2"
+cap DELETE_branches_all -X DELETE "$B/pacticipants/BulkC/branches"
+cap DELETE_branches_unknown_pacticipant -X DELETE "$B/pacticipants/Nope/branches"
+put PUT_pact_bulk_b1 "$TMP/minimal.json" b1
+put PUT_pact_bulk_b2 "$TMP/minimal.json" b2
+cap DELETE_integration_versions -X DELETE "$B/pacts/provider/Provider/consumer/Consumer/versions"
+cap DELETE_integration_versions_again -X DELETE "$B/pacts/provider/Provider/consumer/Consumer/versions"
+cap DELETE_integration_versions_unknown_provider -X DELETE "$B/pacts/provider/Nope/consumer/Consumer/versions"
+cap DELETE_integration_versions_unknown_consumer -X DELETE "$B/pacts/provider/Provider/consumer/Nope/versions"
+# two contracts for one provider in one request: the last one wins (added after review)
+cap POST_contracts_publish_duplicate_provider "${J[@]}" -X POST -d "{\"pacticipantName\":\"Consumer\",\"pacticipantVersionNumber\":\"dup1\",\"contracts\":[$(contract Consumer Provider "$C1"),$(contract Consumer Provider "$C2B")]}" $B/contracts/publish
+get2 "pacts/provider/Provider/consumer/Consumer/version/dup1"
 for p in "pacticipants/Consumer/versions/10.0.0" "pacticipants/Consumer/versions/1.0.0" "pacts/latest" "pacticipants" "integrations" "pacticipants/Consumer/versions" "pacticipants/Consumer/branches"; do
   cap "AFTER_DELETES_GET_$(echo "$p" | tr '/' '_')" -H 'Accept: application/hal+json' "$B/$p"
 done

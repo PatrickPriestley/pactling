@@ -221,14 +221,25 @@ pub async fn delete_branch(db: &Db, pacticipant: &str, branch: &str) -> Result<(
     Ok(())
 }
 
-/// Deletes every branch of the pacticipant except the named ones.
-pub async fn delete_branches_except(db: &Db, pacticipant: &str, keep: &[String]) -> Result<()> {
+/// Deletes every branch of the pacticipant except the named ones. Returns how many were
+/// deleted and the remaining branches in creation order (for the Ruby broker's notice).
+pub async fn delete_branches_except(
+    db: &Db,
+    pacticipant: &str,
+    keep: &[String],
+) -> Result<(usize, Vec<Branch>)> {
+    let mut deleted = 0;
+    let mut remaining = vec![];
     for b in list_branches(db, pacticipant).await? {
-        if !keep.iter().any(|k| k == &b.name) {
+        if keep.iter().any(|k| k == &b.name) {
+            remaining.push(b);
+        } else {
             db.delete_branch(b.id).await?;
+            deleted += 1;
         }
     }
-    Ok(())
+    remaining.sort_by_key(|b| b.id);
+    Ok((deleted, remaining))
 }
 
 /// What a branch-version document needs.

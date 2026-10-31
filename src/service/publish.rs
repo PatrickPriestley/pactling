@@ -44,10 +44,22 @@ pub async fn store_pact(
     let pact_version_id = db
         .find_or_create_pact_version(consumer.id, provider.id, &sha, &serialised)
         .await?;
-    let publication = db
+    let (publication, inserted) = db
         .create_publication(version.id, provider.id, pact_version_id)
         .await?;
-    Ok((publication, true))
+    if inserted {
+        return Ok((publication, true));
+    }
+    // A concurrent publish got there first: same rules as finding it up front.
+    if publication.sha != sha {
+        return Err(Error::Conflict(content_changed_message(
+            &consumer.name,
+            &version.number,
+            &provider.name,
+        )));
+    }
+    db.touch_publication(publication.id).await?;
+    Ok((publication, false))
 }
 
 // --- legacy PUT -------------------------------------------------------------------------
@@ -224,6 +236,19 @@ impl PublishRequest {
                 json!({ "contracts": ["cannot be empty"] }),
             ));
         }
+        // Two contracts for the same consumer and provider: the Ruby broker stores the
+        // last one (verified), so drop the earlier ones before anything is written.
+        let mut deduped: Vec<ContractRequest> = Vec::with_capacity(contracts.len());
+        for c in contracts.into_iter().rev() {
+            if !deduped
+                .iter()
+                .any(|d| d.consumer == c.consumer && d.provider == c.provider)
+            {
+                deduped.push(c);
+            }
+        }
+        deduped.reverse();
+        let contracts = deduped;
         Ok(PublishRequest {
             pacticipant: pacticipant.expect("validated"),
             version: version.expect("validated"),

@@ -331,3 +331,93 @@ async fn list_routes_allow_get_and_options_only() {
         assert_eq!(r.headers()["allow"], allowed, "{path}");
     }
 }
+
+#[tokio::test]
+async fn bulk_delete_of_an_integrations_pacts_matches_the_ruby_broker() {
+    // Probed on Ruby 2.121.2: 204, idempotent, versions and pacticipants survive, and
+    // unknown names are the HAL 404 naming the role.
+    let s = common::start().await;
+    let pact = serde_json::to_string(&pact_named("Consumer", "BulkP", false)).unwrap();
+    put(
+        &s,
+        "/pacts/provider/BulkP/consumer/Consumer/version/b1",
+        &pact,
+    )
+    .await;
+    put(
+        &s,
+        "/pacts/provider/BulkP/consumer/Consumer/version/b2",
+        &pact,
+    )
+    .await;
+    let del = |path: &'static str| s.client.delete(format!("{}{path}", s.base_url)).send();
+    assert_eq!(
+        del("/pacts/provider/BulkP/consumer/Consumer/versions")
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::NO_CONTENT
+    );
+    assert_eq!(
+        s.client
+            .get(format!(
+                "{}/pacts/provider/BulkP/consumer/Consumer/latest",
+                s.base_url
+            ))
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        s.client
+            .get(format!("{}/pacticipants/Consumer/versions/b1", s.base_url))
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::OK
+    );
+    assert_eq!(
+        s.client
+            .get(format!("{}/pacticipants/BulkP", s.base_url))
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::OK
+    );
+    assert_eq!(
+        del("/pacts/provider/BulkP/consumer/Consumer/versions")
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::NO_CONTENT,
+        "idempotent"
+    );
+    for (path, msg) in [
+        (
+            "/pacts/provider/Nope/consumer/Consumer/versions",
+            "No provider with name 'Nope' found",
+        ),
+        (
+            "/pacts/provider/BulkP/consumer/Nope/versions",
+            "No consumer with name 'Nope' found",
+        ),
+    ] {
+        let r = s
+            .client
+            .delete(format!("{}{path}", s.base_url))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(r.status(), StatusCode::NOT_FOUND, "{path}");
+        assert_eq!(r.headers()["content-type"], HAL, "{path}");
+        assert_eq!(
+            r.json::<Value>().await.unwrap(),
+            json!({"error": msg}),
+            "{path}"
+        );
+    }
+}

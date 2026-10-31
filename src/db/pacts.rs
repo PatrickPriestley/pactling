@@ -81,23 +81,30 @@ impl Db {
         .await
     }
 
+    /// Inserts the publication unless one already exists for the version and provider
+    /// (a concurrent publish may have won). Returns the row that is there afterwards and
+    /// whether this call inserted it.
     pub async fn create_publication(
         &self,
         consumer_version_id: i64,
         provider_id: i64,
         pact_version_id: i64,
-    ) -> sqlx::Result<PactPublication> {
-        sqlx::query("INSERT INTO pact_publications (consumer_version_id, provider_id, pact_version_id, created_at) VALUES (?, ?, ?, ?)")
-            .bind(consumer_version_id)
-            .bind(provider_id)
-            .bind(pact_version_id)
-            .bind(now())
-            .execute(&self.pool)
-            .await?;
-        Ok(self
+    ) -> sqlx::Result<(PactPublication, bool)> {
+        let inserted: Option<i64> = sqlx::query_scalar(
+            "INSERT INTO pact_publications (consumer_version_id, provider_id, pact_version_id, created_at) VALUES (?, ?, ?, ?)
+             ON CONFLICT(consumer_version_id, provider_id) DO NOTHING RETURNING id",
+        )
+        .bind(consumer_version_id)
+        .bind(provider_id)
+        .bind(pact_version_id)
+        .bind(now())
+        .fetch_optional(&self.pool)
+        .await?;
+        let row = self
             .find_publication(consumer_version_id, provider_id)
             .await?
-            .expect("just inserted"))
+            .expect("inserted or already present");
+        Ok((row, inserted.is_some()))
     }
 
     pub async fn touch_publication(&self, id: i64) -> sqlx::Result<()> {

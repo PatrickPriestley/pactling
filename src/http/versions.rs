@@ -2,7 +2,7 @@
 //! the phase 2 fixtures; see tests/versions.rs.
 use axum::{
     body::Bytes,
-    extract::{Path, Query, State},
+    extract::{Path, RawQuery, State},
     http::{HeaderMap, HeaderValue, Method, StatusCode, header},
     response::{IntoResponse, Response},
 };
@@ -340,10 +340,40 @@ pub async fn tag(
     }
 }
 
-#[derive(serde::Deserialize)]
-pub struct BranchesQuery {
-    #[serde(default, rename = "exclude[]")]
-    exclude: Vec<String>,
+/// The `exclude[]=name` repeats of a bulk branch delete. serde_urlencoded cannot read a
+/// repeated key into a Vec, so the query string is split by hand.
+fn excluded_branches(query: Option<&str>) -> Vec<String> {
+    query
+        .unwrap_or_default()
+        .split('&')
+        .filter_map(|pair| {
+            let (k, v) = pair.split_once('=')?;
+            let k = percent_decode(k);
+            (k == "exclude[]" || k == "exclude").then(|| percent_decode(v))
+        })
+        .collect()
+}
+
+fn percent_decode(s: &str) -> String {
+    let bytes = s.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%'
+            && let Some(hex) = s.get(i + 1..i + 3)
+            && let Ok(b) = u8::from_str_radix(hex, 16)
+        {
+            out.push(b);
+            i += 3;
+        } else if bytes[i] == b'+' {
+            out.push(b' ');
+            i += 1;
+        } else {
+            out.push(bytes[i]);
+            i += 1;
+        }
+    }
+    String::from_utf8_lossy(&out).into_owned()
 }
 
 /// `GET | DELETE /pacticipants/{p}/branches`
@@ -351,7 +381,7 @@ pub async fn branches(
     m: Method,
     State(state): State<AppState>,
     Path(p): Path<String>,
-    Query(q): Query<BranchesQuery>,
+    RawQuery(query): RawQuery,
     l: Links,
 ) -> Result<Response> {
     match m {
@@ -376,8 +406,17 @@ pub async fn branches(
             .into_response())
         }
         Method::DELETE => {
-            service::delete_branches_except(&state.db, &p, &q.exclude).await?;
-            Ok(StatusCode::NO_CONTENT.into_response())
+            // The Ruby broker deletes asynchronously and answers 202 with a notice
+            // (verified); pactling deletes before answering with the same shape.
+            let keep = excluded_branches(query.as_deref());
+            let (deleted, remaining) =
+                service::delete_branches_except(&state.db, &p, &keep).await?;
+            let names: Vec<&str> = remaining.iter().map(|b| b.name.as_str()).collect();
+            Ok((
+                StatusCode::ACCEPTED,
+                Hal(json!({ "notices": [{ "type": "success", "text": format!("Scheduled deletion of {deleted} branches for pacticipant {p}. Remaining branches are: {}", names.join(", ")) }] })),
+            )
+                .into_response())
         }
         Method::OPTIONS => Ok(method::options(BRANCHES_ALLOWED)),
         _ => Ok(method::method_not_allowed(BRANCHES_ALLOWED)),
