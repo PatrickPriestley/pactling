@@ -123,7 +123,7 @@ async fn document(state: &AppState, l: &Links, r: &Matrix) -> Result<Value> {
     summary.insert("success".into(), json!(r.success));
     summary.insert("failed".into(), json!(r.failed));
     summary.insert("unknown".into(), json!(r.unknown));
-    if r.ignored > 0 {
+    if r.has_ignores {
         summary.insert("ignored".into(), json!(r.ignored));
     }
     let notices: Vec<Value> = r

@@ -1,0 +1,1391 @@
+{
+  "brokerVersion": "2.121.2",
+  "setup": [
+    {
+      "method": "PUT",
+      "path": "/pacts/provider/MatrixProvider/consumer/MatrixConsumer/version/1",
+      "body": {
+        "consumer": {
+          "name": "MatrixConsumer"
+        },
+        "provider": {
+          "name": "MatrixProvider"
+        },
+        "interactions": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/pacts/provider/MatrixProvider/consumer/MatrixWeb/version/1",
+      "body": {
+        "consumer": {
+          "name": "MatrixWeb"
+        },
+        "provider": {
+          "name": "MatrixProvider"
+        },
+        "interactions": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/pacts/provider/MatrixProvider/consumer/MatrixConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results",
+      "body": {
+        "providerApplicationVersion": "1",
+        "success": false
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/pacts/provider/MatrixProvider/consumer/MatrixConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results",
+      "body": {
+        "providerApplicationVersion": "2",
+        "success": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/pacts/provider/MatrixProvider/consumer/MatrixWeb/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results",
+      "body": {
+        "providerApplicationVersion": "1",
+        "success": true
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/environments",
+      "body": {
+        "name": "matrix-regressions",
+        "production": false
+      },
+      "saveUuid": "environment"
+    },
+    {
+      "method": "POST",
+      "path": "/pacticipants/MatrixProvider/versions/1/released-versions/environment/{environment}",
+      "body": {}
+    },
+    {
+      "method": "POST",
+      "path": "/pacticipants/MatrixProvider/versions/2/released-versions/environment/{environment}",
+      "body": {}
+    },
+    {
+      "method": "POST",
+      "path": "/pacticipants/MatrixConsumer/versions/1/deployed-versions/environment/{environment}",
+      "body": {}
+    },
+    {
+      "method": "PUT",
+      "path": "/pacts/provider/MatrixUnverifiedProvider/consumer/MatrixUnverifiedConsumer/version/1",
+      "body": {
+        "consumer": {
+          "name": "MatrixUnverifiedConsumer"
+        },
+        "provider": {
+          "name": "MatrixUnverifiedProvider"
+        },
+        "interactions": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/environments",
+      "body": {
+        "name": "matrix-single",
+        "production": false
+      },
+      "saveUuid": "singleEnvironment"
+    },
+    {
+      "method": "POST",
+      "path": "/pacticipants/MatrixProvider/versions/1/released-versions/environment/{singleEnvironment}",
+      "body": {}
+    },
+    {
+      "method": "PUT",
+      "path": "/pacticipants/MatrixProvider/versions/1/tags/prod",
+      "body": {}
+    },
+    {
+      "method": "PUT",
+      "path": "/pacticipants/MatrixProvider/branches/main/versions/1",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "failed_consumer_first",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "failed_provider_first",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "three_selectors_0",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 1,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "three_selectors_1",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 1,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "three_selectors_2",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 1,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "three_selectors_3",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 1,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "three_selectors_4",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 1,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "three_selectors_5",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 1,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "missing_provider_version",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=999&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "No pacts or verifications have been published for version 999 of MatrixProvider",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "missing_provider_version_first",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=999&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "No pacts or verifications have been published for version 999 of MatrixProvider",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ignore_missing_provider_version",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=999"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "WARN: Cannot ignore version 999 of MatrixProvider (no such version exists)\nThe verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0,
+          "ignored": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ignore_other_existing_provider_version",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=2"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0,
+          "ignored": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ignore_matching_provider_version",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=1"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "There are no missing dependencies",
+          "success": 0,
+          "failed": 0,
+          "unknown": 0,
+          "ignored": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "ignore_whole_provider",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "There are no missing dependencies",
+          "success": 0,
+          "failed": 0,
+          "unknown": 0,
+          "ignored": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "provider_side_ignore_wrong_consumer_version",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixConsumer&ignore%5B%5D%5Bversion%5D=999"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "WARN: Cannot ignore version 999 of MatrixConsumer (no such version exists)\nThe verification for the pact between the version of MatrixConsumer currently in matrix-regressions (1) and version 1 of MatrixProvider failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0,
+          "ignored": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "provider_side_ignore_matching_consumer_version",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixConsumer&ignore%5B%5D%5Bversion%5D=1"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "There are no missing dependencies",
+          "success": 0,
+          "failed": 0,
+          "unknown": 0,
+          "ignored": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "released_versions_ignore_only_success",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=2"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and one of the versions of MatrixProvider currently in matrix-regressions (1) failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0,
+          "ignored": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "2",
+            "success": true,
+            "ignored": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "released_versions_ignore_only_failure",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=1"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0,
+          "ignored": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "2",
+            "success": true,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "released_versions_ignore_whole_provider",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "There are no missing dependencies",
+          "success": 0,
+          "failed": 0,
+          "unknown": 0,
+          "ignored": 2
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "2",
+            "success": true,
+            "ignored": true
+          },
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "unpinned_unverified",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedConsumer&q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedProvider&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": null,
+          "reason": "There is no verified pact between any version of MatrixUnverifiedConsumer and any version of MatrixUnverifiedProvider",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixUnverifiedConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixUnverifiedProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "unpinned_unverified_reverse",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedProvider&q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedConsumer&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": null,
+          "reason": "There is no verified pact between any version of MatrixUnverifiedConsumer and any version of MatrixUnverifiedProvider",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixUnverifiedConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixUnverifiedProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "existing_unverified_pin",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=2&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": null,
+          "reason": "There is no verified pact between version 1 of MatrixWeb and version 2 of MatrixProvider",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "duplicate_selector",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "successful_pin",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=2&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "2",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "single_provider_environment",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-single"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "The verification for the pact between version 1 of MatrixConsumer and the version of MatrixProvider currently in matrix-single (1) failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "unverified_pin_ignored",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=2&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=2"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": null,
+          "reason": "There is no verified pact between version 1 of MatrixWeb and version 2 of MatrixProvider",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1,
+          "ignored": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "unverified_latest_version_ignored",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv&latest=true&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=2"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": null,
+          "reason": "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable.\nThere is no verified pact between version 1 of MatrixWeb and the latest version of MatrixProvider (2)",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1,
+          "ignored": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "any_provider_version_ignore",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=1"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable.\nAll required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0,
+          "ignored": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "2",
+            "success": true,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "missing_with_warning",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=999&latestby=cvpv&latest=true"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable.\nNo pacts or verifications have been published for version 999 of MatrixConsumer",
+          "success": 0,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": []
+      }
+    },
+    {
+      "name": "missing_with_failed_integration",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=999&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "No pacts or verifications have been published for version 999 of MatrixWeb",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ignore_unknown_service",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=NoSuchApp"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "WARN: Cannot ignore any version of NoSuchApp (no such pacticipant exists)\nThe verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0,
+          "ignored": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ignore_unknown_service_version",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=NoSuchApp&ignore%5B%5D%5Bversion%5D=1"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "WARN: Cannot ignore any version of NoSuchApp (no such pacticipant exists)\nThe verification for the pact between version 1 of MatrixConsumer and version 1 of MatrixProvider failed",
+          "success": 0,
+          "failed": 1,
+          "unknown": 0,
+          "ignored": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": false,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_unverified",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": null,
+          "reason": "There is no verified pact between version 1 of MatrixWeb and the latest version of MatrixProvider (2)",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_success",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "2",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_success_reverse",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixConsumer",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "2",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_tag_missing",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=nosuch&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "No version with tag nosuch exists for MatrixProvider",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_tag",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=prod&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_tag_reverse",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=prod&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_branch",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bbranch%5D=main&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_branch_reverse",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bbranch%5D=main&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_mainBranch",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_mainBranch_reverse",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "All required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "latest_provider_branch_missing",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bbranch%5D=nosuch&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "No version of MatrixProvider from branch nosuch exists",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "single_latest_selector_warning",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Blatest%5D=true&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": true,
+          "reason": "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable.\nWARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.\nAll required verification results are published and successful",
+          "success": 1,
+          "failed": 0,
+          "unknown": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixWeb",
+            "consumerVersion": "1",
+            "provider": "MatrixProvider",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -27,9 +27,11 @@ fixtures will record exact requests and outcomes, including controls.
   handling; reject a broad engine redesign in this bug-fix branch.
 - Preserve unresolved pinned versions and their negative verdict rather than widening
   them to any version.
-- Apply ignores after resolving individual rows, using the resolved version even when
-  an unverified provider is rendered as null for compatibility. Reject participant-only
-  filtering for version-scoped ignores.
+- Apply ignores after resolving individual rows. An additional real-broker probe
+  corrected the initial assumption about unverified providers: when the provider
+  version is null in a matrix row, a version-specific ignore does not suppress it.
+  Whole-participant ignores still apply. Reject participant-only filtering for
+  version-scoped ignores and do not infer a version match from a selector alone.
 - Capture real reference outcomes and replay them rather than invent expected summaries.
 
 ## Tasks and validation
@@ -43,3 +45,35 @@ fixtures will record exact requests and outcomes, including controls.
 
 The two pre-existing ignored phase-4 fidelity tests remain outside this scoped fix;
 completing their replay sequence and phase-4 e2e is tracked separately in #7.
+
+## Scope boundary found during controls
+
+A real-broker probe with two released provider versions, only one verified against
+a consumer, showed a pre-existing environment-selection difference: Ruby omitted
+the unverified provider row while Pactling retained it as unknown. This branch
+does not change that selection behavior; broader environment fidelity remains #7.
+The version-ignore regression cases cover multiple verified releases and an
+explicitly pinned unverified provider, so the fixed ignore predicate is tested
+without bundling an unrelated environment-selection rewrite.
+
+## Review-driven corrections
+
+The first independent review was complete. Real Ruby probes confirmed four findings:
+warning/error ordering, latest/tag/branch/main-branch resolution on the second selector,
+missing-selector notices taking precedence over failure notices, and warnings for
+unknown ignored participants. Added capture cases failed before those fixes. Both
+sides now use the same selector resolver; this is needed for selector correctness,
+not the broader pure-engine redesign tracked in #5.
+
+## Validation
+
+- 44 stable request/summary/row projections captured from Ruby 2.121.2; repeat capture
+  matches byte-for-byte. The script is also called by the full phase-4 capture workflow.
+- 116 enabled tests pass; the two pre-existing ignored phase-4 replay tests are unchanged.
+- Formatting, Clippy with warnings denied, and real-client e2e phases 1–3 pass.
+- 32 deliberate guard mutations were killed by assertion failures after a passing
+  baseline, in a disposable source copy with its own build cache. Checks covered
+  selector directions/count, overlap deduplication, missing-version handling, all
+  ignore predicates, latest/branch/tag/main-branch resolution, notice precedence,
+  ignored-row ordering, environment wording, and verdict reduction.
+- No temporary mutations were applied to this worktree.
