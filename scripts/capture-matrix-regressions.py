@@ -69,7 +69,7 @@ def capture(base, output):
         seed("POST", f"/pacticipants/{provider}/versions/{number}/released-versions/environment/{{environment}}", {})
     seed("POST", f"/pacticipants/{consumer}/versions/1/deployed-versions/environment/{{environment}}", {})
 
-    def matrix(name, selectors, ignore=None, environment=False, latest=False):
+    def matrix(name, selectors, ignore=None, environment=False, latest=False, route=None):
         params = []
         for participant, number in selectors:
             params.append(("q[][pacticipant]", participant))
@@ -87,7 +87,7 @@ def capture(base, output):
             params.append(("ignore[][pacticipant]", ignore[0]))
             if ignore[1] is not None:
                 params.append(("ignore[][version]", ignore[1]))
-        path = "/matrix?" + urllib.parse.urlencode(params)
+        path = route or "/matrix?" + urllib.parse.urlencode(params)
         status, response, _ = request("GET", path)
         assert status == 200, (name, status, response)
         rows = []
@@ -100,8 +100,14 @@ def capture(base, output):
                 "success": (row["verificationResult"] or {}).get("success"),
                 "ignored": row.get("ignored", False),
             })
+        # The integration-route control tests directionality, not the pre-existing
+        # unpinned-provider reason wording difference tracked with phase-4 fidelity.
+        summary = response["summary"].copy()
+        if route:
+            summary.pop("reason")
         cases.append({"name": name, "request": {"method": "GET", "path": path},
-                      "status": status, "expected": {"summary": response["summary"], "rows": rows}})
+                      "status": status, "compareReason": route is None,
+                      "expected": {"summary": summary, "rows": rows}})
 
     pair = [(consumer, "1"), (provider, "1")]
     matrix("failed_consumer_first", pair)
@@ -146,6 +152,15 @@ def capture(base, output):
         matrix(f"latest_provider_{key}_reverse", [(provider, {"latest": True, key: value}), (web, "1")])
     matrix("latest_provider_branch_missing", [(web, "1"), (provider, {"latest": True, "branch": "nosuch"})])
     matrix("single_latest_selector_warning", [(web, {"latest": True})])
+    forward = publish("MatrixDuplexA", "MatrixDuplexB")
+    backward = publish("MatrixDuplexB", "MatrixDuplexA")
+    seed("POST", forward, {"providerApplicationVersion": "1", "success": True})
+    seed("POST", backward, {"providerApplicationVersion": "1", "success": False})
+    matrix("directional_integration", [], route="/matrix/provider/MatrixDuplexB/consumer/MatrixDuplexA")
+    matrix("bidirectional_selectors", [("MatrixDuplexA", "1"), ("MatrixDuplexB", "1")])
+    matrix("two_missing_providers", [(consumer, "1"), (provider, "998"), (provider, "999")])
+    matrix("two_missing_services", [(consumer, "1"), (provider, "999"), (web, "999")])
+    matrix("latest_consumer_branch_missing", [(consumer, {"latest": True, "branch": "absent"}), (provider, "1")])
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps({"brokerVersion": version, "setup": setup, "cases": cases}, indent=2) + "\n")

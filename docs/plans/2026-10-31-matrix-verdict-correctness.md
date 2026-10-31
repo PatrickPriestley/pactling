@@ -67,7 +67,7 @@ not the broader pure-engine redesign tracked in #5.
 
 ## Validation
 
-- 44 stable request/summary/row projections captured from Ruby 2.121.2; repeat capture
+- 49 stable request/summary/row projections captured from Ruby 2.121.2; repeat capture
   matches byte-for-byte. The script is also called by the full phase-4 capture workflow.
 - 116 enabled tests pass; the two pre-existing ignored phase-4 replay tests are unchanged.
 - Formatting, Clippy with warnings denied, and real-client e2e phases 1–3 pass.
@@ -77,3 +77,14 @@ not the broader pure-engine redesign tracked in #5.
   ignore predicates, latest/branch/tag/main-branch resolution, notice precedence,
   ignored-row ordering, environment wording, and verdict reduction.
 - No temporary mutations were applied to this worktree.
+
+## Second review disposition
+
+The second review completed. Its suspected integration-route regression was disproved
+by the real Ruby broker: that route also returns both directions. The new directional
+control checks row membership, counts, and verdict; it deliberately excludes the
+pre-existing unpinned-provider reason wording (Ruby says "any version", Pactling says
+"version 1"), which remains broader phase-4 fidelity work. Two-missing-selector and
+two-missing-version probes also matched the existing implementation, disproving the
+reviewer's ordering/count assumptions. The missing consumer-branch probe is now
+captured. Formatting passes. No verified important review findings remain.
