@@ -95,7 +95,11 @@ async fn get_single_matches_fixture_including_deployed_environments_link() {
 #[tokio::test]
 async fn post_existing_name_upserts_and_answers_201() {
     let s = common::start().await;
-    post(&s, json!({"name":"Bar","mainBranch":"trunk"})).await;
+    post(
+        &s,
+        json!({"name":"Bar","mainBranch":"trunk","displayName":"The Bar"}),
+    )
+    .await;
     let res = post(
         &s,
         json!({"name":"Bar","repositoryUrl":"https://example.com/bar2"}),
@@ -107,7 +111,20 @@ async fn post_existing_name_upserts_and_answers_201() {
         body["mainBranch"], "trunk",
         "fields not in the second POST are kept"
     );
+    assert_eq!(body["displayName"], "The Bar");
     assert_eq!(body["repositoryUrl"], "https://example.com/bar2");
+
+    // Every column is independently kept when not provided.
+    let res = post(&s, json!({"name":"Bar","mainBranch":"main"})).await;
+    let body: Value = res.json().await.unwrap();
+    assert_eq!(body["repositoryUrl"], "https://example.com/bar2");
+    assert_eq!(body["displayName"], "The Bar");
+    assert_eq!(body["mainBranch"], "main");
+    let res = post(&s, json!({"name":"Bar","displayName":"Bar!"})).await;
+    let body: Value = res.json().await.unwrap();
+    assert_eq!(body["repositoryUrl"], "https://example.com/bar2");
+    assert_eq!(body["mainBranch"], "main");
+    assert_eq!(body["displayName"], "Bar!");
     assert!(
         body.get("updatedAt").is_some(),
         "an update carries updatedAt"
