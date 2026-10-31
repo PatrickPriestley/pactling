@@ -181,3 +181,18 @@ async fn bearer_token_grants_read_and_write() {
         .unwrap();
     assert_401(bad).await;
 }
+
+#[tokio::test]
+async fn right_password_with_wrong_username_is_401() {
+    let s = common::start_with(secured()).await;
+    for (user, pass) in [("someone", "rwpass"), ("rw", "ropass"), ("ro", "rwpass")] {
+        let res = s
+            .client
+            .get(&s.base_url)
+            .basic_auth(user, Some(pass))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(res.status(), 401, "{user}:{pass}");
+    }
+}
