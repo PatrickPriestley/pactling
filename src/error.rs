@@ -20,6 +20,9 @@ pub enum Error {
     /// Unparseable input. Rendered as the Ruby broker's `{"error": "..."}` with status 400.
     #[error("{0}")]
     BadRequest(String),
+    /// Re-publishing different content for an existing consumer version. 409 HAL.
+    #[error("{0}")]
+    Conflict(String),
     /// An invariant broke; logged and rendered as a plain 500.
     #[error("{0}")]
     Internal(String),
@@ -47,6 +50,11 @@ impl IntoResponse for Error {
             ),
             Error::BadRequest(msg) => (
                 StatusCode::BAD_REQUEST,
+                HAL_CONTENT_TYPE,
+                json!({ "error": msg }),
+            ),
+            Error::Conflict(msg) => (
+                StatusCode::CONFLICT,
                 HAL_CONTENT_TYPE,
                 json!({ "error": msg }),
             ),

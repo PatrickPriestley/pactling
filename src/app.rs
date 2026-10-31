@@ -61,7 +61,28 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
         .route("/environments", get(http::environments::list))
         .route("/webhooks", get(http::webhooks::list))
         .route("/integrations", get(http::integrations::list))
+        .route("/contracts/publish", any(http::contracts::publish))
         .route("/pacts/latest", get(http::pacts::latest))
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/version/{version}",
+            any(http::pacts::pact_by_version),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/latest",
+            any(http::pacts::latest_pact),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/latest/{tag}",
+            any(http::pacts::latest_pact_with_tag),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/latest-untagged",
+            any(http::pacts::latest_pact_untagged),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/pact-version/{sha}",
+            any(http::pacts::pact_by_sha),
+        )
         .route("/matrix", get(http::matrix::matrix))
         .route("/can-i-deploy", get(http::matrix::can_i_deploy))
         .fallback(|| async { Error::NoRoute })

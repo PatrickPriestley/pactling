@@ -45,6 +45,22 @@ async fn delete(s: &common::TestServer, path: &str) -> reqwest::Response {
         .unwrap()
 }
 
+/// Publishes the fixture pact for Consumer/Provider at `version` through the legacy route.
+async fn put_pact(s: &common::TestServer, version: &str) {
+    let r = s
+        .client
+        .put(format!(
+            "{}/pacts/provider/Provider/consumer/Consumer/version/{version}",
+            s.base_url
+        ))
+        .header("content-type", "application/json")
+        .body(include_str!("fixtures/pact/consumer-provider.json"))
+        .send()
+        .await
+        .unwrap();
+    assert!(r.status().is_success(), "{}", r.status());
+}
+
 fn content_type(r: &reqwest::Response) -> String {
     r.headers()
         .get("content-type")
@@ -294,11 +310,13 @@ async fn tag_put_without_a_json_content_type_is_415() {
 }
 
 #[tokio::test]
-#[ignore = "fixture version 1.0.0 carries pact links; enable after Task 2.5 publishes a pact first"]
 async fn tag_document_and_delete() {
     let s = common::start().await;
+    put_pact(&s, "1.0.0").await;
     put_empty(&s, "/pacticipants/Consumer/branches/main/versions/1.0.0").await;
     put_empty(&s, "/pacticipants/Consumer/versions/1.0.0/tags/dev").await;
+    // In the fixture a later version exists on main, so 1.0.0 is not the branch's latest.
+    put_empty(&s, "/pacticipants/Consumer/branches/main/versions/2.0.0").await;
     let r = get(&s, "/pacticipants/Consumer/versions/1.0.0/tags/dev").await;
     assert_eq!(r.status(), StatusCode::OK);
     let body: Value = r.json().await.unwrap();
@@ -497,16 +515,16 @@ async fn deleting_a_version_removes_it() {
 }
 
 #[tokio::test]
-#[ignore = "fixture version 2.0.1 carries pact links; enable after Task 2.5"]
 async fn latest_version_documents_echo_the_request_url_as_self() {
     let s = common::start().await;
+    put_empty(&s, "/pacticipants/Consumer/versions/1.0.0/tags/dev").await;
+    put_pact(&s, "2.0.1").await;
     put_empty(&s, "/pacticipants/Consumer/branches/main/versions/2.0.1").await;
-    put_empty(&s, "/pacticipants/Consumer/versions/2.0.1/tags/dev").await;
     put_json(&s, "/pacticipants/Consumer/versions/3.0.0", json!({})).await;
     let b = &s.base_url;
     for (path, number) in [
         ("/pacticipants/Consumer/latest-version", "3.0.0"),
-        ("/pacticipants/Consumer/latest-version/dev", "2.0.1"),
+        ("/pacticipants/Consumer/latest-version/dev", "1.0.0"),
         (
             "/pacticipants/Consumer/branches/main/latest-version",
             "2.0.1",

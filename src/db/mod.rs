@@ -1,5 +1,6 @@
 //! All SQL lives here. Handlers and services call these methods and never write queries.
 pub mod pacticipants;
+pub mod pacts;
 pub mod versions;
 
 use sqlx::sqlite::{SqlitePool, SqlitePoolOptions};
