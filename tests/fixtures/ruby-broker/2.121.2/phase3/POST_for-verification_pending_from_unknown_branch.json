@@ -1,0 +1,34 @@
+{
+    "_embedded": {
+        "pacts": [
+            {
+                "shortDescription": "latest from branch zeta",
+                "verificationProperties": {
+                    "pending": false,
+                    "notices": [
+                        {
+                            "when": "before_verification",
+                            "text": "The pact at http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/d676a66f281a400646bb25f2b8b05551f4d4769c is being verified because the pact content belongs to the consumer version matching the following criterion:\n    * latest version from branch 'zeta' (4.0.0)"
+                        },
+                        {
+                            "when": "before_verification",
+                            "text": "This pact has previously been successfully verified by a version of Provider from branch 'x'. If this verification fails, it will fail the build. Read more at https://docs.pact.io/go/pending"
+                        }
+                    ]
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/d676a66f281a400646bb25f2b8b05551f4d4769c/metadata/cyU1QiU1RCU1QmIlNUQ9emV0YSZzJTVCJTVEJTVCbCU1RD10cnVlJnMlNUIlNUQlNUJjdiU1RD00JnA9ZmFsc2U",
+                        "name": "Pact between Consumer (4.0.0) and Provider"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/for-verification",
+            "title": "Pacts to be verified"
+        }
+    }
+}

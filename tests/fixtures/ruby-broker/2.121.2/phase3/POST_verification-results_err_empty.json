@@ -1,0 +1,10 @@
+{
+    "errors": {
+        "success": [
+            "is missing"
+        ],
+        "providerApplicationVersion": [
+            "is missing"
+        ]
+    }
+}

@@ -1,0 +1,50 @@
+{
+    "_embedded": {
+        "pacts": [
+            {
+                "shortDescription": "latest from branch feat",
+                "verificationProperties": {
+                    "pending": true,
+                    "notices": [
+                        {
+                            "when": "before_verification",
+                            "text": "The pact at http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/8664f311b5c69dd7c5fffb7d22bf1215bc48da29 is being verified because the pact content belongs to the consumer version matching the following criterion:\n    * latest version from branch 'feat' (2.0.0)"
+                        },
+                        {
+                            "when": "before_verification",
+                            "text": "This pact is in pending state for this version of Provider because a successful verification result for a version of Provider from branch 'feat' has not yet been published. If this verification fails, it will not cause the overall build to fail. Read more at https://docs.pact.io/go/pending"
+                        },
+                        {
+                            "when": "after_verification:success_true_published_false",
+                            "text": "This pact is still in pending state for any version of Provider from branch 'feat' as the successful verification results have not yet been published."
+                        },
+                        {
+                            "when": "after_verification:success_false_published_false",
+                            "text": "This pact is still in pending state for any version of Provider from branch 'feat' as a successful verification result has not yet been published"
+                        },
+                        {
+                            "when": "after_verification:success_true_published_true",
+                            "text": "This pact is no longer in pending state for any version of Provider from branch 'feat', as a successful verification result has been published. If a verification for a version of Provider fails in the future, it will fail the build. Read more at https://docs.pact.io/go/pending"
+                        },
+                        {
+                            "when": "after_verification:success_false_published_true",
+                            "text": "This pact is still in pending state for any version of Provider from branch 'feat' as a successful verification result has not yet been published"
+                        }
+                    ]
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/8664f311b5c69dd7c5fffb7d22bf1215bc48da29/metadata/cyU1QiU1RCU1QmIlNUQ9ZmVhdCZzJTVCJTVEJTVCbCU1RD10cnVlJnMlNUIlNUQlNUJjdiU1RD0yJnA9dHJ1ZQ",
+                        "name": "Pact between Consumer (2.0.0) and Provider"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/for-verification",
+            "title": "Pacts to be verified"
+        }
+    }
+}

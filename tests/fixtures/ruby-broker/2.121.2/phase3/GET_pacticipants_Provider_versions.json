@@ -1,0 +1,302 @@
+{
+    "_embedded": {
+        "versions": [
+            {
+                "number": "7",
+                "updatedAt": "2026-10-31T11:50:22+00:00",
+                "createdAt": "2026-10-31T11:50:22+00:00",
+                "_embedded": {
+                    "branchVersions": [],
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "title": "Version",
+                        "name": "7",
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/7"
+                    },
+                    "pb:pacticipant": {
+                        "title": "Pacticipant",
+                        "name": "Provider",
+                        "href": "http://localhost:9292/pacticipants/Provider"
+                    },
+                    "pb:tag": {
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/7/tags/{tag}",
+                        "title": "Get, create or delete a tag for this pacticipant version",
+                        "templated": true
+                    },
+                    "pb:latest-verification-results-where-pacticipant-is-consumer": {
+                        "title": "Latest verification results for consumer version",
+                        "href": "http://localhost:9292/verification-results/consumer/Provider/version/7/latest"
+                    },
+                    "pb:pact-versions": [],
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=version",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "number": "6",
+                "updatedAt": "2026-10-31T11:50:21+00:00",
+                "createdAt": "2026-10-31T11:50:21+00:00",
+                "_embedded": {
+                    "branchVersions": [
+                        {
+                            "name": "feat",
+                            "latest": true,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "feat",
+                                    "href": "http://localhost:9292/pacticipants/Provider/branches/feat/versions/6"
+                                }
+                            }
+                        }
+                    ],
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "title": "Version",
+                        "name": "6",
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/6"
+                    },
+                    "pb:pacticipant": {
+                        "title": "Pacticipant",
+                        "name": "Provider",
+                        "href": "http://localhost:9292/pacticipants/Provider"
+                    },
+                    "pb:tag": {
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/6/tags/{tag}",
+                        "title": "Get, create or delete a tag for this pacticipant version",
+                        "templated": true
+                    },
+                    "pb:latest-verification-results-where-pacticipant-is-consumer": {
+                        "title": "Latest verification results for consumer version",
+                        "href": "http://localhost:9292/verification-results/consumer/Provider/version/6/latest"
+                    },
+                    "pb:pact-versions": [],
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=version",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "number": "3",
+                "updatedAt": "2026-10-31T11:50:17+00:00",
+                "createdAt": "2026-10-31T11:50:17+00:00",
+                "_embedded": {
+                    "branchVersions": [
+                        {
+                            "name": "feat",
+                            "latest": false,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "feat",
+                                    "href": "http://localhost:9292/pacticipants/Provider/branches/feat/versions/3"
+                                }
+                            }
+                        }
+                    ],
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "title": "Version",
+                        "name": "3",
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/3"
+                    },
+                    "pb:pacticipant": {
+                        "title": "Pacticipant",
+                        "name": "Provider",
+                        "href": "http://localhost:9292/pacticipants/Provider"
+                    },
+                    "pb:tag": {
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/3/tags/{tag}",
+                        "title": "Get, create or delete a tag for this pacticipant version",
+                        "templated": true
+                    },
+                    "pb:latest-verification-results-where-pacticipant-is-consumer": {
+                        "title": "Latest verification results for consumer version",
+                        "href": "http://localhost:9292/verification-results/consumer/Provider/version/3/latest"
+                    },
+                    "pb:pact-versions": [],
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=version",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "number": "2",
+                "updatedAt": "2026-10-31T11:50:14+00:00",
+                "createdAt": "2026-10-31T11:50:14+00:00",
+                "_embedded": {
+                    "branchVersions": [
+                        {
+                            "name": "main",
+                            "latest": true,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "main",
+                                    "href": "http://localhost:9292/pacticipants/Provider/branches/main/versions/2"
+                                }
+                            }
+                        }
+                    ],
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "title": "Version",
+                        "name": "2",
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/2"
+                    },
+                    "pb:pacticipant": {
+                        "title": "Pacticipant",
+                        "name": "Provider",
+                        "href": "http://localhost:9292/pacticipants/Provider"
+                    },
+                    "pb:tag": {
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/2/tags/{tag}",
+                        "title": "Get, create or delete a tag for this pacticipant version",
+                        "templated": true
+                    },
+                    "pb:latest-verification-results-where-pacticipant-is-consumer": {
+                        "title": "Latest verification results for consumer version",
+                        "href": "http://localhost:9292/verification-results/consumer/Provider/version/2/latest"
+                    },
+                    "pb:pact-versions": [],
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=version",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "number": "1",
+                "updatedAt": "2026-10-31T11:50:11+00:00",
+                "createdAt": "2026-10-31T11:50:11+00:00",
+                "_embedded": {
+                    "branchVersions": [
+                        {
+                            "name": "main",
+                            "latest": false,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "main",
+                                    "href": "http://localhost:9292/pacticipants/Provider/branches/main/versions/1"
+                                }
+                            }
+                        }
+                    ],
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "title": "Version",
+                        "name": "1",
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/1"
+                    },
+                    "pb:pacticipant": {
+                        "title": "Pacticipant",
+                        "name": "Provider",
+                        "href": "http://localhost:9292/pacticipants/Provider"
+                    },
+                    "pb:tag": {
+                        "href": "http://localhost:9292/pacticipants/Provider/versions/1/tags/{tag}",
+                        "title": "Get, create or delete a tag for this pacticipant version",
+                        "templated": true
+                    },
+                    "pb:latest-verification-results-where-pacticipant-is-consumer": {
+                        "title": "Latest verification results for consumer version",
+                        "href": "http://localhost:9292/verification-results/consumer/Provider/version/1/latest"
+                    },
+                    "pb:pact-versions": [],
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=version",
+                            "templated": true
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacticipants/Provider/versions",
+            "title": "All application versions of Provider"
+        },
+        "pb:pacticipant": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Provider"
+        },
+        "pb:versions": [
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/7",
+                "title": "Version 7 - 31/10/2026"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/6",
+                "title": "Version 6 - 31/10/2026"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/3",
+                "title": "Version 3 - 31/10/2026"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/2",
+                "title": "Version 2 - 31/10/2026"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/1",
+                "title": "Version 1 - 31/10/2026"
+            }
+        ],
+        "pacticipant": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Deprecated - please use pb:pacticipant"
+        },
+        "versions": [
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/7",
+                "title": "Deprecated - please use pb:versions"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/6",
+                "title": "Deprecated - please use pb:versions"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/3",
+                "title": "Deprecated - please use pb:versions"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/2",
+                "title": "Deprecated - please use pb:versions"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Provider/versions/1",
+                "title": "Deprecated - please use pb:versions"
+            }
+        ]
+    }
+}

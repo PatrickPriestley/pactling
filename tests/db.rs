@@ -90,7 +90,31 @@ async fn count(db: &Db, table: &str) -> i64 {
         "tags" => "SELECT COUNT(*) FROM tags",
         "pact_versions" => "SELECT COUNT(*) FROM pact_versions",
         "pact_publications" => "SELECT COUNT(*) FROM pact_publications",
+        "verifications" => "SELECT COUNT(*) FROM verifications",
         other => panic!("unknown table {other}"),
     };
     sqlx::query_scalar(sql).fetch_one(db.pool()).await.unwrap()
+}
+
+#[tokio::test]
+async fn verifications_cascade_from_pact_versions_and_provider_versions() {
+    let db = Db::connect("sqlite::memory:").await.unwrap();
+    db.migrate().await.unwrap();
+    let pool = db.pool();
+    sqlx::query(
+        "INSERT INTO pacticipants (id, name, created_at) VALUES (1, 'C', 't'), (2, 'P', 't')",
+    )
+    .execute(pool)
+    .await
+    .unwrap();
+    sqlx::query("INSERT INTO versions (id, pacticipant_id, number, created_at) VALUES (10, 1, '1', 't'), (20, 2, '1', 't')").execute(pool).await.unwrap();
+    sqlx::query("INSERT INTO pact_versions (id, consumer_id, provider_id, sha, content, created_at) VALUES (30, 1, 2, 'abc', '{}', 't')").execute(pool).await.unwrap();
+    sqlx::query("INSERT INTO verifications (number, pact_version_id, provider_version_id, consumer_version_id, success, created_at) VALUES (1, 30, 20, 10, 1, 't')").execute(pool).await.unwrap();
+    assert_eq!(count(&db, "verifications").await, 1);
+    db.delete_pacticipant("P").await.unwrap();
+    assert_eq!(
+        count(&db, "verifications").await,
+        0,
+        "deleting the provider removes its verifications"
+    );
 }

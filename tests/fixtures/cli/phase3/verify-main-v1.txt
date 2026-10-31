@@ -1,0 +1,58 @@
+TAP version 13
+# (node:83340) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+# (Use `node --trace-deprecation ...` to show where the warning was created)
+# [07:50:10.937] WARN (83340): pact@13.2.0: no state handler found for state: ""
+# [07:50:11.849] WARN (83340): pact@13.2.0: no state handler found for state: ""
+# 2026-10-31T11:50:12.140422Z  WARN ThreadId(09) pact_matching::metrics: 
+# Please note:
+# We are tracking events anonymously to gather important usage statistics like Pact version and operating system. To disable tracking, set the 'PACT_DO_NOT_TRACK' environment variable to 'true'.
+# The pact at http://127.0.0.1:57301/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer versions matching the following criteria:
+#     * latest version from branch 'main' (1.0.0)
+#     * latest version from the main branch 'main' (1.0.0)
+# This pact is in pending state for this version of Provider because a successful verification result for a version of Provider from branch 'main' has not yet been published. If this verification fails, it will not cause the overall build to fail. Read more at https://docs.pact.io/go/pending
+# Verifying a pact between [1mConsumer[0m and [1mProvider[0m
+#   a request for an order (222ms loading, 390ms verification)
+#      Given an order exists
+#     returns a response which
+#       has status code [1m200[0m ([32mOK[0m)
+#       includes headers
+#         "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
+#       has a matching body ([32mOK[0m)
+#   a request for a missing order (222ms loading, 367ms verification)
+#     returns a response which
+#       has status code [1m404[0m ([32mOK[0m)
+#       has a matching body ([32mOK[0m)
+# This pact is no longer in pending state for any version of Provider from branch 'main', as a successful verification result has been published. If a verification for a version of Provider fails in the future, it will fail the build. Read more at https://docs.pact.io/go/pending
+# The pact at http://127.0.0.1:57301/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer versions matching the following criteria:
+#     * latest version from branch 'main' (1)
+#     * latest version from the main branch 'main' (1)
+# This pact is in pending state for this version of Provider because a successful verification result for a version of Provider from branch 'main' has not yet been published. If this verification fails, it will not cause the overall build to fail. Read more at https://docs.pact.io/go/pending
+# Verifying a pact between [1mWeb[0m and [1mProvider[0m
+#   a request for an order (222ms loading, 371ms verification)
+#      Given an order exists
+#     returns a response which
+#       has status code [1m200[0m ([32mOK[0m)
+#       includes headers
+#         "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
+#       has a matching body ([32mOK[0m)
+#   a request for a missing order (222ms loading, 367ms verification)
+#     returns a response which
+#       has status code [1m404[0m ([32mOK[0m)
+#       has a matching body ([32mOK[0m)
+# This pact is no longer in pending state for any version of Provider from branch 'main', as a successful verification result has been published. If a verification for a version of Provider fails in the future, it will fail the build. Read more at https://docs.pact.io/go/pending
+# Subtest: provider verifies the pacts the broker selects and publishes results
+ok 1 - provider verifies the pacts the broker selects and publishes results
+  ---
+  duration_ms: 2237.962625
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2601.136625
+exit=0

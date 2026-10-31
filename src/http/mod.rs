@@ -9,5 +9,6 @@ pub mod method;
 pub mod pact_lists;
 pub mod pacticipants;
 pub mod pacts;
+pub mod verification;
 pub mod versions;
 pub mod webhooks;

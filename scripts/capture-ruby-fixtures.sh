@@ -305,4 +305,94 @@ get2 "pacts/provider/Provider/consumer/Consumer/version/dup1"
 for p in "pacticipants/Consumer/versions/10.0.0" "pacticipants/Consumer/versions/1.0.0" "pacts/latest" "pacticipants" "integrations" "pacticipants/Consumer/versions" "pacticipants/Consumer/branches"; do
   cap "AFTER_DELETES_GET_$(echo "$p" | tr '/' '_')" -H 'Accept: application/hal+json' "$B/$p"
 done
+
+# ---------------------------------------------------------------------------------------
+# Phase 3: verification. Fresh broker again; the pact-js 13 provider verifier runs through
+# the proxy (e2e/provider.test.js) so its exact requests are kept, then curl probes every
+# selector kind, the pending rule and the verification-result documents.
+# ---------------------------------------------------------------------------------------
+echo "phase 3: resetting the Ruby broker"
+"${COMPOSE[@]}" down -v >/dev/null 2>&1 || true
+"${COMPOSE[@]}" up -d >/dev/null 2>&1
+for _ in $(seq 1 90); do curl -sf $B/ >/dev/null && break; sleep 1; done
+F3="$F/phase3"; C3="$C/phase3"; mkdir -p "$F3" "$C3"
+cap3() { local n=$1; shift; curl -s -D "$F3/$n.json.headers" "$@" | pretty > "$F3/$n.json"; }
+mkdir -p "$TMP/p1" "$TMP/p2" "$TMP/p4" "$TMP/web"
+cp "$PACT" "$TMP/p1/"; cp "$TMP/changed/consumer-provider.json" "$TMP/p2/"; cp "$TMP/web-provider.json" "$TMP/web/"
+python3 -I - "$PACT" "$TMP/p4/consumer-provider.json" <<'EOF'
+import json, sys
+d = json.load(open(sys.argv[1])); d["interactions"][0]["response"]["body"]["id"] = 4
+json.dump(d, open(sys.argv[2], "w"))
+EOF
+"$PB" publish "$TMP/p1" --consumer-app-version 1.0.0 --branch main --tag dev --broker-base-url $B >/dev/null
+"$PB" publish "$TMP/p2" --consumer-app-version 2.0.0 --branch feat --broker-base-url $B >/dev/null
+"$PB" publish "$TMP/web" --consumer-app-version 1 --branch main --broker-base-url $B >/dev/null
+"$PB" publish "$TMP/p4" --consumer-app-version 4.0.0 --branch zeta --broker-base-url $B >/dev/null
+
+echo "phase 3: pact-js provider verification through the proxy"
+verify_via_proxy() { # <log name> <env assignments...>
+  local n=$1; shift
+  local port; port=$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1])')
+  node "$ROOT/e2e/proxy.js" "$port" $B "$C3/$n.jsonl" & local pid=$!
+  trap 'kill '"$pid"' 2>/dev/null; rm -rf "$TMP"' EXIT
+  sleep 0.5
+  set +e; env BROKER="http://127.0.0.1:$port" "$@" node --test "$ROOT/e2e/provider.test.js" > "$C3/$n.txt" 2>&1; echo "exit=$?" >> "$C3/$n.txt"; set -e
+  kill $pid 2>/dev/null || true; wait $pid 2>/dev/null || true
+  trap 'rm -rf "$TMP"' EXIT
+}
+verify_via_proxy verify-main-v1 PROVIDER_VERSION=1 PROVIDER_BRANCH=main
+verify_via_proxy verify-main-v2-fail PROVIDER_VERSION=2 PROVIDER_BRANCH=main FAIL=true
+verify_via_proxy verify-feat-v3 PROVIDER_VERSION=3 PROVIDER_BRANCH=feat
+verify_via_proxy verify-feat-v6-zeta PROVIDER_VERSION=6 PROVIDER_BRANCH=feat ORDER_ID=4 'SELECTORS=[{"branch":"zeta"}]'
+
+echo "phase 3: selector and pending probes"
+FV="$B/pacts/provider/Provider/for-verification"
+cap3 GET_for-verification -X GET "${J[@]}" "$FV"
+sel() { local n=$1; shift; cap3 "POST_for-verification_$n" "${J[@]}" -X POST -d "$1" "$FV"; }
+sel empty '{}'
+sel empty_array '{"consumerVersionSelectors":[]}'
+sel latest '{"consumerVersionSelectors":[{"latest":true}]}'
+sel tag '{"consumerVersionSelectors":[{"tag":"dev"}]}'
+sel tag_latest '{"consumerVersionSelectors":[{"tag":"dev","latest":true}]}'
+sel tag_nope '{"consumerVersionSelectors":[{"tag":"nope"}]}'
+sel branch '{"consumerVersionSelectors":[{"branch":"feat"}]}'
+sel branch_consumer '{"consumerVersionSelectors":[{"branch":"main","consumer":"Web"}]}'
+sel mainBranch '{"consumerVersionSelectors":[{"mainBranch":true}]}'
+sel matchingBranch_no_provider_branch '{"consumerVersionSelectors":[{"matchingBranch":true}]}'
+sel matchingBranch_feat '{"consumerVersionSelectors":[{"matchingBranch":true}],"providerVersionBranch":"feat"}'
+sel deployed '{"consumerVersionSelectors":[{"deployed":true}]}'
+sel released '{"consumerVersionSelectors":[{"released":true}]}'
+sel deployedOrReleased '{"consumerVersionSelectors":[{"deployedOrReleased":true}]}'
+sel two_selectors '{"includePendingStatus":true,"consumerVersionSelectors":[{"mainBranch":true},{"deployedOrReleased":true},{"matchingBranch":true}],"providerVersionBranch":"main"}'
+sel pending_from_feat '{"includePendingStatus":true,"consumerVersionSelectors":[{"branch":"zeta"}],"providerVersionBranch":"feat"}'
+sel pending_from_unknown_branch '{"includePendingStatus":true,"consumerVersionSelectors":[{"branch":"zeta"}],"providerVersionBranch":"x"}'
+sel pending_from_main '{"includePendingStatus":true,"consumerVersionSelectors":[{"branch":"zeta"}],"providerVersionBranch":"main"}'
+sel pending_no_branch '{"includePendingStatus":true,"consumerVersionSelectors":[{"branch":"zeta"}]}'
+sel pending_provider_tags '{"includePendingStatus":true,"consumerVersionSelectors":[{"mainBranch":true}],"providerVersionTags":["prod"]}'
+sel pending_off '{"consumerVersionSelectors":[{"branch":"zeta"}],"providerVersionBranch":"main"}'
+sel err_bogus_selector '{"consumerVersionSelectors":[{"bogus":true}]}'
+sel err_types '{"consumerVersionSelectors":"x","includePendingStatus":"yes"}'
+sel err_not_json 'nope'
+cap3 POST_for-verification_unknown_provider -X POST "${J[@]}" -d '{}' "$B/pacts/provider/Nope/for-verification"
+cap3 OPTIONS_for-verification -X OPTIONS "$FV"
+
+echo "phase 3: verification result documents"
+PV="$B/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485"
+cap3 GET_verification-results_latest "${J[@]}" "$PV/verification-results/latest"
+cap3 GET_verification-results_1 "${J[@]}" "$PV/verification-results/1"
+cap3 GET_verification-results_999 "${J[@]}" "$PV/verification-results/999"
+cap3 GET_verification-results_unknown_pact "${J[@]}" "$B/pacts/provider/Provider/consumer/Consumer/pact-version/deadbeef/verification-results/latest"
+cap3 GET_pact_by_version_verification-results_latest "${J[@]}" "$B/pacts/provider/Provider/consumer/Consumer/version/1.0.0/verification-results/latest"
+cap3 GET_consumer_version_verification-results_latest "${J[@]}" "$B/verification-results/consumer/Consumer/version/1.0.0/latest"
+cap3 GET_consumer_version_verification-results_latest_unknown "${J[@]}" "$B/verification-results/consumer/Consumer/version/9.9.9/latest"
+cap3 POST_verification-results_minimal "${J[@]}" -X POST -d '{"providerApplicationVersion":"7","success":true}' "$PV/verification-results"
+cap3 POST_verification-results_err_empty "${J[@]}" -X POST -d '{}' "$PV/verification-results"
+cap3 POST_verification-results_err_types "${J[@]}" -X POST -d '{"providerApplicationVersion":"","success":"yes"}' "$PV/verification-results"
+cap3 POST_verification-results_err_not_json "${J[@]}" -X POST -d 'nope' "$PV/verification-results"
+cap3 POST_verification-results_unknown_pact "${J[@]}" -X POST -d '{"providerApplicationVersion":"7","success":true}' "$B/pacts/provider/Provider/consumer/Consumer/pact-version/deadbeef/verification-results"
+cap3 GET_pacticipants_Provider_versions_7 "${J[@]}" "$B/pacticipants/Provider/versions/7"
+cap3 GET_pacticipants_Provider_versions "${J[@]}" "$B/pacticipants/Provider/versions"
+cap3 GET_pact_1.0.0_after_verification "${J[@]}" "$B/pacts/provider/Provider/consumer/Consumer/version/1.0.0"
+for p in "verification-results" "verification-results/1" "verification-results/latest"; do cap3 "OPTIONS_$(echo "$p" | tr '/' '_')" -X OPTIONS "$PV/$p"; done
+"$PB" describe-version --pacticipant Provider --version 1 --broker-base-url $B > "$C3/describe-version-Provider-1.txt" 2>&1 || true
 echo "done: $(find "$F" "$C" -type f | wc -l | tr -d ' ') files"

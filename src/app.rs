@@ -139,6 +139,13 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
             "/pacts/provider/{provider}/consumer/{consumer}/pact-version/{sha}",
             any(http::pacts::pact_by_sha),
         )
+        .route("/pacts/provider/{provider}/consumer/{consumer}/pact-version/{sha}/metadata/{metadata}", any(http::verification::pact_with_metadata))
+        .route("/pacts/provider/{provider}/consumer/{consumer}/pact-version/{sha}/metadata/{metadata}/verification-results", any(http::verification::results_with_metadata))
+        .route("/pacts/provider/{provider}/consumer/{consumer}/pact-version/{sha}/verification-results", any(http::verification::results))
+        .route("/pacts/provider/{provider}/consumer/{consumer}/pact-version/{sha}/verification-results/{number}", any(http::verification::result))
+        .route("/pacts/provider/{provider}/consumer/{consumer}/version/{version}/verification-results/latest", any(http::verification::latest_result_for_version))
+        .route("/pacts/provider/{provider}/for-verification", any(http::verification::for_verification))
+        .route("/verification-results/consumer/{consumer}/version/{version}/latest", any(http::verification::latest_results_for_consumer_version))
         .route("/matrix", get(http::matrix::matrix))
         .route("/can-i-deploy", get(http::matrix::can_i_deploy))
         .fallback(|| async { Error::NoRoute })

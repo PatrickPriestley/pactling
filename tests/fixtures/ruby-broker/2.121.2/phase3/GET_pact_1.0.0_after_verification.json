@@ -1,0 +1,141 @@
+{
+    "consumer": {
+        "name": "Consumer"
+    },
+    "provider": {
+        "name": "Provider"
+    },
+    "interactions": [
+        {
+            "_id": "72e9b4bb90f5cb675f1cea3e426b11616e6703a0",
+            "description": "a request for an order",
+            "providerState": "an order exists",
+            "request": {
+                "method": "GET",
+                "path": "/orders/1"
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "id": 1,
+                    "status": "open"
+                }
+            }
+        },
+        {
+            "_id": "8da86afba68368b3a91327afde5a9c6b59c02274",
+            "description": "a request for a missing order",
+            "request": {
+                "method": "GET",
+                "path": "/orders/999"
+            },
+            "response": {
+                "status": 404
+            }
+        }
+    ],
+    "metadata": {
+        "pactSpecification": {
+            "version": "2.0.0"
+        }
+    },
+    "createdAt": "2026-10-31T11:50:07+00:00",
+    "_links": {
+        "self": {
+            "title": "Pact",
+            "name": "Pact between Consumer (1.0.0) and Provider",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0"
+        },
+        "pb:consumer": {
+            "title": "Consumer",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        },
+        "pb:consumer-version": {
+            "title": "Consumer version",
+            "name": "1.0.0",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0"
+        },
+        "pb:provider": {
+            "title": "Provider",
+            "name": "Provider",
+            "href": "http://localhost:9292/pacticipants/Provider"
+        },
+        "pb:pact-version": {
+            "title": "Pact content version permalink",
+            "name": "0350e2d94a510324ee31cd7375bf1660e5d8c485",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485"
+        },
+        "pb:latest-pact-version": {
+            "title": "Latest version of this pact",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/latest"
+        },
+        "pb:all-pact-versions": {
+            "title": "All versions of this pact",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/versions"
+        },
+        "pb:latest-untagged-pact-version": {
+            "title": "Latest untagged version of this pact",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/latest-untagged"
+        },
+        "pb:latest-tagged-pact-version": {
+            "title": "Latest tagged version of this pact",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/latest/{tag}",
+            "templated": true
+        },
+        "pb:previous-distinct": {
+            "title": "Previous distinct version of this pact",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0/previous-distinct"
+        },
+        "pb:diff-previous-distinct": {
+            "title": "Diff with previous distinct version of this pact",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0/diff/previous-distinct"
+        },
+        "pb:diff": {
+            "title": "Diff with another specified version of this pact",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/diff/pact-version/{pactVersion}",
+            "templated": true
+        },
+        "pb:pact-webhooks": {
+            "title": "Webhooks for the pact between Consumer and Provider",
+            "href": "http://localhost:9292/webhooks/provider/Provider/consumer/Consumer"
+        },
+        "pb:consumer-webhooks": {
+            "title": "Webhooks for all pacts with provider Provider",
+            "href": "http://localhost:9292/webhooks/consumer/Provider"
+        },
+        "pb:tag-prod-version": {
+            "title": "PUT to this resource to tag this consumer version as 'production'",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/tags/prod"
+        },
+        "pb:tag-version": {
+            "title": "PUT to this resource to tag this consumer version",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/tags/{tag}"
+        },
+        "pb:publish-verification-results": {
+            "title": "Publish verification results",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/verification-results"
+        },
+        "pb:latest-verification-results": {
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/verification-results/latest"
+        },
+        "pb:triggered-webhooks": {
+            "title": "Webhooks triggered by the publication of this pact",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0/triggered-webhooks"
+        },
+        "pb:matrix-for-consumer-version": {
+            "title": "View matrix rows for the consumer version to which this pact belongs",
+            "href": "http://localhost:9292/matrix?q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvpv"
+        },
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/{rel}?context=pact",
+                "templated": true
+            }
+        ]
+    }
+}

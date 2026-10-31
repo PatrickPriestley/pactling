@@ -10,6 +10,7 @@ pub struct PactPublication {
     pub consumer_name: String,
     pub consumer_version_id: i64,
     pub consumer_version_number: String,
+    pub consumer_main_branch: Option<String>,
     pub provider_id: i64,
     pub provider_name: String,
     pub pact_version_id: i64,
@@ -23,7 +24,7 @@ macro_rules! publication_query {
     ($tail:literal) => {
         concat!(
             "SELECT pp.id, c.id AS consumer_id, c.name AS consumer_name, pp.consumer_version_id,
-                    v.number AS consumer_version_number, p.id AS provider_id, p.name AS provider_name,
+                    v.number AS consumer_version_number, c.main_branch AS consumer_main_branch, p.id AS provider_id, p.name AS provider_name,
                     pp.pact_version_id, pv.sha, pv.content, pp.created_at, pp.updated_at
              FROM pact_publications pp
              JOIN versions v ON v.id = pp.consumer_version_id

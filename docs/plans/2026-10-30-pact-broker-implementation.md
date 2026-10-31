@@ -908,27 +908,106 @@ a second publish of changed content for the same version exits 1 with the 409 me
 
 # Phase 3: Verification
 
-### Task 3.1: Capture
+### Task 3.1: Capture (done 2026-10-31)
 
-Run pact-js 13 provider verification against the Ruby broker with `consumerVersionSelectors: [{ mainBranch: true }, { deployedOrReleased: true }, { matchingBranch: true }]` and `publishVerificationResult: true`, behind the logging proxy. Record the `for-verification` POST body and response (including `verificationProperties` with `pending` and `notices`), and the verification-results POST and response.
+Recorded by the Phase 3 section of `scripts/capture-ruby-fixtures.sh` into
+`tests/fixtures/ruby-broker/2.121.2/phase3/` and `tests/fixtures/cli/phase3/` (pact-js 13
+`Verifier` traffic through `e2e/proxy.js`, driven by `e2e/provider.test.js`). Verified
+unless marked.
 
-### Task 3.2: Migration for `verifications`
+**What the verifier sends.** `GET /`, `GET /pacts/provider/{p}/for-verification` (a probe;
+200 with the beta warning notice), then `POST /pacts/provider/{p}/for-verification` with
+`{"includePendingStatus": true, "consumerVersionSelectors": [...], "providerVersionBranch":
+"main"}`. For each returned pact it `GET`s the pact's `_links.self.href`, which is
+`.../pact-version/{sha}/metadata/{m}`, then `PUT /pacticipants/{p}/branches/{b}/versions/{v}`
+(creating its own provider version and branch) and `POST
+.../pact-version/{sha}/metadata/{m}/verification-results` with `{providerApplicationVersion,
+success, testResults: [{interactionId, success, [interactionDescription, mismatches]}],
+verifiedBy: {clientLanguage: {name, testFramework, version}, implementation, version}}`.
 
-### Task 3.3: Selector resolution
+**Metadata.** `m` is url-safe base64 without padding of a query string: for-verification
+links carry `s[][b]=main&s[][l]=true&s[][cv]=<consumer version id>&...&p=true` (one `s[]`
+group per selector that matched, `p` = pending), latest-pact links carry `cv=<id>`, and
+verification-result `pb:pact-version` links carry `cvn=<consumer version number>`. The
+broker only needs to round-trip it: the pact fetched through a metadata URL puts the same
+`m` into its `pb:publish-verification-results` href.
 
-Service `resolve_selectors(db, provider, selectors) -> Vec<PactToVerify>` with a unit test per selector kind: `mainBranch`, `matchingBranch`, `branch`, `tag`, `latest`, `deployed`, `released`, `deployedOrReleased`, and a de-duplication test (one pact matched by two selectors appears once, with both selector reasons). Mutation-check every branch of the match.
+**for-verification response.** `{"_embedded": {"pacts": [{shortDescription,
+verificationProperties: {pending, notices: [{when, text}]}, _links: {self: {href, name:
+"Pact between C (v) and P"}}]}, "_links": {"self": {href, title: "Pacts to be verified"}}}`.
+`pending` is present only when `includePendingStatus` is true. Short descriptions, joined
+with ", " when several selectors match one pact: "latest from main branch", "latest from
+branch {b}", "latest", "one of {tag}" (tag without latest), "latest with tag {tag}". The
+first notice (`before_verification`) reads "The pact at {pact-version href} is being
+verified because the pact content belongs to the consumer version(s) matching the
+following criteri(on|a):\n    * latest version from the main branch '{b}' ({v})" with one
+bullet per matched selector: "latest version from branch '{b}' ({v})", "latest version
+({v})", "version tagged '{tag}' ({v})" (assumed wording for tag), "latest version with tag
+'{tag}' ({v})" (assumed). With no body or no selectors the default is `mainBranch` and the
+bullet reads "latest version of {consumer} from the main branch 'main' ({v})". Pending
+notices (second `before_verification` plus four `after_verification:*`) are the fixed
+texts in the fixtures, parameterised by provider name and branch.
 
-### Task 3.4: `for-verification` handler with `pending` semantics
+**Selectors.** `mainBranch` (each consumer's main branch, latest), `branch` (+ optional
+`consumer`), `matchingBranch` (needs `providerVersionBranch`, else 400 "the
+providerVersionBranch must be specified when the selector matchingBranch=true is used (at
+index 0)"), `tag` (all versions with the tag unless `latest: true`), `latest`, `deployed`,
+`released`, `deployedOrReleased` (empty until Phase 4). A selector with none of these:
+400 "must specify a value for environment or tag or branch, or specify mainBranch=true,
+matchingBranch=true, latest=true, deployed=true, released=true or deployedOrReleased=true
+(at index N)". Wrong types: `consumerVersionSelectors: ["must be an array"]`,
+`includePendingStatus: ["must be one of: true, false"]`. Unknown provider: HAL 404 "No
+provider with name 'X' found". One pact content matched by several selectors appears once.
 
-Pending is true when the provider has no successful verification of that pact content from its main branch. Unit test both sides.
+**Pending rule (verified by four probes).** Given `providerVersionBranch` B: if B has
+provider versions, pending = no successful verification of this pact content by a
+provider version on B; if B has no versions, or no branch was given, pending = no
+successful verification by any provider version. With `providerVersionTags`, pending = no
+successful verification by a provider version carrying one of the tags (no fallback).
 
-### Task 3.5: Publish verification results
+**Verification results.** `POST` returns 201 with `Location` and `{providerName,
+providerApplicationVersion, success, verificationDate, [testResults], verifiedBy:
+{implementation, version, client_implementation, client_test_framework, client_version}
+(or {} when absent), _links: {self: {title: "Verification result", name: "Verification
+result {n} for Pact between C (v) and P", href: .../verification-results/{n}},
+pb:pact-version: {title: "Pact", name, href: .../pact-version/{sha}/metadata/{cvn}},
+pb:triggered-webhooks}}`. The provider version is created when missing (no branch).
+Errors: `success: ["is missing"]` / `["must be boolean"]`, `providerApplicationVersion:
+["is missing"]` / `["must be filled"]`, bad JSON `{"error": "JSON::ParserError - ..."}`,
+unknown pact version the plain 404. Reads: `.../verification-results/{n}`,
+`.../verification-results/latest` (also under `/version/{v}/`), and
+`/verification-results/consumer/{c}/version/{v}/latest` = `{success, providerSummary:
+{successful, failed, unknown}, _embedded: {verificationResults: [...]}, _links: {self:
+{href, title: "Latest verification results for consumer C version v"}}}`. OPTIONS:
+for-verification `GET, POST, OPTIONS`; results collection `POST, OPTIONS`; a result and
+latest `GET, OPTIONS, DELETE`.
 
-### Task 3.6: E2E `e2e/phase3_verify.test.js`
+### Task 3.2: Migration `0003_verifications.sql`
 
-Provider verifies and publishes; `describe-version` for the provider shows a verification; the fixtures' `notices` text matches.
+`verifications` (pact_version_id, provider_version_id, consumer_version_id, number,
+success, test_results JSON, verified_by JSON, build_url, created_at). `number` is a global
+counter (the Ruby broker's ids). Cascade from pact_versions and versions.
 
----
+### Task 3.3: Selector resolution (`service::verification::select`)
+
+Parses the request into typed selectors with the exact error strings; resolves each to
+consumer versions; collects per pact publication the matching selectors; de-duplicates by
+pact content. Unit tests per selector kind and for the de-duplication.
+
+### Task 3.4: Pending and notices
+
+`pending(db, pact_version, provider_branch, provider_tags)` per the rule above with a
+unit test for each branch of it; notice rendering compared with the fixtures.
+
+### Task 3.5: Publish and read verification results
+
+POST with validation, provider version creation, metadata round-trip; the four read
+routes; `/pacts/.../pact-version/{sha}/metadata/{m}` serving the pact document.
+
+### Task 3.6: E2E `e2e/phase3_verify.sh`
+
+`e2e/provider.test.js` against pactling: verification passes, results publish, the second
+run reports the pact no longer pending, a failing provider publishes a failure.
 
 # Phase 4: Environments, deployments and can-i-deploy
 

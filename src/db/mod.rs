@@ -2,6 +2,7 @@
 pub mod pact_lists;
 pub mod pacticipants;
 pub mod pacts;
+pub mod verifications;
 pub mod versions;
 
 use sqlx::sqlite::{SqlitePool, SqlitePoolOptions};

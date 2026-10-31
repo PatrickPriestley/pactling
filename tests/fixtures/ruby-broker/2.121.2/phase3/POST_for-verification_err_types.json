@@ -1,0 +1,10 @@
+{
+    "errors": {
+        "consumerVersionSelectors": [
+            "must be an array"
+        ],
+        "includePendingStatus": [
+            "must be one of: true, false"
+        ]
+    }
+}

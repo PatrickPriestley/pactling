@@ -1,0 +1,59 @@
+{
+    "success": true,
+    "providerSummary": {
+        "successful": [
+            "Provider"
+        ],
+        "failed": [],
+        "unknown": []
+    },
+    "_embedded": {
+        "verificationResults": [
+            {
+                "providerName": "Provider",
+                "providerApplicationVersion": "3",
+                "success": true,
+                "verificationDate": "2026-10-31T11:50:17+00:00",
+                "testResults": [
+                    {
+                        "interactionId": "72e9b4bb90f5cb675f1cea3e426b11616e6703a0",
+                        "success": true
+                    },
+                    {
+                        "interactionId": "8da86afba68368b3a91327afde5a9c6b59c02274",
+                        "success": true
+                    }
+                ],
+                "verifiedBy": {
+                    "implementation": "Pact-Rust",
+                    "version": "1.2.4",
+                    "client_implementation": "pact-core",
+                    "client_test_framework": "pact_ffi",
+                    "client_version": "15.2.1"
+                },
+                "_links": {
+                    "self": {
+                        "title": "Verification result",
+                        "name": "Verification result 204 for Pact between Consumer (1.0.0) and Provider",
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/verification-results/204"
+                    },
+                    "pb:pact-version": {
+                        "title": "Pact",
+                        "name": "Pact between Consumer (1.0.0) and Provider",
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4w"
+                    },
+                    "pb:triggered-webhooks": {
+                        "title": "Webhooks triggered by the publication of this verification result",
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/verification-results/204/triggered-webhooks"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/verification-results/consumer/Consumer/version/1.0.0/latest",
+            "title": "Latest verification results for consumer Consumer version 1.0.0"
+        }
+    }
+}

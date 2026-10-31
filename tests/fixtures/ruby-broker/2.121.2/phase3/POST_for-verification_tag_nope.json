@@ -1,0 +1,11 @@
+{
+    "_embedded": {
+        "pacts": []
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/for-verification",
+            "title": "Pacts to be verified"
+        }
+    }
+}

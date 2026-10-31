@@ -1,0 +1,34 @@
+{
+    "_embedded": {
+        "pacts": [
+            {
+                "shortDescription": "latest from branch main",
+                "verificationProperties": {
+                    "pending": false,
+                    "notices": [
+                        {
+                            "when": "before_verification",
+                            "text": "The pact at http://localhost:9292/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer version matching the following criterion:\n    * latest version of Web from branch 'main' (1)"
+                        },
+                        {
+                            "when": "before_verification",
+                            "text": "This pact has previously been successfully verified by Provider. If this verification fails, it will fail the build. Read more at https://docs.pact.io/go/pending"
+                        }
+                    ]
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/cyU1QiU1RCU1QmIlNUQ9bWFpbiZzJTVCJTVEJTVCbCU1RD10cnVlJnMlNUIlNUQlNUJjdiU1RD0zJnA9ZmFsc2U",
+                        "name": "Pact between Web (1) and Provider"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/for-verification",
+            "title": "Pacts to be verified"
+        }
+    }
+}

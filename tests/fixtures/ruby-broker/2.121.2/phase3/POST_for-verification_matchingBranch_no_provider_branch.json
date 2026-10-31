@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "consumerVersionSelectors": [
+            "the providerVersionBranch must be specified when the selector matchingBranch=true is used (at index 0)"
+        ]
+    }
+}

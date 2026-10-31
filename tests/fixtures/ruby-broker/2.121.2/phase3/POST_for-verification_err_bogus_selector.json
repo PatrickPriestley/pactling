@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "consumerVersionSelectors": [
+            "must specify a value for environment or tag or branch, or specify mainBranch=true, matchingBranch=true, latest=true, deployed=true, released=true or deployedOrReleased=true (at index 0)"
+        ]
+    }
+}

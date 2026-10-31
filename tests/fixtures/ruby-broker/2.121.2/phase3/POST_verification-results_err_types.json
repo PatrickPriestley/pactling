@@ -1,0 +1,10 @@
+{
+    "errors": {
+        "success": [
+            "must be boolean"
+        ],
+        "providerApplicationVersion": [
+            "must be filled"
+        ]
+    }
+}

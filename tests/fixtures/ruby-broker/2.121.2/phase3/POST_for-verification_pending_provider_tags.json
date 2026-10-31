@@ -1,0 +1,88 @@
+{
+    "_embedded": {
+        "pacts": [
+            {
+                "shortDescription": "latest from main branch",
+                "verificationProperties": {
+                    "pending": true,
+                    "notices": [
+                        {
+                            "when": "before_verification",
+                            "text": "The pact at http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer version matching the following criterion:\n    * latest version from the main branch 'main' (1.0.0)"
+                        },
+                        {
+                            "when": "before_verification",
+                            "text": "This pact is in pending state for this version of Provider because a successful verification result for a version of Provider with tag 'prod' has not yet been published. If this verification fails, it will not cause the overall build to fail. Read more at https://docs.pact.io/go/pending"
+                        },
+                        {
+                            "when": "after_verification:success_true_published_false",
+                            "text": "This pact is still in pending state for any version of Provider with tag 'prod' as the successful verification results with this tag have not yet been published."
+                        },
+                        {
+                            "when": "after_verification:success_false_published_false",
+                            "text": "This pact is still in pending state for any version of Provider with tag 'prod' as a successful verification result with this tag has not yet been published"
+                        },
+                        {
+                            "when": "after_verification:success_true_published_true",
+                            "text": "This pact is no longer in pending state for any version of Provider with tag 'prod', as a successful verification result with this tag has been published. If a verification for a version of Provider with this tag fails in the future, it will fail the build. Read more at https://docs.pact.io/go/pending"
+                        },
+                        {
+                            "when": "after_verification:success_false_published_true",
+                            "text": "This pact is still in pending state for any version of Provider with tag 'prod' as a successful verification result with this tag has not yet been published"
+                        }
+                    ]
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/cyU1QiU1RCU1QmwlNUQ9dHJ1ZSZzJTVCJTVEJTVCY3YlNUQ9MSZwPXRydWU",
+                        "name": "Pact between Consumer (1.0.0) and Provider"
+                    }
+                }
+            },
+            {
+                "shortDescription": "latest from main branch",
+                "verificationProperties": {
+                    "pending": true,
+                    "notices": [
+                        {
+                            "when": "before_verification",
+                            "text": "The pact at http://localhost:9292/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer version matching the following criterion:\n    * latest version from the main branch 'main' (1)"
+                        },
+                        {
+                            "when": "before_verification",
+                            "text": "This pact is in pending state for this version of Provider because a successful verification result for a version of Provider with tag 'prod' has not yet been published. If this verification fails, it will not cause the overall build to fail. Read more at https://docs.pact.io/go/pending"
+                        },
+                        {
+                            "when": "after_verification:success_true_published_false",
+                            "text": "This pact is still in pending state for any version of Provider with tag 'prod' as the successful verification results with this tag have not yet been published."
+                        },
+                        {
+                            "when": "after_verification:success_false_published_false",
+                            "text": "This pact is still in pending state for any version of Provider with tag 'prod' as a successful verification result with this tag has not yet been published"
+                        },
+                        {
+                            "when": "after_verification:success_true_published_true",
+                            "text": "This pact is no longer in pending state for any version of Provider with tag 'prod', as a successful verification result with this tag has been published. If a verification for a version of Provider with this tag fails in the future, it will fail the build. Read more at https://docs.pact.io/go/pending"
+                        },
+                        {
+                            "when": "after_verification:success_false_published_true",
+                            "text": "This pact is still in pending state for any version of Provider with tag 'prod' as a successful verification result with this tag has not yet been published"
+                        }
+                    ]
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/cyU1QiU1RCU1QmwlNUQ9dHJ1ZSZzJTVCJTVEJTVCY3YlNUQ9MyZwPXRydWU",
+                        "name": "Pact between Web (1) and Provider"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/for-verification",
+            "title": "Pacts to be verified"
+        }
+    }
+}
