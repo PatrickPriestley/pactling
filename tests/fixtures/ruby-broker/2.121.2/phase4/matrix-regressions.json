@@ -1477,15 +1477,15 @@
       "name": "directional_integration",
       "request": {
         "method": "GET",
-        "path": "/matrix/provider/MatrixDuplexB/consumer/MatrixDuplexA"
+        "path": "/matrix/provider/MatrixDuplexB/consumer/MatrixDuplexA?latestby=cvpv"
       },
       "status": 200,
       "compareReason": false,
       "expected": {
         "summary": {
           "deployable": false,
-          "success": 2,
-          "failed": 2,
+          "success": 1,
+          "failed": 1,
           "unknown": 0
         },
         "rows": [
@@ -1495,22 +1495,6 @@
             "provider": "MatrixDuplexB",
             "providerVersion": "1",
             "success": true,
-            "ignored": false
-          },
-          {
-            "consumer": "MatrixDuplexA",
-            "consumerVersion": "1",
-            "provider": "MatrixDuplexB",
-            "providerVersion": "1",
-            "success": true,
-            "ignored": false
-          },
-          {
-            "consumer": "MatrixDuplexB",
-            "consumerVersion": "1",
-            "provider": "MatrixDuplexA",
-            "providerVersion": "1",
-            "success": false,
             "ignored": false
           },
           {

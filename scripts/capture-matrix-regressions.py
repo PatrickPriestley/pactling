@@ -156,7 +156,7 @@ def capture(base, output):
     backward = publish("MatrixDuplexB", "MatrixDuplexA")
     seed("POST", forward, {"providerApplicationVersion": "1", "success": True})
     seed("POST", backward, {"providerApplicationVersion": "1", "success": False})
-    matrix("directional_integration", [], route="/matrix/provider/MatrixDuplexB/consumer/MatrixDuplexA")
+    matrix("directional_integration", [], route="/matrix/provider/MatrixDuplexB/consumer/MatrixDuplexA?latestby=cvpv")
     matrix("bidirectional_selectors", [("MatrixDuplexA", "1"), ("MatrixDuplexB", "1")])
     matrix("two_missing_providers", [(consumer, "1"), (provider, "998"), (provider, "999")])
     matrix("two_missing_services", [(consumer, "1"), (provider, "999"), (web, "999")])
