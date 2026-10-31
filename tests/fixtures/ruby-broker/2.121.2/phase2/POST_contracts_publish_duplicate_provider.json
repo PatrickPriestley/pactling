@@ -1,0 +1,177 @@
+{
+    "logs": [
+        {
+            "level": "debug",
+            "message": "Created Consumer version dup1",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "  Next steps:\n    Configure the version branch to be the value of your repository branch.",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "success",
+            "message": "Pact successfully published for Consumer version dup1 and provider Provider.",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "debug",
+            "message": "  View the published pact at http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/dup1",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "debug",
+            "message": "  Events detected: contract_published, contract_content_changed (first time untagged pact published)",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "  Next steps:",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "    * Add Pact verification tests to the Provider build. See https://docs.pact.io/go/provider_verification",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "    * Configure separate Provider pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "warning",
+            "message": "Pact with changed content published over existing content for Consumer version dup1 and provider Provider. This is not recommended in normal circumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "debug",
+            "message": "  View the published pact at http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/dup1",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "debug",
+            "message": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Consumer version dup1)",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "  Next steps:",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "    * Add Pact verification tests to the Provider build. See https://docs.pact.io/go/provider_verification",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "    * Configure separate Provider pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks",
+            "deprecationWarning": "Replaced by notices"
+        }
+    ],
+    "notices": [
+        {
+            "type": "debug",
+            "text": "Created Consumer version dup1"
+        },
+        {
+            "type": "prompt",
+            "text": "  Next steps:\n    Configure the version branch to be the value of your repository branch."
+        },
+        {
+            "type": "success",
+            "text": "Pact successfully published for Consumer version dup1 and provider Provider."
+        },
+        {
+            "type": "debug",
+            "text": "  View the published pact at http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/dup1"
+        },
+        {
+            "type": "debug",
+            "text": "  Events detected: contract_published, contract_content_changed (first time untagged pact published)"
+        },
+        {
+            "type": "prompt",
+            "text": "  Next steps:"
+        },
+        {
+            "type": "prompt",
+            "text": "    * Add Pact verification tests to the Provider build. See https://docs.pact.io/go/provider_verification"
+        },
+        {
+            "type": "prompt",
+            "text": "    * Configure separate Provider pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
+        },
+        {
+            "type": "warning",
+            "text": "Pact with changed content published over existing content for Consumer version dup1 and provider Provider. This is not recommended in normal circumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning"
+        },
+        {
+            "type": "debug",
+            "text": "  View the published pact at http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/dup1"
+        },
+        {
+            "type": "debug",
+            "text": "  Events detected: contract_published, contract_content_changed (pact content modified since previous publication for Consumer version dup1)"
+        },
+        {
+            "type": "prompt",
+            "text": "  Next steps:"
+        },
+        {
+            "type": "prompt",
+            "text": "    * Add Pact verification tests to the Provider build. See https://docs.pact.io/go/provider_verification"
+        },
+        {
+            "type": "prompt",
+            "text": "    * Configure separate Provider pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
+        }
+    ],
+    "_embedded": {
+        "pacticipant": {
+            "name": "Consumer",
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/Consumer"
+                }
+            }
+        },
+        "version": {
+            "number": "dup1",
+            "_links": {
+                "self": {
+                    "title": "Version",
+                    "name": "dup1",
+                    "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1"
+                }
+            }
+        }
+    },
+    "_links": {
+        "pb:pacticipant": {
+            "title": "Pacticipant",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        },
+        "pb:pacticipant-version": {
+            "title": "Pacticipant version",
+            "name": "dup1",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1"
+        },
+        "pb:pacticipant-version-tags": [],
+        "pb:contracts": [
+            {
+                "title": "Pact",
+                "name": "Pact between Consumer (dup1) and Provider",
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/dup1"
+            },
+            {
+                "title": "Pact",
+                "name": "Pact between Consumer (dup1) and Provider",
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/dup1"
+            }
+        ]
+    }
+}

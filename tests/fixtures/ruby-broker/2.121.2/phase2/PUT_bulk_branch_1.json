@@ -1,0 +1,19 @@
+{
+    "createdAt": "2026-10-31T11:34:25+00:00",
+    "_links": {
+        "self": {
+            "title": "Branch version",
+            "href": "http://localhost:9292/pacticipants/BulkC/branches/b1/versions/1"
+        },
+        "pb:branch": {
+            "title": "Branch",
+            "name": "b1",
+            "href": "http://localhost:9292/pacticipants/BulkC/branches/b1"
+        },
+        "pb:version": {
+            "title": "Version",
+            "name": "1",
+            "href": "http://localhost:9292/pacticipants/BulkC/versions/1"
+        }
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "notices": [
+        {
+            "type": "success",
+            "text": "Scheduled deletion of 1 branches for pacticipant BulkC. Remaining branches are: b1, b2"
+        }
+    ]
+}
