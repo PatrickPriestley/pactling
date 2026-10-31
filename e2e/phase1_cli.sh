@@ -18,7 +18,7 @@ echo "list-environments exits 0 on an empty broker"
 echo "create-or-update-pacticipant creates, then updates"
 out=$("$PB" create-or-update-pacticipant --name Bar --main-branch trunk --repository-url https://example.com/bar --broker-base-url "$BROKER")
 grep -q 'Pacticipant "Bar" created in the Pact Broker' <<<"$out" || fail "unexpected output: $out"
-out=$("$PB" create-or-update-pacticipant --name Bar --main-branch trunk --repository-url https://example.com/bar --broker-base-url "$BROKER")
+out=$("$PB" create-or-update-pacticipant --name Bar --main-branch trunk --repository-url https://example.com/bar2 --broker-base-url "$BROKER")
 grep -q 'Pacticipant "Bar" updated in the Pact Broker' <<<"$out" || fail "unexpected output: $out"
 
 echo "describe-pacticipant prints the same fields as the Ruby broker"
