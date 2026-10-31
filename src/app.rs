@@ -1,4 +1,4 @@
-use crate::{config::Config, error::Error, http};
+use crate::{config::Config, db::Db, error::Error, http};
 use axum::{
     Router,
     http::{HeaderName, HeaderValue},
@@ -6,7 +6,16 @@ use axum::{
 };
 use tower_http::set_header::SetResponseHeaderLayer;
 
-pub async fn build(_config: Config) -> anyhow::Result<Router> {
+#[derive(Clone)]
+pub struct AppState {
+    pub db: Db,
+    pub config: Config,
+}
+
+pub async fn build(config: Config) -> anyhow::Result<Router> {
+    let db = Db::connect(&config.database_url).await?;
+    db.migrate().await?;
+    let state = AppState { db, config };
     Ok(Router::new()
         .route("/", any(http::index::index))
         .route(
@@ -21,5 +30,6 @@ pub async fn build(_config: Config) -> anyhow::Result<Router> {
         .layer(SetResponseHeaderLayer::overriding(
             HeaderName::from_static("x-content-type-options"),
             HeaderValue::from_static("nosniff"),
-        )))
+        ))
+        .with_state(state))
 }
