@@ -17,6 +17,9 @@ pub enum Error {
     /// Bad input. The value is the Ruby broker's `errors` member (array or object).
     #[error("{0}")]
     Validation(serde_json::Value),
+    /// Unparseable input. Rendered as the Ruby broker's `{"error": "..."}` with status 400.
+    #[error("{0}")]
+    BadRequest(String),
     #[error(transparent)]
     Db(#[from] sqlx::Error),
 }
@@ -38,6 +41,11 @@ impl IntoResponse for Error {
                 StatusCode::BAD_REQUEST,
                 HAL_CONTENT_TYPE,
                 json!({ "errors": errors }),
+            ),
+            Error::BadRequest(msg) => (
+                StatusCode::BAD_REQUEST,
+                HAL_CONTENT_TYPE,
+                json!({ "error": msg }),
             ),
             Error::Db(e) => {
                 tracing::error!(error = %e, "database error");

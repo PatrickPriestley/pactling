@@ -1,4 +1,6 @@
 //! All SQL lives here. Handlers and services call these methods and never write queries.
+pub mod pacticipants;
+
 use sqlx::sqlite::{SqlitePool, SqlitePoolOptions};
 
 #[derive(Clone)]
@@ -27,9 +29,18 @@ impl Db {
     }
 
     pub async fn list_pacticipant_names(&self) -> sqlx::Result<Vec<String>> {
-        let rows: Vec<(String,)> = sqlx::query_as("SELECT name FROM pacticipants ORDER BY name")
-            .fetch_all(&self.pool)
-            .await?;
-        Ok(rows.into_iter().map(|(n,)| n).collect())
+        Ok(self
+            .list_pacticipants()
+            .await?
+            .into_iter()
+            .map(|p| p.name)
+            .collect())
     }
+}
+
+/// Timestamps in the Ruby broker's format: `2026-10-31T02:53:09+00:00`.
+pub fn now() -> String {
+    chrono::Utc::now()
+        .format("%Y-%m-%dT%H:%M:%S+00:00")
+        .to_string()
 }

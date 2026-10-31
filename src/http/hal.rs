@@ -40,3 +40,18 @@ impl Links {
         json!({ "href": self.href(path), "title": title, "templated": templated })
     }
 }
+
+/// Percent-encodes one path segment the way the Ruby broker's links do: everything but
+/// unreserved characters is escaped, so `Example App` becomes `Example%20App`.
+pub fn encode(segment: &str) -> String {
+    let mut out = String::with_capacity(segment.len());
+    for b in segment.bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                out.push(b as char)
+            }
+            _ => out.push_str(&format!("%{b:02X}")),
+        }
+    }
+    out
+}

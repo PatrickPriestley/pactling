@@ -20,11 +20,8 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
     let state = AppState { db, config };
     Ok(Router::new()
         .route("/", any(http::index::index))
-        .route(
-            "/pacticipants/{name}",
-            get(http::pacticipants::get_pacticipant),
-        )
-        .route("/pacticipants", get(http::pacticipants::list))
+        .route("/pacticipants", any(http::pacticipants::collection))
+        .route("/pacticipants/{name}", any(http::pacticipants::resource))
         .route("/environments", get(http::environments::list))
         .route("/webhooks", get(http::webhooks::list))
         .route("/integrations", get(http::integrations::list))
