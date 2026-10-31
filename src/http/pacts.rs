@@ -5,6 +5,7 @@ use axum::{
     http::{HeaderMap, HeaderValue, Method, StatusCode, header},
     response::{IntoResponse, Response},
 };
+use base64::Engine;
 use serde_json::{Map, Value, json};
 
 use crate::app::AppState;
@@ -36,8 +37,16 @@ fn integration_href(l: &Links, provider: &str, consumer: &str) -> String {
     ))
 }
 
-/// The pact content with `_id`s, `createdAt` and the Ruby broker's links.
-pub fn pact_document(l: &Links, p: &PactPublication) -> Value {
+/// Opaque metadata the Ruby broker threads through the verification-results href of
+/// pacts fetched by "latest" routes, so the result can be tied to the consumer version
+/// it was fetched for: url-safe base64 without padding of `cv=<consumer version id>`.
+pub fn latest_metadata(p: &PactPublication) -> String {
+    base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(format!("cv={}", p.consumer_version_id))
+}
+
+/// The pact content with `_id`s, `createdAt` and the Ruby broker's links. `metadata`
+/// is inserted into the `pb:publish-verification-results` href when given.
+pub fn pact_document(l: &Links, p: &PactPublication, metadata: Option<&str>) -> Value {
     let content: Value = serde_json::from_str(&p.content).expect("stored json");
     let mut doc = match content::with_ids(content) {
         Value::Object(m) => m,
@@ -55,6 +64,10 @@ pub fn pact_document(l: &Links, p: &PactPublication) -> Value {
     let base = integration_href(l, pr, c);
     let this = pact_href(l, pr, c, v);
     let pact_version = format!("{base}/pact-version/{}", p.sha);
+    let results_base = match metadata {
+        Some(m) => format!("{pact_version}/metadata/{m}"),
+        None => pact_version.clone(),
+    };
     doc.insert("createdAt".into(), json!(p.created_at));
     doc.insert("_links".into(), json!({
         "self": { "title": "Pact", "name": format!("Pact between {c} ({v}) and {pr}"), "href": this },
@@ -73,7 +86,7 @@ pub fn pact_document(l: &Links, p: &PactPublication) -> Value {
         "pb:consumer-webhooks": { "title": format!("Webhooks for all pacts with provider {pr}"), "href": l.href(&format!("/webhooks/consumer/{}", encode(pr))) },
         "pb:tag-prod-version": { "title": "PUT to this resource to tag this consumer version as 'production'", "href": format!("{}/tags/prod", version_href(l, c, v)) },
         "pb:tag-version": { "title": "PUT to this resource to tag this consumer version", "href": format!("{}/tags/{{tag}}", version_href(l, c, v)) },
-        "pb:publish-verification-results": { "title": "Publish verification results", "href": format!("{pact_version}/verification-results") },
+        "pb:publish-verification-results": { "title": "Publish verification results", "href": format!("{results_base}/verification-results") },
         "pb:latest-verification-results": { "href": format!("{pact_version}/verification-results/latest") },
         "pb:triggered-webhooks": { "title": "Webhooks triggered by the publication of this pact", "href": format!("{this}/triggered-webhooks") },
         "pb:matrix-for-consumer-version": { "title": "View matrix rows for the consumer version to which this pact belongs",
@@ -134,7 +147,7 @@ pub async fn pact_by_version(
                 .find_pact(&provider, &consumer, &version)
                 .await?
                 .ok_or(Error::NoRoute)?;
-            Ok(render_pact(&headers, pact_document(&l, &p)))
+            Ok(render_pact(&headers, pact_document(&l, &p, None)))
         }
         Method::PUT => {
             if !has_json_content_type(&headers) {
@@ -144,7 +157,7 @@ pub async fn pact_by_version(
                 .map_err(|e| Error::BadRequest(format!("JSON::ParserError - {e}")))?;
             let (p, created) =
                 publish::put_pact(&state.db, &provider, &consumer, &version, json).await?;
-            let mut res = render_pact(&headers, pact_document(&l, &p));
+            let mut res = render_pact(&headers, pact_document(&l, &p, None));
             if created {
                 *res.status_mut() = StatusCode::CREATED;
             }
@@ -186,7 +199,10 @@ pub async fn latest_pact(
                 .latest_pact(&provider, &consumer)
                 .await?
                 .ok_or(Error::NoRoute)?;
-            Ok(render_pact(&headers, pact_document(&l, &p)))
+            Ok(render_pact(
+                &headers,
+                pact_document(&l, &p, Some(&latest_metadata(&p))),
+            ))
         }
         Method::OPTIONS => Ok(method::options(READ_ALLOWED)),
         _ => Ok(method::method_not_allowed(READ_ALLOWED)),
@@ -208,7 +224,10 @@ pub async fn latest_pact_with_tag(
                 .latest_pact_with_tag(&provider, &consumer, &tag)
                 .await?
                 .ok_or(Error::NoRoute)?;
-            Ok(render_pact(&headers, pact_document(&l, &p)))
+            Ok(render_pact(
+                &headers,
+                pact_document(&l, &p, Some(&latest_metadata(&p))),
+            ))
         }
         Method::OPTIONS => Ok(method::options(READ_ALLOWED)),
         _ => Ok(method::method_not_allowed(READ_ALLOWED)),
@@ -230,7 +249,10 @@ pub async fn latest_pact_untagged(
                 .latest_pact_untagged(&provider, &consumer)
                 .await?
                 .ok_or(Error::NoRoute)?;
-            Ok(render_pact(&headers, pact_document(&l, &p)))
+            Ok(render_pact(
+                &headers,
+                pact_document(&l, &p, Some(&latest_metadata(&p))),
+            ))
         }
         Method::OPTIONS => Ok(method::options(READ_ALLOWED)),
         _ => Ok(method::method_not_allowed(READ_ALLOWED)),
@@ -252,23 +274,9 @@ pub async fn pact_by_sha(
                 .find_pact_by_sha(&provider, &consumer, &sha)
                 .await?
                 .ok_or(Error::NoRoute)?;
-            Ok(render_pact(&headers, pact_document(&l, &p)))
+            Ok(render_pact(&headers, pact_document(&l, &p, None)))
         }
         Method::OPTIONS => Ok(method::options(READ_ALLOWED)),
         _ => Ok(method::method_not_allowed(READ_ALLOWED)),
     }
-}
-
-/// `GET /pacts/latest`: the latest pact of every integration. Filled in by Task 2.6; for
-/// now the empty document from Phase 1.
-pub async fn latest(l: Links) -> Result<Hal> {
-    Ok(Hal(json!({
-        "pacts": [],
-        "_links": {
-            "self": { "href": l.href("/pacts/latest") },
-            "pb:pacts": [],
-            "pacts": [],
-            "curies": [{ "name": "pb", "href": l.href("/doc/{rel}?context=pacts"), "templated": true }]
-        }
-    })))
 }

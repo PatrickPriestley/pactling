@@ -167,8 +167,6 @@ async fn unknown_version_tag_and_branch_are_the_plain_json_404() {
         "/pacticipants/Consumer/branches/nope/latest-version",
         "/pacticipants/Consumer/branches/main/versions/9.9.9",
         "/pacticipants/Consumer/latest-version/nope",
-        "/pacticipants/Nope/versions",
-        "/pacticipants/Nope/branches",
     ] {
         let r = get(&s, path).await;
         assert_eq!(r.status(), StatusCode::NOT_FOUND, "{path}");
@@ -182,6 +180,17 @@ async fn unknown_version_tag_and_branch_are_the_plain_json_404() {
     }
     let r = get(&s, "/pacticipants/Nope/latest-version").await;
     assert_eq!(r.status(), StatusCode::NOT_FOUND);
+    // ...except the versions and branches lists of an unknown pacticipant, which name it.
+    for path in ["/pacticipants/Nope/versions", "/pacticipants/Nope/branches"] {
+        let r = get(&s, path).await;
+        assert_eq!(r.status(), StatusCode::NOT_FOUND, "{path}");
+        assert_eq!(content_type(&r), HAL, "{path}");
+        assert_eq!(
+            r.json::<Value>().await.unwrap(),
+            json!({"error": "No pacticipant with name 'Nope' found"}),
+            "{path}"
+        );
+    }
 }
 
 #[tokio::test]

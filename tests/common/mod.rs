@@ -37,9 +37,9 @@ pub fn stable(mut v: serde_json::Value) -> serde_json::Value {
     fn walk(v: &mut serde_json::Value) {
         match v {
             serde_json::Value::Object(m) => {
-                m.remove("createdAt");
-                m.remove("updatedAt");
-                m.remove("uuid");
+                m.shift_remove("createdAt");
+                m.shift_remove("updatedAt");
+                m.shift_remove("uuid");
                 m.values_mut().for_each(walk);
             }
             serde_json::Value::Array(a) => a.iter_mut().for_each(walk),

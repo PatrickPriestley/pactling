@@ -108,7 +108,7 @@ impl Db {
         sqlx::query_as(version_query!(
             "JOIN branch_versions bv ON bv.version_id = v.id
              JOIN branches b ON b.id = bv.branch_id
-             WHERE v.pacticipant_id = ? AND b.name = ? ORDER BY v.id DESC LIMIT 1"
+             WHERE v.pacticipant_id = ? AND b.name = ? ORDER BY bv.id DESC LIMIT 1"
         ))
         .bind(pacticipant_id)
         .bind(branch)
@@ -187,9 +187,13 @@ impl Db {
             .await
     }
 
-    /// Ordered by name.
+    /// Most recently updated first, then by name (the Ruby broker's order, verified on
+    /// two captures; the tie-break is assumed).
     pub async fn list_branches(&self, pacticipant_id: i64) -> sqlx::Result<Vec<Branch>> {
-        sqlx::query_as("SELECT id, pacticipant_id, name, created_at, updated_at FROM branches WHERE pacticipant_id = ? ORDER BY name")
+        sqlx::query_as(
+            "SELECT id, pacticipant_id, name, created_at, updated_at FROM branches WHERE pacticipant_id = ?
+             ORDER BY COALESCE(updated_at, created_at) DESC, name",
+        )
             .bind(pacticipant_id)
             .fetch_all(&self.pool)
             .await
@@ -289,14 +293,16 @@ impl Db {
         Ok(r.rows_affected() > 0)
     }
 
-    /// The branches a version belongs to, in the order it joined them.
+    /// The branches a version belongs to, in the order it joined them. `latest` means the
+    /// version was the last one added to that branch (the Ruby broker's branch head),
+    /// which is not always the highest version order (verified).
     pub async fn branch_versions_for_version(
         &self,
         version_id: i64,
     ) -> sqlx::Result<Vec<BranchVersion>> {
         sqlx::query_as(
             "SELECT b.name AS branch_name, bv.created_at,
-                    (bv.version_id = (SELECT MAX(version_id) FROM branch_versions WHERE branch_id = b.id)) AS latest
+                    (bv.id = (SELECT MAX(id) FROM branch_versions WHERE branch_id = b.id)) AS latest
              FROM branch_versions bv JOIN branches b ON b.id = bv.branch_id
              WHERE bv.version_id = ? ORDER BY bv.id",
         )

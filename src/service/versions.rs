@@ -8,7 +8,7 @@ use crate::db::{
     versions::{Branch, BranchVersion, Tag, Version},
 };
 use crate::error::{Error, Result};
-use crate::service::pacticipants::default_display_name;
+use crate::service::pacticipants::{default_display_name, not_found};
 
 /// The Ruby broker's `main_branch_candidates`: the first branch with one of these names
 /// becomes the pacticipant's main branch when it has none.
@@ -83,11 +83,13 @@ pub async fn delete(db: &Db, pacticipant: &str, number: &str) -> Result<()> {
     Ok(())
 }
 
+/// Unlike every other missing thing under a pacticipant, a missing pacticipant on the
+/// versions and branches lists is the HAL 404 with its name (verified).
 pub async fn list(db: &Db, pacticipant: &str) -> Result<(Pacticipant, Vec<VersionDetail>)> {
     let p = db
         .find_pacticipant(pacticipant)
         .await?
-        .ok_or(Error::NoRoute)?;
+        .ok_or_else(|| not_found(pacticipant))?;
     let mut out = Vec::new();
     for v in db.list_versions(p.id).await? {
         out.push(detail(db, v).await?);
@@ -209,7 +211,7 @@ pub async fn list_branches(db: &Db, pacticipant: &str) -> Result<Vec<Branch>> {
     let p = db
         .find_pacticipant(pacticipant)
         .await?
-        .ok_or(Error::NoRoute)?;
+        .ok_or_else(|| not_found(pacticipant))?;
     Ok(db.list_branches(p.id).await?)
 }
 

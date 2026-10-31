@@ -60,9 +60,65 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
         )
         .route("/environments", get(http::environments::list))
         .route("/webhooks", get(http::webhooks::list))
-        .route("/integrations", get(http::integrations::list))
+        .route("/integrations", any(http::pact_lists::integrations))
         .route("/contracts/publish", any(http::contracts::publish))
-        .route("/pacts/latest", get(http::pacts::latest))
+        .route("/pacts/latest", any(http::pact_lists::latest))
+        .route(
+            "/pacts/provider/{provider}",
+            any(http::pact_lists::provider_all),
+        )
+        .route(
+            "/pacts/provider/{provider}/latest",
+            any(http::pact_lists::provider_latest),
+        )
+        .route(
+            "/pacts/provider/{provider}/latest/{tag}",
+            any(http::pact_lists::provider_latest_with_tag),
+        )
+        .route(
+            "/pacts/provider/{provider}/tag/{tag}",
+            any(http::pact_lists::provider_with_tag),
+        )
+        .route(
+            "/pacts/provider/{provider}/branch",
+            any(http::pact_lists::provider_main_branch),
+        )
+        .route(
+            "/pacts/provider/{provider}/branch/latest",
+            any(http::pact_lists::provider_latest_main_branch),
+        )
+        .route(
+            "/pacts/provider/{provider}/branch/{branch}",
+            any(http::pact_lists::provider_branch),
+        )
+        .route(
+            "/pacts/provider/{provider}/branch/{branch}/latest",
+            any(http::pact_lists::provider_latest_branch),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/versions",
+            any(http::pact_lists::integration_versions),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/tag/{tag}",
+            any(http::pact_lists::integration_with_tag),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/branch/versions",
+            any(http::pact_lists::integration_main_branch),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/branch/latest/versions",
+            any(http::pact_lists::integration_latest_main_branch),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}",
+            any(http::pact_lists::integration_branch),
+        )
+        .route(
+            "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}/latest/versions",
+            any(http::pact_lists::integration_latest_branch),
+        )
         .route(
             "/pacts/provider/{provider}/consumer/{consumer}/version/{version}",
             any(http::pacts::pact_by_version),
