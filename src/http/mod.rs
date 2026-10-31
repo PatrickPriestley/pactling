@@ -8,4 +8,5 @@ pub mod matrix;
 pub mod method;
 pub mod pacticipants;
 pub mod pacts;
+pub mod versions;
 pub mod webhooks;

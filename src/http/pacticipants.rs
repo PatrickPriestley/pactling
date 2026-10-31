@@ -10,9 +10,11 @@ use serde_json::{Value, json};
 
 use crate::app::AppState;
 use crate::db::pacticipants::Pacticipant;
+use crate::db::versions::Version;
 use crate::error::{Error, Result};
 use crate::http::hal::{Hal, Links, encode};
 use crate::http::method;
+use crate::http::versions::version_stub;
 use crate::service::pacticipants as service;
 use crate::service::pacticipants::Patch;
 
@@ -42,7 +44,7 @@ pub async fn collection(
             let saved = service::upsert(&state.db, &name, &patch).await?;
             let mut res = (
                 StatusCode::CREATED,
-                Hal(document(&saved.pacticipant, &l, false)),
+                Hal(document(&saved.pacticipant, None, &l, false)),
             )
                 .into_response();
             // The Ruby broker's Location header really is spelled "pacticpants".
@@ -70,12 +72,15 @@ pub async fn resource(
     match m {
         Method::GET => {
             let p = service::find(&state.db, &name).await?;
-            Ok(Hal(document(&p, &l, true)).into_response())
+            let latest = state.db.latest_version(p.id).await?;
+            Ok(Hal(document(&p, latest.as_ref(), &l, true)).into_response())
         }
         Method::PATCH => {
             let patch = Patch::from_json(&parse_body(&body)?);
             let saved = service::upsert(&state.db, &name, &patch).await?;
-            let mut res = Hal(document(&saved.pacticipant, &l, true)).into_response();
+            let latest = state.db.latest_version(saved.pacticipant.id).await?;
+            let mut res =
+                Hal(document(&saved.pacticipant, latest.as_ref(), &l, true)).into_response();
             if saved.created {
                 // Unlike POST, the PATCH Location is spelled correctly (verified).
                 *res.status_mut() = StatusCode::CREATED;
@@ -90,7 +95,8 @@ pub async fn resource(
         Method::PUT => {
             let patch = Patch::from_json(&parse_body(&body)?);
             let p = service::update(&state.db, &name, &patch).await?;
-            Ok(Hal(document(&p, &l, true)).into_response())
+            let latest = state.db.latest_version(p.id).await?;
+            Ok(Hal(document(&p, latest.as_ref(), &l, true)).into_response())
         }
         Method::DELETE => {
             service::delete(&state.db, &name).await?;
@@ -103,7 +109,15 @@ pub async fn resource(
 
 async fn list(state: &AppState, l: &Links) -> Result<Hal> {
     let all = state.db.list_pacticipants().await?;
-    let embedded: Vec<Value> = all.iter().map(|p| document(p, l, false)).collect();
+    let mut latest = Vec::with_capacity(all.len());
+    for p in &all {
+        latest.push(state.db.latest_version(p.id).await?);
+    }
+    let embedded: Vec<Value> = all
+        .iter()
+        .zip(&latest)
+        .map(|(p, v)| document(p, v.as_ref(), l, false))
+        .collect();
     let links: Vec<Value> = all
         .iter()
         .map(|p| json!({ "href": self_href(p, l), "title": "Pacticipant", "name": p.name }))
@@ -114,8 +128,9 @@ async fn list(state: &AppState, l: &Links) -> Result<Hal> {
         .collect();
     let deprecated_docs: Vec<Value> = all
         .iter()
-        .map(|p| {
-            let mut doc = document(p, l, false);
+        .zip(&latest)
+        .map(|(p, v)| {
+            let mut doc = document(p, v.as_ref(), l, false);
             let obj = doc.as_object_mut().unwrap();
             obj.shift_remove("_embedded");
             obj.shift_remove("_links");
@@ -124,7 +139,7 @@ async fn list(state: &AppState, l: &Links) -> Result<Hal> {
                 "title".into(),
                 json!("DEPRECATED - Please use the embedded pacticipants collection"),
             );
-            let full = document(p, l, false);
+            let full = document(p, v.as_ref(), l, false);
             with_title["_embedded"] = full["_embedded"].clone();
             with_title["_links"] = full["_links"].clone();
             with_title
@@ -148,7 +163,12 @@ fn self_href(p: &Pacticipant, l: &Links) -> String {
 
 /// One pacticipant document. Only the single-resource `GET` carries
 /// `pb:deployed-environments`; `POST`, `PATCH` and list entries do not.
-pub fn document(p: &Pacticipant, l: &Links, with_deployed_environments: bool) -> Value {
+pub fn document(
+    p: &Pacticipant,
+    latest: Option<&Version>,
+    l: &Links,
+    with_deployed_environments: bool,
+) -> Value {
     let base = self_href(p, l);
     let n = &p.name;
     let mut doc = serde_json::Map::new();
@@ -166,7 +186,25 @@ pub fn document(p: &Pacticipant, l: &Links, with_deployed_environments: bool) ->
         doc.insert("updatedAt".into(), json!(u));
     }
     doc.insert("createdAt".into(), json!(p.created_at));
-    doc.insert("_embedded".into(), json!({ "labels": [] }));
+    let mut embedded = serde_json::Map::new();
+    if let Some(v) = latest {
+        embedded.insert("latestVersion".into(), version_stub(l, v));
+    }
+    embedded.insert("labels".into(), json!([]));
+    if let Some(v) = latest {
+        let mut deprecated = version_stub(l, v);
+        let m = deprecated.as_object_mut().unwrap();
+        m.insert(
+            "title".into(),
+            json!("DEPRECATED - please use latestVersion"),
+        );
+        m.insert(
+            "name".into(),
+            json!("DEPRECATED - please use latestVersion"),
+        );
+        embedded.insert("latest-version".into(), deprecated);
+    }
+    doc.insert("_embedded".into(), Value::Object(embedded));
     let mut links = serde_json::Map::new();
     links.insert("self".into(), json!({ "href": base }));
     links.insert(

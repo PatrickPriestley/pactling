@@ -2,6 +2,7 @@ use super::{Db, now};
 
 #[derive(Clone, Debug, PartialEq, Eq, sqlx::FromRow)]
 pub struct Pacticipant {
+    pub id: i64,
     pub name: String,
     pub display_name: Option<String>,
     pub repository_url: Option<String>,
@@ -13,7 +14,7 @@ pub struct Pacticipant {
 impl Db {
     pub async fn find_pacticipant(&self, name: &str) -> sqlx::Result<Option<Pacticipant>> {
         sqlx::query_as(
-            "SELECT name, display_name, repository_url, main_branch, created_at, updated_at
+            "SELECT id, name, display_name, repository_url, main_branch, created_at, updated_at
              FROM pacticipants WHERE name = ?",
         )
         .bind(name)
@@ -24,7 +25,7 @@ impl Db {
     /// Ordered case-insensitively by name, as the Ruby broker lists them.
     pub async fn list_pacticipants(&self) -> sqlx::Result<Vec<Pacticipant>> {
         sqlx::query_as(
-            "SELECT name, display_name, repository_url, main_branch, created_at, updated_at
+            "SELECT id, name, display_name, repository_url, main_branch, created_at, updated_at
              FROM pacticipants ORDER BY name COLLATE NOCASE",
         )
         .fetch_all(&self.pool)
@@ -50,7 +51,7 @@ impl Db {
                 repository_url = CASE WHEN ?5 THEN ?6 ELSE repository_url END,
                 main_branch    = CASE WHEN ?7 THEN ?8 ELSE main_branch END,
                 updated_at     = ?9
-             RETURNING name, display_name, repository_url, main_branch, created_at, updated_at,
+             RETURNING id, name, display_name, repository_url, main_branch, created_at, updated_at,
                        (updated_at IS NULL) AS created",
         )
         .bind(name)
@@ -83,7 +84,7 @@ impl Db {
                 main_branch    = CASE WHEN ?5 THEN ?6 ELSE main_branch END,
                 updated_at     = ?7
              WHERE name = ?8
-             RETURNING name, display_name, repository_url, main_branch, created_at, updated_at",
+             RETURNING id, name, display_name, repository_url, main_branch, created_at, updated_at",
         )
         .bind(display_name.is_some())
         .bind(display_name.flatten())

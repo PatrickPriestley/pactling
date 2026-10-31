@@ -20,6 +20,9 @@ pub enum Error {
     /// Unparseable input. Rendered as the Ruby broker's `{"error": "..."}` with status 400.
     #[error("{0}")]
     BadRequest(String),
+    /// An invariant broke; logged and rendered as a plain 500.
+    #[error("{0}")]
+    Internal(String),
     #[error(transparent)]
     Db(#[from] sqlx::Error),
 }
@@ -47,6 +50,14 @@ impl IntoResponse for Error {
                 HAL_CONTENT_TYPE,
                 json!({ "error": msg }),
             ),
+            Error::Internal(msg) => {
+                tracing::error!(error = %msg, "internal error");
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    JSON_CONTENT_TYPE,
+                    json!({ "error": "internal error" }),
+                )
+            }
             Error::Db(e) => {
                 tracing::error!(error = %e, "database error");
                 (
