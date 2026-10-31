@@ -471,6 +471,21 @@ async fn verification_result_documents_match_the_ruby_broker() {
         StatusCode::CREATED,
     )
     .await;
+    // The successful numeric read, through the Location the POST returned (captured).
+    let r = s
+        .client
+        .get(&location)
+        .header("accept", "application/hal+json")
+        .send()
+        .await
+        .unwrap();
+    assert_matches(
+        &s,
+        r,
+        "GET_verification-results_by_number.json",
+        StatusCode::OK,
+    )
+    .await;
     let r = get(&s, "/pacticipants/Provider/versions/7").await;
     assert_matches(
         &s,
