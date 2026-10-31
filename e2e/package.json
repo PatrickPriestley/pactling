@@ -1,0 +1,9 @@
+{
+  "name": "pactling-e2e",
+  "private": true,
+  "description": "Runs the real Pact clients against the pactling binary",
+  "devDependencies": {
+    "@pact-foundation/pact-cli": "16.1.2",
+    "@pact-foundation/pact": "13.2.0"
+  }
+}
