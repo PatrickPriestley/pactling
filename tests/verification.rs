@@ -639,3 +639,196 @@ async fn metadata_ties_a_result_to_the_consumer_version_it_was_fetched_for() {
         "Pact between Consumer (1.0.1) and Provider"
     );
 }
+
+fn decode_metadata(href: &str) -> String {
+    let m = href
+        .split("/metadata/")
+        .nth(1)
+        .unwrap()
+        .split('/')
+        .next()
+        .unwrap();
+    let bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD
+        .decode(m)
+        .unwrap();
+    String::from_utf8(bytes).unwrap()
+}
+
+#[tokio::test]
+async fn branch_names_with_query_characters_cannot_corrupt_the_metadata() {
+    // Review finding: an unescaped "&" in a branch name would inject a fake cv= pair.
+    let s = common::start().await;
+    publish(
+        &s,
+        "Consumer",
+        "1.0.0",
+        "feat&cv=999",
+        vec![],
+        &pact("Consumer", |_| {}),
+    )
+    .await;
+    let fv: Value = post(
+        &s,
+        "/pacts/provider/Provider/for-verification",
+        &json!({"consumerVersionSelectors": [{"branch": "feat&cv=999"}]}),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let href = fv["_embedded"]["pacts"][0]["_links"]["self"]["href"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let decoded = decode_metadata(&href);
+    assert!(
+        decoded.contains("feat%26cv%3D999"),
+        "branch must be form-encoded: {decoded}"
+    );
+    let doc: Value = s
+        .client
+        .get(&href)
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    let results_href = doc["_links"]["pb:publish-verification-results"]["href"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let r = s
+        .client
+        .post(&results_href)
+        .header("content-type", "application/json")
+        .json(&json!({"providerApplicationVersion": "1", "success": true}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(
+        r.status(),
+        StatusCode::CREATED,
+        "{}",
+        r.text().await.unwrap()
+    );
+    let body: Value = r.json().await.unwrap();
+    assert_eq!(
+        body["_links"]["pb:pact-version"]["name"],
+        "Pact between Consumer (1.0.0) and Provider"
+    );
+}
+
+#[tokio::test]
+async fn metadata_naming_a_foreign_consumer_version_is_ignored() {
+    // Hand-built metadata pointing at a version that does not hold this pact.
+    let s = common::start().await;
+    publish(
+        &s,
+        "Consumer",
+        "1.0.0",
+        "main",
+        vec![],
+        &pact("Consumer", |_| {}),
+    )
+    .await;
+    publish(
+        &s,
+        "Other",
+        "9",
+        "main",
+        vec![],
+        &pact("Other", |p| {
+            p["interactions"][0]["response"]["body"]["id"] = json!(9)
+        }),
+    )
+    .await;
+    let other: Value = get(&s, "/pacts/provider/Provider/consumer/Other/latest")
+        .await
+        .json()
+        .await
+        .unwrap();
+    let other_cv = decode_metadata(
+        other["_links"]["pb:publish-verification-results"]["href"]
+            .as_str()
+            .unwrap(),
+    );
+    let forged = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(&other_cv);
+    let r = s.client.post(format!("{}/pacts/provider/Provider/consumer/Consumer/pact-version/{SHA1}/metadata/{forged}/verification-results", s.base_url))
+        .header("content-type", "application/json").json(&json!({"providerApplicationVersion": "1", "success": true})).send().await.unwrap();
+    assert_eq!(r.status(), StatusCode::CREATED);
+    let body: Value = r.json().await.unwrap();
+    assert_eq!(
+        body["_links"]["pb:pact-version"]["name"], "Pact between Consumer (1.0.0) and Provider",
+        "falls back to the pact's own consumer version"
+    );
+    let bogus = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode("cv=999999");
+    let r = s.client.post(format!("{}/pacts/provider/Provider/consumer/Consumer/pact-version/{SHA1}/metadata/{bogus}/verification-results", s.base_url))
+        .header("content-type", "application/json").json(&json!({"providerApplicationVersion": "2", "success": true})).send().await.unwrap();
+    assert_eq!(
+        r.status(),
+        StatusCode::CREATED,
+        "an unknown version id must not break publishing"
+    );
+}
+
+#[tokio::test]
+async fn each_selector_group_in_the_metadata_names_its_own_consumer_version() {
+    // Review finding: identical content on two branches, selected by both.
+    let s = common::start().await;
+    publish(
+        &s,
+        "Consumer",
+        "A",
+        "main",
+        vec![],
+        &pact("Consumer", |_| {}),
+    )
+    .await;
+    publish(
+        &s,
+        "Consumer",
+        "B",
+        "feature",
+        vec![],
+        &pact("Consumer", |_| {}),
+    )
+    .await;
+    let fv: Value = post(
+        &s,
+        "/pacts/provider/Provider/for-verification",
+        &json!({"consumerVersionSelectors": [{"branch": "main"}, {"branch": "feature"}]}),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let pacts = fv["_embedded"]["pacts"].as_array().unwrap();
+    assert_eq!(pacts.len(), 1, "same content is one pact to verify");
+    assert_eq!(
+        pacts[0]["shortDescription"],
+        "latest from branch main, latest from branch feature"
+    );
+    let decoded = decode_metadata(pacts[0]["_links"]["self"]["href"].as_str().unwrap());
+    let a: Value = get(&s, "/pacticipants/Consumer/versions/A")
+        .await
+        .json()
+        .await
+        .unwrap();
+    let b: Value = get(&s, "/pacticipants/Consumer/versions/B")
+        .await
+        .json()
+        .await
+        .unwrap();
+    let _ = (a, b);
+    let cvs: Vec<&str> = decoded
+        .split('&')
+        .filter(|p| p.starts_with("s%5B%5D%5Bcv%5D="))
+        .map(|p| p.split('=').nth(1).unwrap())
+        .collect();
+    assert_eq!(cvs.len(), 2);
+    assert_ne!(
+        cvs[0], cvs[1],
+        "each group carries its own consumer version id: {decoded}"
+    );
+}

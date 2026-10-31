@@ -153,6 +153,8 @@ pub struct Reason {
     pub bullet: String,
     /// The `s[]` metadata keys the Ruby broker puts in the pact link for this reason.
     pub metadata: Vec<(&'static str, String)>,
+    /// The consumer version this reason matched; set when the reason is attached.
+    pub consumer_version_id: i64,
 }
 
 /// A pact to verify with everything the response needs.
@@ -204,12 +206,14 @@ pub async fn pacts_for_verification(
                     } else {
                         vec![("l", "true".to_owned())]
                     };
+                    let consumer_version_id = p.consumer_version_id;
                     (
                         p,
                         Reason {
                             short: "latest from main branch".into(),
                             bullet,
                             metadata,
+                            consumer_version_id,
                         },
                     )
                 })
@@ -234,6 +238,7 @@ pub async fn pacts_for_verification(
                         short: format!("latest from branch {branch}"),
                         bullet,
                         metadata: vec![("b", branch.clone()), ("l", "true".to_owned())],
+                        consumer_version_id: p.consumer_version_id,
                     };
                     (p, r)
                 })
@@ -251,6 +256,7 @@ pub async fn pacts_for_verification(
                                 p.consumer_version_number
                             ),
                             metadata: vec![("b", branch.clone()), ("l", "true".to_owned())],
+                            consumer_version_id: p.consumer_version_id,
                         };
                         (p, r)
                     })
@@ -273,6 +279,7 @@ pub async fn pacts_for_verification(
                                 p.consumer_version_number
                             ),
                             metadata: vec![("t", tag.clone()), ("l", "true".to_owned())],
+                            consumer_version_id: p.consumer_version_id,
                         }
                     } else {
                         Reason {
@@ -282,6 +289,7 @@ pub async fn pacts_for_verification(
                                 p.consumer_version_number
                             ),
                             metadata: vec![("t", tag.clone())],
+                            consumer_version_id: p.consumer_version_id,
                         }
                     };
                     (p, r)
@@ -299,6 +307,7 @@ pub async fn pacts_for_verification(
                             provider.name, p.consumer_version_number
                         ),
                         metadata: vec![("l", "true".to_owned())],
+                        consumer_version_id: p.consumer_version_id,
                     };
                     (p, r)
                 })

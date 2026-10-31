@@ -2,9 +2,133 @@
     "_embedded": {
         "versions": [
             {
+                "number": "dup1",
+                "createdAt": "2026-10-31T12:05:17+00:00",
+                "_embedded": {
+                    "branchVersions": [],
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "title": "Version",
+                        "name": "dup1",
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1"
+                    },
+                    "pb:pacticipant": {
+                        "title": "Pacticipant",
+                        "name": "Consumer",
+                        "href": "http://localhost:9292/pacticipants/Consumer"
+                    },
+                    "pb:tag": {
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1/tags/{tag}",
+                        "title": "Get, create or delete a tag for this pacticipant version",
+                        "templated": true
+                    },
+                    "pb:latest-verification-results-where-pacticipant-is-consumer": {
+                        "title": "Latest verification results for consumer version",
+                        "href": "http://localhost:9292/verification-results/consumer/Consumer/version/dup1/latest"
+                    },
+                    "pb:pact-versions": [
+                        {
+                            "title": "Pact",
+                            "name": "Pact between Consumer (dup1) and Provider",
+                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/dup1"
+                        },
+                        {
+                            "title": "Pact",
+                            "name": "Pact between Consumer (dup1) and Provider",
+                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/dup1"
+                        }
+                    ],
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=version",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "number": "b2",
+                "updatedAt": "2026-10-31T12:05:17+00:00",
+                "createdAt": "2026-10-31T12:05:17+00:00",
+                "_embedded": {
+                    "branchVersions": [],
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "title": "Version",
+                        "name": "b2",
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/b2"
+                    },
+                    "pb:pacticipant": {
+                        "title": "Pacticipant",
+                        "name": "Consumer",
+                        "href": "http://localhost:9292/pacticipants/Consumer"
+                    },
+                    "pb:tag": {
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/b2/tags/{tag}",
+                        "title": "Get, create or delete a tag for this pacticipant version",
+                        "templated": true
+                    },
+                    "pb:latest-verification-results-where-pacticipant-is-consumer": {
+                        "title": "Latest verification results for consumer version",
+                        "href": "http://localhost:9292/verification-results/consumer/Consumer/version/b2/latest"
+                    },
+                    "pb:pact-versions": [],
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=version",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "number": "b1",
+                "updatedAt": "2026-10-31T12:05:17+00:00",
+                "createdAt": "2026-10-31T12:05:17+00:00",
+                "_embedded": {
+                    "branchVersions": [],
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "title": "Version",
+                        "name": "b1",
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/b1"
+                    },
+                    "pb:pacticipant": {
+                        "title": "Pacticipant",
+                        "name": "Consumer",
+                        "href": "http://localhost:9292/pacticipants/Consumer"
+                    },
+                    "pb:tag": {
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/b1/tags/{tag}",
+                        "title": "Get, create or delete a tag for this pacticipant version",
+                        "templated": true
+                    },
+                    "pb:latest-verification-results-where-pacticipant-is-consumer": {
+                        "title": "Latest verification results for consumer version",
+                        "href": "http://localhost:9292/verification-results/consumer/Consumer/version/b1/latest"
+                    },
+                    "pb:pact-versions": [],
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=version",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
                 "number": "11.0.0",
-                "updatedAt": "2026-10-31T05:28:44+00:00",
-                "createdAt": "2026-10-31T05:28:44+00:00",
+                "updatedAt": "2026-10-31T12:05:15+00:00",
+                "createdAt": "2026-10-31T12:05:15+00:00",
                 "_embedded": {
                     "branchVersions": [
                         {
@@ -64,8 +188,8 @@
             },
             {
                 "number": "5.0.0",
-                "updatedAt": "2026-10-31T05:28:43+00:00",
-                "createdAt": "2026-10-31T05:28:43+00:00",
+                "updatedAt": "2026-10-31T12:05:14+00:00",
+                "createdAt": "2026-10-31T12:05:14+00:00",
                 "_embedded": {
                     "branchVersions": [
                         {
@@ -125,8 +249,8 @@
             },
             {
                 "number": "10.0.0",
-                "updatedAt": "2026-10-31T05:28:27+00:00",
-                "createdAt": "2026-10-31T05:28:27+00:00",
+                "updatedAt": "2026-10-31T12:04:56+00:00",
+                "createdAt": "2026-10-31T12:04:56+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -164,8 +288,8 @@
             {
                 "number": "8.0.0",
                 "buildUrl": "https://ci/8",
-                "updatedAt": "2026-10-31T05:28:27+00:00",
-                "createdAt": "2026-10-31T05:28:27+00:00",
+                "updatedAt": "2026-10-31T12:04:56+00:00",
+                "createdAt": "2026-10-31T12:04:56+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -202,8 +326,8 @@
             },
             {
                 "number": "7.0.0",
-                "updatedAt": "2026-10-31T05:28:26+00:00",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "updatedAt": "2026-10-31T12:04:56+00:00",
+                "createdAt": "2026-10-31T12:04:56+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -228,13 +352,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/7.0.0/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (7.0.0) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/7.0.0"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -246,8 +364,8 @@
             },
             {
                 "number": "1.0.0+build",
-                "updatedAt": "2026-10-31T05:28:26+00:00",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "updatedAt": "2026-10-31T12:04:56+00:00",
+                "createdAt": "2026-10-31T12:04:56+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -272,13 +390,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/1.0.0%2Bbuild/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (1.0.0+build) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0%2Bbuild"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -290,8 +402,8 @@
             },
             {
                 "number": "4.0.4",
-                "updatedAt": "2026-10-31T05:28:26+00:00",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "updatedAt": "2026-10-31T12:04:56+00:00",
+                "createdAt": "2026-10-31T12:04:56+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -316,13 +428,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/4.0.4/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (4.0.4) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.4"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -334,8 +440,8 @@
             },
             {
                 "number": "4.0.2",
-                "updatedAt": "2026-10-31T05:28:26+00:00",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "updatedAt": "2026-10-31T12:04:56+00:00",
+                "createdAt": "2026-10-31T12:04:56+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -360,13 +466,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/4.0.2/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (4.0.2) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.2"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -378,8 +478,8 @@
             },
             {
                 "number": "4.0.0",
-                "updatedAt": "2026-10-31T05:28:26+00:00",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "updatedAt": "2026-10-31T12:04:56+00:00",
+                "createdAt": "2026-10-31T12:04:56+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -404,13 +504,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/4.0.0/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (4.0.0) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.0"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -423,7 +517,7 @@
             {
                 "number": "3.0.1",
                 "buildUrl": "https://ci.example.com/1",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "createdAt": "2026-10-31T12:04:55+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -448,13 +542,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/3.0.1/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (3.0.1) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/3.0.1"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -466,7 +554,7 @@
             },
             {
                 "number": "3.0.0",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "createdAt": "2026-10-31T12:04:55+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": []
@@ -491,13 +579,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/3.0.0/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (3.0.0) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/3.0.0"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -509,7 +591,7 @@
             },
             {
                 "number": "2.0.1",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "createdAt": "2026-10-31T12:04:55+00:00",
                 "_embedded": {
                     "branchVersions": [
                         {
@@ -546,13 +628,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/2.0.1/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (2.0.1) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.1"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -564,7 +640,7 @@
             },
             {
                 "number": "2.0.0",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "createdAt": "2026-10-31T12:04:55+00:00",
                 "_embedded": {
                     "branchVersions": [
                         {
@@ -601,13 +677,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/2.0.0/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (2.0.0) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.0"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -619,7 +689,7 @@
             },
             {
                 "number": "1.0.2",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "createdAt": "2026-10-31T12:04:55+00:00",
                 "_embedded": {
                     "branchVersions": [
                         {
@@ -677,13 +747,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/1.0.2/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (1.0.2) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.2"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -695,7 +759,7 @@
             },
             {
                 "number": "1.0.1",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "createdAt": "2026-10-31T12:04:55+00:00",
                 "_embedded": {
                     "branchVersions": [],
                     "tags": [
@@ -741,13 +805,7 @@
                         "title": "Latest verification results for consumer version",
                         "href": "http://localhost:9292/verification-results/consumer/Consumer/version/1.0.1/latest"
                     },
-                    "pb:pact-versions": [
-                        {
-                            "title": "Pact",
-                            "name": "Pact between Consumer (1.0.1) and Provider",
-                            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.1"
-                        }
-                    ],
+                    "pb:pact-versions": [],
                     "curies": [
                         {
                             "name": "pb",
@@ -759,7 +817,7 @@
             },
             {
                 "number": "1.0.0",
-                "createdAt": "2026-10-31T05:28:25+00:00",
+                "createdAt": "2026-10-31T12:04:54+00:00",
                 "_embedded": {
                     "branchVersions": [
                         {
@@ -830,6 +888,18 @@
         },
         "pb:versions": [
             {
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1",
+                "title": "Version dup1 - 31/10/2026"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/b2",
+                "title": "Version b2 - 31/10/2026"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/b1",
+                "title": "Version b1 - 31/10/2026"
+            },
+            {
                 "href": "http://localhost:9292/pacticipants/Consumer/versions/11.0.0",
                 "title": "Version 11.0.0 - 31/10/2026"
             },
@@ -899,6 +969,18 @@
             "title": "Deprecated - please use pb:pacticipant"
         },
         "versions": [
+            {
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1",
+                "title": "Deprecated - please use pb:versions"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/b2",
+                "title": "Deprecated - please use pb:versions"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/b1",
+                "title": "Deprecated - please use pb:versions"
+            },
             {
                 "href": "http://localhost:9292/pacticipants/Consumer/versions/11.0.0",
                 "title": "Deprecated - please use pb:versions"

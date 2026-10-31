@@ -1,0 +1,23 @@
+{
+    "providerName": "Provider",
+    "providerApplicationVersion": "7",
+    "success": true,
+    "verificationDate": "2026-10-31T12:05:40+00:00",
+    "verifiedBy": {},
+    "_links": {
+        "self": {
+            "title": "Verification result",
+            "name": "Verification result 208 for Pact between Consumer (1.0.0) and Provider",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/verification-results/208"
+        },
+        "pb:pact-version": {
+            "title": "Pact",
+            "name": "Pact between Consumer (1.0.0) and Provider",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4w"
+        },
+        "pb:triggered-webhooks": {
+            "title": "Webhooks triggered by the publication of this verification result",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/verification-results/208/triggered-webhooks"
+        }
+    }
+}

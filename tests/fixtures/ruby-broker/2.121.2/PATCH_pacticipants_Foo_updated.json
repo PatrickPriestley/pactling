@@ -3,8 +3,8 @@
     "displayName": "Foo Service",
     "repositoryUrl": "https://example.com/foo",
     "mainBranch": "main",
-    "updatedAt": "2026-10-31T03:08:33+00:00",
-    "createdAt": "2026-10-31T03:08:33+00:00",
+    "updatedAt": "2026-10-31T12:04:41+00:00",
+    "createdAt": "2026-10-31T12:04:41+00:00",
     "_embedded": {
         "labels": []
     },

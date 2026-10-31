@@ -61,18 +61,16 @@ pub fn consumer_version_from_metadata(m: &str) -> Option<i64> {
     })
 }
 
-/// The Ruby broker's metadata for a selected pact: one `s[]` group per reason plus the
-/// pending flag. Only `cv` is read back; the rest is carried for fidelity.
+/// The Ruby broker's metadata for a selected pact: one `s[]` group per reason, each
+/// naming the consumer version it matched, plus the pending flag. Values are
+/// form-encoded so a branch or tag name cannot inject a pair.
 fn selection_metadata(v: &VerifiablePact) -> String {
     let mut parts: Vec<String> = vec![];
     for r in &v.reasons {
         for (k, val) in &r.metadata {
-            parts.push(format!("s%5B%5D%5B{k}%5D={val}"));
+            parts.push(format!("s%5B%5D%5B{k}%5D={}", encode(val)));
         }
-        parts.push(format!(
-            "s%5B%5D%5Bcv%5D={}",
-            v.publication.consumer_version_id
-        ));
+        parts.push(format!("s%5B%5D%5Bcv%5D={}", r.consumer_version_id));
     }
     parts.push(format!("p={}", v.pending.unwrap_or(false)));
     encode_metadata(&parts.join("&"))
@@ -337,7 +335,17 @@ async fn publish(
         .await?
         .ok_or(Error::NoRoute)?;
     let req = ResultRequest::parse(&parse_body(body)?)?;
-    let consumer_version_id = metadata.and_then(consumer_version_from_metadata);
+    // Only honour a consumer version that actually published this pact content.
+    let consumer_version_id = match metadata.and_then(consumer_version_from_metadata) {
+        Some(id) => state
+            .db
+            .publications_for_pact_version(pact.pact_version_id)
+            .await?
+            .iter()
+            .any(|p| p.consumer_version_id == id)
+            .then_some(id),
+        None => None,
+    };
     let v = service::publish_result(&state.db, &pact, &req, consumer_version_id).await?;
     let doc = verification_document(l, &v, &pact, state).await?;
     let mut res = (StatusCode::CREATED, Hal(doc)).into_response();

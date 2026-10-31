@@ -386,6 +386,9 @@ cap3 GET_pact_by_version_verification-results_latest "${J[@]}" "$B/pacts/provide
 cap3 GET_consumer_version_verification-results_latest "${J[@]}" "$B/verification-results/consumer/Consumer/version/1.0.0/latest"
 cap3 GET_consumer_version_verification-results_latest_unknown "${J[@]}" "$B/verification-results/consumer/Consumer/version/9.9.9/latest"
 cap3 POST_verification-results_minimal "${J[@]}" -X POST -d '{"providerApplicationVersion":"7","success":true}' "$PV/verification-results"
+# the successful numeric read, through the Location the POST returned (added after review)
+LOC=$(grep -i '^location:' "$F3/POST_verification-results_minimal.json.headers" | tr -d '\r' | cut -d' ' -f2)
+cap3 GET_verification-results_by_number "${J[@]}" "$LOC"
 cap3 POST_verification-results_err_empty "${J[@]}" -X POST -d '{}' "$PV/verification-results"
 cap3 POST_verification-results_err_types "${J[@]}" -X POST -d '{"providerApplicationVersion":"","success":"yes"}' "$PV/verification-results"
 cap3 POST_verification-results_err_not_json "${J[@]}" -X POST -d 'nope' "$PV/verification-results"

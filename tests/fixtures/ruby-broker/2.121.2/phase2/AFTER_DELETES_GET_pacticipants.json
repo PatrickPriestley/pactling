@@ -4,7 +4,7 @@
             {
                 "name": "Brand_New",
                 "displayName": "Brand New",
-                "createdAt": "2026-10-31T05:28:27+00:00",
+                "createdAt": "2026-10-31T12:04:56+00:00",
                 "_embedded": {
                     "latestVersion": {
                         "number": "1",
@@ -84,30 +84,112 @@
                 }
             },
             {
-                "name": "Consumer",
-                "displayName": "Consumer",
-                "mainBranch": "main",
-                "updatedAt": "2026-10-31T05:28:25+00:00",
-                "createdAt": "2026-10-31T05:28:25+00:00",
+                "name": "BulkC",
+                "displayName": "BulkC",
+                "createdAt": "2026-10-31T12:05:17+00:00",
                 "_embedded": {
                     "latestVersion": {
-                        "number": "11.0.0",
+                        "number": "3",
                         "_links": {
                             "self": {
                                 "title": "Version",
-                                "name": "11.0.0",
-                                "href": "http://localhost:9292/pacticipants/Consumer/versions/11.0.0"
+                                "name": "3",
+                                "href": "http://localhost:9292/pacticipants/BulkC/versions/3"
                             }
                         }
                     },
                     "labels": [],
                     "latest-version": {
-                        "number": "11.0.0",
+                        "number": "3",
                         "_links": {
                             "self": {
                                 "title": "Version",
-                                "name": "11.0.0",
-                                "href": "http://localhost:9292/pacticipants/Consumer/versions/11.0.0"
+                                "name": "3",
+                                "href": "http://localhost:9292/pacticipants/BulkC/versions/3"
+                            }
+                        },
+                        "title": "DEPRECATED - please use latestVersion",
+                        "name": "DEPRECATED - please use latestVersion"
+                    }
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/BulkC"
+                    },
+                    "pb:versions": {
+                        "href": "http://localhost:9292/pacticipants/BulkC/versions"
+                    },
+                    "pb:branches": {
+                        "href": "http://localhost:9292/pacticipants/BulkC/branches"
+                    },
+                    "pb:version": {
+                        "title": "Get, create or delete a pacticipant version",
+                        "href": "http://localhost:9292/pacticipants/BulkC/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:version-tag": {
+                        "title": "Get, create or delete a tag for a version of BulkC",
+                        "href": "http://localhost:9292/pacticipants/BulkC/versions/{version}/tags/{tag}",
+                        "templated": true
+                    },
+                    "pb:branch-version": {
+                        "title": "Get or add/create a version for a branch of BulkC",
+                        "href": "http://localhost:9292/pacticipants/BulkC/branches/{branch}/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:label": {
+                        "title": "Get, create or delete a label for BulkC",
+                        "href": "http://localhost:9292/pacticipants/BulkC/labels/{label}",
+                        "templated": true
+                    },
+                    "versions": {
+                        "title": "Deprecated - use pb:versions",
+                        "href": "http://localhost:9292/pacticipants/BulkC/versions"
+                    },
+                    "pb:can-i-deploy-badge": {
+                        "title": "Can I Deploy BulkC badge",
+                        "href": "http://localhost:9292/pacticipants/BulkC/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                        "templated": true
+                    },
+                    "pb:can-i-deploy-branch-to-environment-badge": {
+                        "title": "Can I Deploy BulkC from branch to environment badge",
+                        "href": "http://localhost:9292/pacticipants/BulkC/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                        "templated": true
+                    },
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Consumer",
+                "displayName": "Consumer",
+                "mainBranch": "main",
+                "updatedAt": "2026-10-31T12:04:54+00:00",
+                "createdAt": "2026-10-31T12:04:54+00:00",
+                "_embedded": {
+                    "latestVersion": {
+                        "number": "dup1",
+                        "_links": {
+                            "self": {
+                                "title": "Version",
+                                "name": "dup1",
+                                "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1"
+                            }
+                        }
+                    },
+                    "labels": [],
+                    "latest-version": {
+                        "number": "dup1",
+                        "_links": {
+                            "self": {
+                                "title": "Version",
+                                "name": "dup1",
+                                "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1"
                             }
                         },
                         "title": "DEPRECATED - please use latestVersion",
@@ -170,7 +252,7 @@
             {
                 "name": "Other",
                 "displayName": "Other",
-                "createdAt": "2026-10-31T05:28:26+00:00",
+                "createdAt": "2026-10-31T12:04:55+00:00",
                 "_embedded": {
                     "labels": []
                 },
@@ -230,7 +312,7 @@
             {
                 "name": "Provider",
                 "displayName": "Provider",
-                "createdAt": "2026-10-31T05:28:25+00:00",
+                "createdAt": "2026-10-31T12:04:54+00:00",
                 "_embedded": {
                     "labels": []
                 },
@@ -305,6 +387,11 @@
                 "name": "Brand_New"
             },
             {
+                "href": "http://localhost:9292/pacticipants/BulkC",
+                "title": "Pacticipant",
+                "name": "BulkC"
+            },
+            {
                 "href": "http://localhost:9292/pacticipants/Consumer",
                 "title": "Pacticipant",
                 "name": "Consumer"
@@ -324,6 +411,11 @@
             {
                 "href": "http://localhost:9292/pacticipants/Brand_New",
                 "title": "Brand_New",
+                "name": "DEPRECATED - please use pb:pacticipants"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/BulkC",
+                "title": "BulkC",
                 "name": "DEPRECATED - please use pb:pacticipants"
             },
             {
@@ -347,7 +439,7 @@
         {
             "name": "Brand_New",
             "displayName": "Brand New",
-            "createdAt": "2026-10-31T05:28:27+00:00",
+            "createdAt": "2026-10-31T12:04:56+00:00",
             "title": "DEPRECATED - Please use the embedded pacticipants collection",
             "_embedded": {
                 "latestVersion": {
@@ -428,31 +520,114 @@
             }
         },
         {
-            "name": "Consumer",
-            "displayName": "Consumer",
-            "mainBranch": "main",
-            "updatedAt": "2026-10-31T05:28:25+00:00",
-            "createdAt": "2026-10-31T05:28:25+00:00",
+            "name": "BulkC",
+            "displayName": "BulkC",
+            "createdAt": "2026-10-31T12:05:17+00:00",
             "title": "DEPRECATED - Please use the embedded pacticipants collection",
             "_embedded": {
                 "latestVersion": {
-                    "number": "11.0.0",
+                    "number": "3",
                     "_links": {
                         "self": {
                             "title": "Version",
-                            "name": "11.0.0",
-                            "href": "http://localhost:9292/pacticipants/Consumer/versions/11.0.0"
+                            "name": "3",
+                            "href": "http://localhost:9292/pacticipants/BulkC/versions/3"
                         }
                     }
                 },
                 "labels": [],
                 "latest-version": {
-                    "number": "11.0.0",
+                    "number": "3",
                     "_links": {
                         "self": {
                             "title": "Version",
-                            "name": "11.0.0",
-                            "href": "http://localhost:9292/pacticipants/Consumer/versions/11.0.0"
+                            "name": "3",
+                            "href": "http://localhost:9292/pacticipants/BulkC/versions/3"
+                        }
+                    },
+                    "title": "DEPRECATED - please use latestVersion",
+                    "name": "DEPRECATED - please use latestVersion"
+                }
+            },
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/BulkC"
+                },
+                "pb:versions": {
+                    "href": "http://localhost:9292/pacticipants/BulkC/versions"
+                },
+                "pb:branches": {
+                    "href": "http://localhost:9292/pacticipants/BulkC/branches"
+                },
+                "pb:version": {
+                    "title": "Get, create or delete a pacticipant version",
+                    "href": "http://localhost:9292/pacticipants/BulkC/versions/{version}",
+                    "templated": true
+                },
+                "pb:version-tag": {
+                    "title": "Get, create or delete a tag for a version of BulkC",
+                    "href": "http://localhost:9292/pacticipants/BulkC/versions/{version}/tags/{tag}",
+                    "templated": true
+                },
+                "pb:branch-version": {
+                    "title": "Get or add/create a version for a branch of BulkC",
+                    "href": "http://localhost:9292/pacticipants/BulkC/branches/{branch}/versions/{version}",
+                    "templated": true
+                },
+                "pb:label": {
+                    "title": "Get, create or delete a label for BulkC",
+                    "href": "http://localhost:9292/pacticipants/BulkC/labels/{label}",
+                    "templated": true
+                },
+                "versions": {
+                    "title": "Deprecated - use pb:versions",
+                    "href": "http://localhost:9292/pacticipants/BulkC/versions"
+                },
+                "pb:can-i-deploy-badge": {
+                    "title": "Can I Deploy BulkC badge",
+                    "href": "http://localhost:9292/pacticipants/BulkC/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                    "templated": true
+                },
+                "pb:can-i-deploy-branch-to-environment-badge": {
+                    "title": "Can I Deploy BulkC from branch to environment badge",
+                    "href": "http://localhost:9292/pacticipants/BulkC/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                    "templated": true
+                },
+                "curies": [
+                    {
+                        "name": "pb",
+                        "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                        "templated": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Consumer",
+            "displayName": "Consumer",
+            "mainBranch": "main",
+            "updatedAt": "2026-10-31T12:04:54+00:00",
+            "createdAt": "2026-10-31T12:04:54+00:00",
+            "title": "DEPRECATED - Please use the embedded pacticipants collection",
+            "_embedded": {
+                "latestVersion": {
+                    "number": "dup1",
+                    "_links": {
+                        "self": {
+                            "title": "Version",
+                            "name": "dup1",
+                            "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1"
+                        }
+                    }
+                },
+                "labels": [],
+                "latest-version": {
+                    "number": "dup1",
+                    "_links": {
+                        "self": {
+                            "title": "Version",
+                            "name": "dup1",
+                            "href": "http://localhost:9292/pacticipants/Consumer/versions/dup1"
                         }
                     },
                     "title": "DEPRECATED - please use latestVersion",
@@ -515,7 +690,7 @@
         {
             "name": "Other",
             "displayName": "Other",
-            "createdAt": "2026-10-31T05:28:26+00:00",
+            "createdAt": "2026-10-31T12:04:55+00:00",
             "title": "DEPRECATED - Please use the embedded pacticipants collection",
             "_embedded": {
                 "labels": []
@@ -576,7 +751,7 @@
         {
             "name": "Provider",
             "displayName": "Provider",
-            "createdAt": "2026-10-31T05:28:25+00:00",
+            "createdAt": "2026-10-31T12:04:54+00:00",
             "title": "DEPRECATED - Please use the embedded pacticipants collection",
             "_embedded": {
                 "labels": []
