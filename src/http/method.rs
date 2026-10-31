@@ -11,10 +11,13 @@ pub fn method_not_allowed(allowed: &'static str) -> Response {
     res
 }
 
-/// The Ruby broker answers OPTIONS with 200 and an empty body.
+/// The Ruby broker answers OPTIONS with 200, an empty body and the methods in
+/// `access-control-allow-methods` (verified; it does not send `allow` here).
 pub fn options(allowed: &'static str) -> Response {
     let mut res = StatusCode::OK.into_response();
-    res.headers_mut()
-        .insert(header::ALLOW, HeaderValue::from_static(allowed));
+    res.headers_mut().insert(
+        header::ACCESS_CONTROL_ALLOW_METHODS,
+        HeaderValue::from_static(allowed),
+    );
     res
 }

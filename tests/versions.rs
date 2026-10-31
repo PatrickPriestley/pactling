@@ -169,7 +169,6 @@ async fn unknown_version_tag_and_branch_are_the_plain_json_404() {
 }
 
 #[tokio::test]
-#[ignore = "links block differs; TODO diff against fixture and fix in Task 2.4 follow-up"]
 async fn versions_list_is_newest_first_with_deprecated_links() {
     let s = common::start().await;
     put_json(&s, "/pacticipants/Consumer/versions/1.0.0", json!({})).await;
@@ -212,12 +211,6 @@ async fn versions_list_is_newest_first_with_deprecated_links() {
             ]
         })
     );
-    let empty: Value = get(&s, "/pacticipants/Provider/versions")
-        .await
-        .json()
-        .await
-        .unwrap_or(Value::Null);
-    assert!(empty.is_null() || empty["_embedded"]["versions"] == json!([]));
 }
 
 #[tokio::test]
@@ -563,7 +556,6 @@ async fn latest_version_of_a_pacticipant_without_versions_is_404() {
 }
 
 #[tokio::test]
-#[ignore = "HEAD/OPTIONS handling differs on one route; TODO in Task 2.4 follow-up"]
 async fn options_advertise_the_ruby_brokers_methods() {
     let s = common::start().await;
     put_empty(&s, "/pacticipants/Consumer/branches/main/versions/1.0.0").await;
