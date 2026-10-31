@@ -15,9 +15,15 @@ Verified against Ruby broker **2.121.2** and `@pact-foundation/pact-cli` **16.1.
 
 ## Status
 
-Phase 1 of the [implementation plan](docs/plans/2026-10-30-pact-broker-implementation.md):
-HAL index, basic auth, pacticipants. Publishing, verification, can-i-deploy and webhooks
-follow. See the [design](docs/plans/2026-10-30-pact-broker-design.md).
+Phases 1 and 2 of the [implementation plan](docs/plans/2026-10-30-pact-broker-implementation.md):
+HAL index, basic auth, pacticipants, versions, branches, tags, publishing (both
+`pb:publish-contracts` and the legacy `PUT`) and every pact retrieval document. A pact-js 13
+consumer test plus `pact-broker publish` run against the binary in CI. Verification,
+can-i-deploy and webhooks follow. See the [design](docs/plans/2026-10-30-pact-broker-design.md).
+
+Known differences from the Ruby broker, all deliberate: an empty `contracts` array is a 400
+rather than a 500; the 409 for changed content omits the Ruby broker's diff notice; bad-JSON
+error messages use serde's wording.
 
 ## Run
 
