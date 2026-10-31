@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "consumer.name": [
+            "name in pact 'Consumer' does not match name in URL path 'consumer'."
+        ]
+    }
+}

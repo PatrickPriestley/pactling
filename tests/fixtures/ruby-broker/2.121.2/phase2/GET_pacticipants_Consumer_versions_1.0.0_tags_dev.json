@@ -1,0 +1,21 @@
+{
+    "name": "dev",
+    "createdAt": "2026-10-31T05:28:25+00:00",
+    "_links": {
+        "self": {
+            "title": "Tag",
+            "name": "dev",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/tags/dev"
+        },
+        "version": {
+            "title": "Version",
+            "name": "1.0.0",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0"
+        },
+        "pacticipant": {
+            "title": "Pacticipant",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        }
+    }
+}

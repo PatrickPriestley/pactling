@@ -1,0 +1,80 @@
+{
+    "number": "1.0.2",
+    "createdAt": "2026-10-31T05:28:26+00:00",
+    "_embedded": {
+        "branchVersions": [
+            {
+                "name": "prod",
+                "latest": true,
+                "_links": {
+                    "self": {
+                        "title": "Branch version",
+                        "name": "prod",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/prod/versions/1.0.2"
+                    }
+                }
+            }
+        ],
+        "tags": [
+            {
+                "name": "prod",
+                "_links": {
+                    "self": {
+                        "title": "Tag",
+                        "name": "prod",
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.2/tags/prod"
+                    }
+                }
+            },
+            {
+                "name": "test",
+                "_links": {
+                    "self": {
+                        "title": "Tag",
+                        "name": "test",
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.2/tags/test"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "title": "Version",
+            "name": "1.0.2",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.2"
+        },
+        "pb:pacticipant": {
+            "title": "Pacticipant",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        },
+        "pb:tag": {
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.2/tags/{tag}",
+            "title": "Get, create or delete a tag for this pacticipant version",
+            "templated": true
+        },
+        "pb:latest-verification-results-where-pacticipant-is-consumer": {
+            "title": "Latest verification results for consumer version",
+            "href": "http://localhost:9292/verification-results/consumer/Consumer/version/1.0.2/latest"
+        },
+        "pb:pact-versions": [
+            {
+                "title": "Pact",
+                "name": "Pact between Consumer (1.0.2) and Provider",
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.2"
+            }
+        ],
+        "pb:deployed-environments": [],
+        "pb:released-environments": [],
+        "pb:record-deployment": [],
+        "pb:record-release": [],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/{rel}?context=version",
+                "templated": true
+            }
+        ]
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "errors": {
+        "contracts": [
+            "is not valid Base64 (at index 0)",
+            "content could not be parsed as application/json (at index 0)"
+        ]
+    }
+}

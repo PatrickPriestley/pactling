@@ -1,0 +1,86 @@
+{
+    "number": "9.0.0",
+    "updatedAt": "2026-10-31T05:28:27+00:00",
+    "createdAt": "2026-10-31T05:28:27+00:00",
+    "_embedded": {
+        "branchVersions": [
+            {
+                "name": "t1",
+                "latest": true,
+                "_links": {
+                    "self": {
+                        "title": "Branch version",
+                        "name": "t1",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/t1/versions/9.0.0"
+                    }
+                }
+            },
+            {
+                "name": "release",
+                "latest": true,
+                "_links": {
+                    "self": {
+                        "title": "Branch version",
+                        "name": "release",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/release/versions/9.0.0"
+                    }
+                }
+            }
+        ],
+        "tags": [
+            {
+                "name": "t1",
+                "_links": {
+                    "self": {
+                        "title": "Tag",
+                        "name": "t1",
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/9.0.0/tags/t1"
+                    }
+                }
+            },
+            {
+                "name": "t2",
+                "_links": {
+                    "self": {
+                        "title": "Tag",
+                        "name": "t2",
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/9.0.0/tags/t2"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "title": "Version",
+            "name": "9.0.0",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/9.0.0"
+        },
+        "pb:pacticipant": {
+            "title": "Pacticipant",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        },
+        "pb:tag": {
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/9.0.0/tags/{tag}",
+            "title": "Get, create or delete a tag for this pacticipant version",
+            "templated": true
+        },
+        "pb:latest-verification-results-where-pacticipant-is-consumer": {
+            "title": "Latest verification results for consumer version",
+            "href": "http://localhost:9292/verification-results/consumer/Consumer/version/9.0.0/latest"
+        },
+        "pb:pact-versions": [],
+        "pb:deployed-environments": [],
+        "pb:released-environments": [],
+        "pb:record-deployment": [],
+        "pb:record-release": [],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/{rel}?context=version",
+                "templated": true
+            }
+        ]
+    }
+}

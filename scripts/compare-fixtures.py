@@ -6,10 +6,13 @@ timestamps, uuids, dates in headers and the Created/Updated lines in CLI output.
 """
 import json
 import pathlib
+import re
 import sys
 
+TIMESTAMP = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00")
+
 VOLATILE_KEYS = {"createdAt", "updatedAt", "uuid"}
-KEPT_HEADERS = {"content-type", "www-authenticate", "allow", "location"}
+KEPT_HEADERS = {"content-type", "www-authenticate", "allow", "location", "access-control-allow-methods"}
 
 
 def stable(value):
@@ -30,7 +33,19 @@ def normalise(path: pathlib.Path):
         kept = sorted(l for l in lines[1:] if l.split(":", 1)[0].lower() in KEPT_HEADERS)
         return [status, *kept]
     if name.endswith(".txt"):
-        return [l for l in text.splitlines() if not l.startswith(("Created At:", "Updated At:"))]
+        return [TIMESTAMP.sub("<ts>", l) for l in text.splitlines() if not l.startswith(("Created At:", "Updated At:"))]
+    if name.endswith(".jsonl"):
+        # A proxy log: one request/response pair per line; response headers carry dates.
+        entries = [json.loads(l) for l in text.splitlines() if l.strip()]
+        for e in entries:
+            e["response"]["headers"] = {k: v for k, v in e["response"]["headers"].items() if k in KEPT_HEADERS}
+            for side in ("request", "response"):
+                if e[side].get("body"):
+                    try:
+                        e[side]["body"] = stable(json.loads(e[side]["body"]))
+                    except json.JSONDecodeError:
+                        pass
+        return entries
     try:
         return stable(json.loads(text))
     except json.JSONDecodeError:

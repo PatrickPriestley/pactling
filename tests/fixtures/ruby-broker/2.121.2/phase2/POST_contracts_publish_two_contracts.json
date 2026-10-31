@@ -1,0 +1,174 @@
+{
+    "logs": [
+        {
+            "level": "debug",
+            "message": "Created Web version 1 with branch main and tags dev",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "success",
+            "message": "Pact successfully published for Web version 1 and provider Provider.",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "debug",
+            "message": "  View the published pact at http://localhost:9292/pacts/provider/Provider/consumer/Web/version/1",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "debug",
+            "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged dev)",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "  Next steps:",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "    * Add Pact verification tests to the Provider build. See https://docs.pact.io/go/provider_verification",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "    * Configure separate Provider pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "success",
+            "message": "Pact successfully published for Web version 1 and provider Other.",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "debug",
+            "message": "  View the published pact at http://localhost:9292/pacts/provider/Other/consumer/Web/version/1",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "debug",
+            "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged dev)",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "  Next steps:",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "    * Add Pact verification tests to the Other build. See https://docs.pact.io/go/provider_verification",
+            "deprecationWarning": "Replaced by notices"
+        },
+        {
+            "level": "prompt",
+            "message": "    * Configure separate Other pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks",
+            "deprecationWarning": "Replaced by notices"
+        }
+    ],
+    "notices": [
+        {
+            "type": "debug",
+            "text": "Created Web version 1 with branch main and tags dev"
+        },
+        {
+            "type": "success",
+            "text": "Pact successfully published for Web version 1 and provider Provider."
+        },
+        {
+            "type": "debug",
+            "text": "  View the published pact at http://localhost:9292/pacts/provider/Provider/consumer/Web/version/1"
+        },
+        {
+            "type": "debug",
+            "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged dev)"
+        },
+        {
+            "type": "prompt",
+            "text": "  Next steps:"
+        },
+        {
+            "type": "prompt",
+            "text": "    * Add Pact verification tests to the Provider build. See https://docs.pact.io/go/provider_verification"
+        },
+        {
+            "type": "prompt",
+            "text": "    * Configure separate Provider pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
+        },
+        {
+            "type": "success",
+            "text": "Pact successfully published for Web version 1 and provider Other."
+        },
+        {
+            "type": "debug",
+            "text": "  View the published pact at http://localhost:9292/pacts/provider/Other/consumer/Web/version/1"
+        },
+        {
+            "type": "debug",
+            "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged dev)"
+        },
+        {
+            "type": "prompt",
+            "text": "  Next steps:"
+        },
+        {
+            "type": "prompt",
+            "text": "    * Add Pact verification tests to the Other build. See https://docs.pact.io/go/provider_verification"
+        },
+        {
+            "type": "prompt",
+            "text": "    * Configure separate Other pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"
+        }
+    ],
+    "_embedded": {
+        "pacticipant": {
+            "name": "Web",
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/Web"
+                }
+            }
+        },
+        "version": {
+            "number": "1",
+            "_links": {
+                "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://localhost:9292/pacticipants/Web/versions/1"
+                }
+            }
+        }
+    },
+    "_links": {
+        "pb:pacticipant": {
+            "title": "Pacticipant",
+            "name": "Web",
+            "href": "http://localhost:9292/pacticipants/Web"
+        },
+        "pb:pacticipant-version": {
+            "title": "Pacticipant version",
+            "name": "1",
+            "href": "http://localhost:9292/pacticipants/Web/versions/1"
+        },
+        "pb:pacticipant-version-tags": [
+            {
+                "title": "Tag",
+                "name": "dev",
+                "href": "http://localhost:9292/pacticipants/Web/versions/1/tags/dev"
+            }
+        ],
+        "pb:contracts": [
+            {
+                "title": "Pact",
+                "name": "Pact between Web (1) and Provider",
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Web/version/1"
+            },
+            {
+                "title": "Pact",
+                "name": "Pact between Web (1) and Other",
+                "href": "http://localhost:9292/pacts/provider/Other/consumer/Web/version/1"
+            }
+        ]
+    }
+}

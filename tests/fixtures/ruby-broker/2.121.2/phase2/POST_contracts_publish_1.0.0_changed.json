@@ -1,0 +1,17 @@
+{
+    "notices": [
+        {
+            "type": "error",
+            "text": "Cannot change the content of the pact for Consumer version 1.0.0 and provider Provider, as race conditions will cause unreliable results for can-i-deploy. Each pact must be published with a unique consumer version number. Some Pact libraries generate random data when a concrete value for a type matcher is not specified, and this can cause the contract to mutate - ensure you have given example values for all type matchers. For more information see https://docs.pact.io/go/versioning"
+        },
+        {
+            "type": "info",
+            "text": "     {\n       \"response\": {\n         \"body\": {\n-          \"status\": \"open\"\n+          \"status\": \"closed\"\n         }\n       }\n     },"
+        }
+    ],
+    "errors": {
+        "contracts": [
+            "Cannot change the content of the pact for Consumer version 1.0.0 and provider Provider, as race conditions will cause unreliable results for can-i-deploy. Each pact must be published with a unique consumer version number. Some Pact libraries generate random data when a concrete value for a type matcher is not specified, and this can cause the contract to mutate - ensure you have given example values for all type matchers. For more information see https://docs.pact.io/go/versioning"
+        ]
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "contracts": [
+            "contentType must be one of: application/json (at index 0)"
+        ]
+    }
+}

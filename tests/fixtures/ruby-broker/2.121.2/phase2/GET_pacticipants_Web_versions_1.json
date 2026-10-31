@@ -1,0 +1,75 @@
+{
+    "number": "1",
+    "createdAt": "2026-10-31T05:28:26+00:00",
+    "_embedded": {
+        "branchVersions": [
+            {
+                "name": "main",
+                "latest": true,
+                "_links": {
+                    "self": {
+                        "title": "Branch version",
+                        "name": "main",
+                        "href": "http://localhost:9292/pacticipants/Web/branches/main/versions/1"
+                    }
+                }
+            }
+        ],
+        "tags": [
+            {
+                "name": "dev",
+                "_links": {
+                    "self": {
+                        "title": "Tag",
+                        "name": "dev",
+                        "href": "http://localhost:9292/pacticipants/Web/versions/1/tags/dev"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "title": "Version",
+            "name": "1",
+            "href": "http://localhost:9292/pacticipants/Web/versions/1"
+        },
+        "pb:pacticipant": {
+            "title": "Pacticipant",
+            "name": "Web",
+            "href": "http://localhost:9292/pacticipants/Web"
+        },
+        "pb:tag": {
+            "href": "http://localhost:9292/pacticipants/Web/versions/1/tags/{tag}",
+            "title": "Get, create or delete a tag for this pacticipant version",
+            "templated": true
+        },
+        "pb:latest-verification-results-where-pacticipant-is-consumer": {
+            "title": "Latest verification results for consumer version",
+            "href": "http://localhost:9292/verification-results/consumer/Web/version/1/latest"
+        },
+        "pb:pact-versions": [
+            {
+                "title": "Pact",
+                "name": "Pact between Web (1) and Other",
+                "href": "http://localhost:9292/pacts/provider/Other/consumer/Web/version/1"
+            },
+            {
+                "title": "Pact",
+                "name": "Pact between Web (1) and Provider",
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Web/version/1"
+            }
+        ],
+        "pb:deployed-environments": [],
+        "pb:released-environments": [],
+        "pb:record-deployment": [],
+        "pb:record-release": [],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/{rel}?context=version",
+                "templated": true
+            }
+        ]
+    }
+}

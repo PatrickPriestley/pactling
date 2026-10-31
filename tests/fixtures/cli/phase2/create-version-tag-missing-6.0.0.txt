@@ -1,0 +1,2 @@
+Could not create tag. Version 6.0.0 of Consumer does not exist.
+exit=1

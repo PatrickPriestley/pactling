@@ -1,0 +1,3 @@
+Tagging Consumer version 1.0.1 as qa
+Tagging Consumer version 1.0.1 as uat
+exit=0

@@ -1,0 +1,50 @@
+{
+    "_embedded": {
+        "pacts": [
+            {
+                "createdAt": "2026-10-31T05:28:25+00:00",
+                "_embedded": {
+                    "consumerVersion": {
+                        "number": "1.0.0",
+                        "_links": {
+                            "self": {
+                                "title": "Version",
+                                "name": "1.0.0",
+                                "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0"
+                            }
+                        }
+                    }
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0",
+                        "title": "Pact between Consumer (1.0.0) and Provider"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/tag/dev",
+            "title": "All versions of the pact between Consumer and Provider with tag dev"
+        },
+        "pb:consumer": {
+            "href": "http://localhost:9292/pacticipants/Consumer",
+            "title": "Consumer",
+            "name": "Consumer"
+        },
+        "pb:provider": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Provider",
+            "name": "Provider"
+        },
+        "pb:pact-versions": [
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0",
+                "title": "Pact version",
+                "name": "Version 1.0.0 - 31/10/2026"
+            }
+        ]
+    }
+}

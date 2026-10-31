@@ -1,0 +1,13 @@
+{
+    "errors": {
+        "pacticipantName": [
+            "is missing"
+        ],
+        "pacticipantVersionNumber": [
+            "is missing"
+        ],
+        "contracts": [
+            "is missing"
+        ]
+    }
+}

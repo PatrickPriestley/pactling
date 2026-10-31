@@ -1,0 +1,2 @@
+[31mCould not delete branch feat of pacticipant Consumer as it was not found[0m
+exit=1

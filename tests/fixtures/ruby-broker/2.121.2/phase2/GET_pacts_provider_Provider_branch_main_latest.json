@@ -1,0 +1,41 @@
+{
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/branch/main/latest",
+            "title": "Latest pact versions for the provider Provider with consumer version branch 'main'"
+        },
+        "pb:provider": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "name": "Provider"
+        },
+        "pb:pacts": [
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.1",
+                "title": "Pact between Consumer (2.0.1) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Web/version/1",
+                "title": "Pact between Web (1) and Provider",
+                "name": "Web"
+            }
+        ],
+        "provider": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Provider",
+            "name": "DEPRECATED - please use the pb:provider relation"
+        },
+        "pacts": [
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.1",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (2.0.1) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Web/version/1",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Web (1) and Provider",
+                "name": "Web"
+            }
+        ]
+    }
+}

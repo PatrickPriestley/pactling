@@ -1,0 +1,11 @@
+{
+    "_links": {
+        "index": {
+            "href": "http://localhost:9292"
+        },
+        "pb:latest-pact-version": {
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/latest",
+            "title": "Latest pact"
+        }
+    }
+}

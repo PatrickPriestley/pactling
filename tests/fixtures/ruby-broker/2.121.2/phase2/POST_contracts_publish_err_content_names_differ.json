@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "contracts": [
+            "consumer name in contract content ('Web') must match consumerName in contract params ('Consumer') (at index 0)"
+        ]
+    }
+}

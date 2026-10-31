@@ -1,0 +1,87 @@
+{
+    "_embedded": {
+        "integrations": [
+            {
+                "consumer": {
+                    "name": "Consumer"
+                },
+                "provider": {
+                    "name": "Provider"
+                },
+                "_links": {
+                    "pb:dashboard": {
+                        "title": "BETA: Pacts to show on the dashboard",
+                        "href": "http://localhost:9292/dashboard/provider/Provider/consumer/Consumer"
+                    },
+                    "pb:matrix": {
+                        "title": "Matrix of pacts/verification results for Consumer and Provider",
+                        "href": "/matrix/provider/Provider/consumer/Consumer"
+                    },
+                    "pb:group": {
+                        "href": "http://localhost:9292/pacticipants/Consumer"
+                    },
+                    "pb:delete_integration": {
+                        "title": "Delete the integration between Consumer and Provider",
+                        "href": "http://localhost:9292/integrations/provider/Provider/consumer/Consumer"
+                    }
+                }
+            },
+            {
+                "consumer": {
+                    "name": "Web"
+                },
+                "provider": {
+                    "name": "Provider"
+                },
+                "_links": {
+                    "pb:dashboard": {
+                        "title": "BETA: Pacts to show on the dashboard",
+                        "href": "http://localhost:9292/dashboard/provider/Provider/consumer/Web"
+                    },
+                    "pb:matrix": {
+                        "title": "Matrix of pacts/verification results for Web and Provider",
+                        "href": "/matrix/provider/Provider/consumer/Web"
+                    },
+                    "pb:group": {
+                        "href": "http://localhost:9292/pacticipants/Web"
+                    },
+                    "pb:delete_integration": {
+                        "title": "Delete the integration between Web and Provider",
+                        "href": "http://localhost:9292/integrations/provider/Provider/consumer/Web"
+                    }
+                }
+            },
+            {
+                "consumer": {
+                    "name": "Web"
+                },
+                "provider": {
+                    "name": "Other"
+                },
+                "_links": {
+                    "pb:dashboard": {
+                        "title": "BETA: Pacts to show on the dashboard",
+                        "href": "http://localhost:9292/dashboard/provider/Other/consumer/Web"
+                    },
+                    "pb:matrix": {
+                        "title": "Matrix of pacts/verification results for Web and Other",
+                        "href": "/matrix/provider/Other/consumer/Web"
+                    },
+                    "pb:group": {
+                        "href": "http://localhost:9292/pacticipants/Web"
+                    },
+                    "pb:delete_integration": {
+                        "title": "Delete the integration between Web and Other",
+                        "href": "http://localhost:9292/integrations/provider/Other/consumer/Web"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/integrations",
+            "title": "All integrations"
+        }
+    }
+}

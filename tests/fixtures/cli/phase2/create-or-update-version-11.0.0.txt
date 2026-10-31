@@ -1,0 +1,2 @@
+[32mCreated/updated pacticipant version 11.0.0 with branch main and tag(s) t3 in the Pact Broker[0m
+exit=0

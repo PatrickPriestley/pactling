@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "contracts": [
+            "content could not be parsed as application/json (at index 0)"
+        ]
+    }
+}

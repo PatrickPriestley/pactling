@@ -1,0 +1,2 @@
+[32mSuccessfully deleted branch feat of pacticipant Consumer[0m
+exit=0

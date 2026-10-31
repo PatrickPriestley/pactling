@@ -1,0 +1,151 @@
+{
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider",
+            "title": "All pact versions for the provider Provider"
+        },
+        "pb:provider": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "name": "Provider"
+        },
+        "pb:pacts": [
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0",
+                "title": "Pact between Consumer (1.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.1",
+                "title": "Pact between Consumer (1.0.1) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.2",
+                "title": "Pact between Consumer (1.0.2) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.0",
+                "title": "Pact between Consumer (2.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.1",
+                "title": "Pact between Consumer (2.0.1) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/3.0.0",
+                "title": "Pact between Consumer (3.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/3.0.1",
+                "title": "Pact between Consumer (3.0.1) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.0",
+                "title": "Pact between Consumer (4.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.2",
+                "title": "Pact between Consumer (4.0.2) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.4",
+                "title": "Pact between Consumer (4.0.4) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0%2Bbuild",
+                "title": "Pact between Consumer (1.0.0+build) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/7.0.0",
+                "title": "Pact between Consumer (7.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Web/version/1",
+                "title": "Pact between Web (1) and Provider",
+                "name": "Web"
+            }
+        ],
+        "provider": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Provider",
+            "name": "DEPRECATED - please use the pb:provider relation"
+        },
+        "pacts": [
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (1.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.1",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (1.0.1) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.2",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (1.0.2) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.0",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (2.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.1",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (2.0.1) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/3.0.0",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (3.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/3.0.1",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (3.0.1) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.0",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (4.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.2",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (4.0.2) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/4.0.4",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (4.0.4) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0%2Bbuild",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (1.0.0+build) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/7.0.0",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Consumer (7.0.0) and Provider",
+                "name": "Consumer"
+            },
+            {
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Web/version/1",
+                "title": "DEPRECATED - please use the pb:pacts relation. Pact between Web (1) and Provider",
+                "name": "Web"
+            }
+        ]
+    }
+}

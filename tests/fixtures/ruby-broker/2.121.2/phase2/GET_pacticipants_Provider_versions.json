@@ -1,0 +1,21 @@
+{
+    "_embedded": {
+        "versions": []
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacticipants/Provider/versions",
+            "title": "All application versions of Provider"
+        },
+        "pb:pacticipant": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Provider"
+        },
+        "pb:versions": [],
+        "pacticipant": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Deprecated - please use pb:pacticipant"
+        },
+        "versions": []
+    }
+}

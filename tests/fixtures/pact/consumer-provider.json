@@ -1,0 +1,43 @@
+{
+  "consumer": {
+    "name": "Consumer"
+  },
+  "provider": {
+    "name": "Provider"
+  },
+  "interactions": [
+    {
+      "description": "a request for an order",
+      "providerState": "an order exists",
+      "request": {
+        "method": "GET",
+        "path": "/orders/1"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": 1,
+          "status": "open"
+        }
+      }
+    },
+    {
+      "description": "a request for a missing order",
+      "request": {
+        "method": "GET",
+        "path": "/orders/999"
+      },
+      "response": {
+        "status": 404
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+    "_embedded": {
+        "integrations": [
+            {
+                "consumer": {
+                    "name": "Consumer"
+                },
+                "provider": {
+                    "name": "Provider"
+                },
+                "_links": {
+                    "pb:dashboard": {
+                        "title": "BETA: Pacts to show on the dashboard",
+                        "href": "http://localhost:9292/dashboard/provider/Provider/consumer/Consumer"
+                    },
+                    "pb:matrix": {
+                        "title": "Matrix of pacts/verification results for Consumer and Provider",
+                        "href": "/matrix/provider/Provider/consumer/Consumer"
+                    },
+                    "pb:group": {
+                        "href": "http://localhost:9292/pacticipants/Consumer"
+                    },
+                    "pb:delete_integration": {
+                        "title": "Delete the integration between Consumer and Provider",
+                        "href": "http://localhost:9292/integrations/provider/Provider/consumer/Consumer"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/integrations",
+            "title": "All integrations"
+        }
+    }
+}

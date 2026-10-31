@@ -1,0 +1,7 @@
+Updated Consumer version 1.0.0 with branch main and tags dev
+[32mPact successfully republished for Consumer version 1.0.0 and provider Provider with no content changes.[0m
+  View the published pact at [35mhttp://127.0.0.1:58664/pacts/provider/Provider/consumer/Consumer/version/1.0.0[0m
+  Events detected: contract_published
+[33m  Next steps:[0m
+[33m    * Add Pact verification tests to the Provider build. See [35mhttps://docs.pact.io/go/provider_verification[0m[0m
+[33m    * Configure separate Provider pact verification build and webhook to trigger it when the pact content changes. See [35mhttps://docs.pact.io/go/webhooks[0m[0m

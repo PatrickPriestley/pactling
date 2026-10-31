@@ -1,0 +1,10 @@
+[31mCannot change the content of the pact for Consumer version 1.0.0 and provider Provider, as race conditions will cause unreliable results for can-i-deploy. Each pact must be published with a unique consumer version number. Some Pact libraries generate random data when a concrete value for a type matcher is not specified, and this can cause the contract to mutate - ensure you have given example values for all type matchers. For more information see [35mhttps://docs.pact.io/go/versioning[0m[0m
+     {
+       "response": {
+         "body": {
+-          "status": "open"
++          "status": "closed"
+         }
+       }
+     },
+exit=1

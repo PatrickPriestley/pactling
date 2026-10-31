@@ -718,30 +718,193 @@ echo "phase 1 e2e: PASS"
 
 Expand into bite-sized tasks after the capture task, using the Phase 1 task format.
 
-### Task 2.1: Capture (probe first)
+### Task 2.1: Capture (done 2026-10-31)
 
-Against the Ruby broker, with `tests/fixtures/pact/consumer-provider.json` (a minimal pact v3 document, two interactions):
+Captured from Ruby broker 2.121.2 and pact-cli 16.1.2 (`pact-broker` CLI 1.77) into
+`tests/fixtures/ruby-broker/2.121.2/phase2/` and `tests/fixtures/cli/phase2/` by the Phase 2
+section of `scripts/capture-ruby-fixtures.sh`. The CLI's requests were recorded through
+`e2e/proxy.js`. Every claim below is verified against the real broker unless marked.
 
-1. `pact-broker publish tests/fixtures/pact --consumer-app-version 1.0.0 --branch main --tag dev` with `--verbose`; record every request the CLI makes (method, path, headers, body) and every response. The CLI uses `pb:publish-contracts` when the index advertises it.
-2. The legacy route: `curl -X PUT .../pacts/provider/Provider/consumer/Consumer/version/1.0.0` with the pact body; capture 201 and the 200 on a re-publish of identical content, and the 409 on different content for the same version.
-3. `GET` the pact by version, the latest pact, `pb:latest-pact-versions`, the pacticipant's versions list, the version document, a branch document, a tag document.
-4. pact-js 13 consumer test with `@pact-foundation/pact`'s `Publisher`, run against the Ruby broker; record its requests with a logging proxy (`mitmproxy` or a 20-line node http proxy in `e2e/proxy.js`).
+**Clients.** pact-js 13 has no `Publisher`; JavaScript consumers publish with the
+`pact-broker publish` CLI. The CLI does `GET /` then `POST /contracts/publish` with
+`{pacticipantName, pacticipantVersionNumber, tags: [..], branch?, buildUrl?, contracts:
+[{consumerName, providerName, specification: "pact", contentType: "application/json",
+content: <base64>}]}`, `Accept: application/hal+json`. `tags` is always present (maybe
+empty); `branch` only when given. It follows the index `self` href literally.
 
-### Task 2.2: Migrations for versions, branches, branch_versions, tags, pact_versions, pact_publications
+**publish-contracts responses (200 on success, even for a re-publish).** Body:
+`logs` (deprecated copies of the notices with `level` and `deprecationWarning: "Replaced
+by notices"`), `notices` (`{type, text}`), `_embedded.pacticipant` and `.version`, `_links`
+`pb:pacticipant`, `pb:pacticipant-version`, `pb:pacticipant-version-tags` (array, may be
+empty), `pb:contracts` (one per contract). Notices in order, per request:
+1. `debug` "Created|Updated {name} version {v}[ with branch {b}][ and tags {t, ..}]";
+   with tags but no branch: "with tags prod, test"; with neither: just "Created X version v".
+2. `prompt` "  Next steps:\n    Configure the version branch to be the value of your
+   repository branch." only when no branch was given.
+3. Then per contract: `success` "Pact successfully published for {c} version {v} and
+   provider {p}." or "... republished for ... with no content changes."; `debug` "  View the
+   published pact at {href}"; `debug` "  Events detected: contract_published[,
+   contract_content_changed] ({reasons})"; then the two webhook `prompt` lines (`"  Next
+   steps:"`, `"    * Add Pact verification tests to the {p} build. See
+   https://docs.pact.io/go/provider_verification"`, `"    * Configure separate {p} pact
+   verification build and webhook to trigger it when the pact content changes. See
+   https://docs.pact.io/go/webhooks"`).
+Event reasons: the previous pact is looked up per tag of the new consumer version, or
+once for "untagged" (consumer versions with no tags) when there are no tags. Per lookup:
+no previous → "first time any pact published for this consumer with consumer version
+tagged {t}" / "first time untagged pact published"; previous with different sha →
+"pact content has changed since the last consumer version tagged with {t}" (assumed
+wording, not captured) / "pact content has changed since previous untagged version";
+when nothing changed the single reason is "pact content is the same as previous versions
+with tags {tags joined ', '} and no new tags were applied" (two spaces when no tags) and
+the event list is just `contract_published`. Re-publishing an existing version with the
+same content gives "Events detected: contract_published" with no parenthesis.
+Branches are ignored by event detection (verified: branch-only publishes say "untagged").
 
-### Task 2.3: `pb:publish-contracts`
+**publish-contracts errors (400, `{"errors": {...}}`).** Missing fields: `"is missing"`
+per field; whitespace version: `"cannot be blank"`; wrong types: `"must be a string"`,
+`"must be an array"`; contract problems go under `contracts` with ` (at index N)`:
+`"is not valid Base64"`, `"content could not be parsed as application/json"`,
+`"consumer name in contract content ('X') must match consumerName in contract params ('Y')"`,
+`"consumerName ('Y') must match pacticipantName ('Z')"`, `"contentType must be one of:
+application/json"`, `"specification must be one of: pact"`. Unparseable body:
+`{"error": "JSON::ParserError - ..."}`. Empty `contracts` array is a Ruby 500; pactling
+returns 400 `contracts: ["cannot be empty"]` (deliberate difference). Changing the content
+of an existing consumer version is **409** with `notices` (an `error` notice with the long
+"Cannot change the content of the pact ..." text, plus an `info` notice holding a diff
+that pactling does not reproduce) and `errors.contracts` with the same text.
 
-Service function `publish_contracts(db, request) -> PublishResult` with unit tests for: new pacticipant created, version created with branch, same content re-published is idempotent, different content for same version without branch is a conflict, tags applied. Handler renders the captured response including its `notices` array and links.
+**Legacy `PUT /pacts/provider/{p}/consumer/{c}/version/{v}`.** 201 with the pact
+document on create, 200 on an identical re-publish, 409 `{"error": "Cannot change..."}`
+on different content, 400 `{"error": "JSON::ParserError - ..."}` on bad JSON, 400
+`{"errors": {"consumer.name": ["name in pact 'Other' does not match name in URL path
+'Consumer'."]}}` on a mismatch (case-sensitive). Missing names are filled from the URL.
+`HEAD` is 405, `OPTIONS` 200 with `access-control-allow-methods: GET, PUT, DELETE, PATCH,
+OPTIONS`, `DELETE` 200 with `{"_links": {"index": {..}, "pb:latest-pact-version": {..}}}`
+(404 when absent), `PATCH` without a JSON content type is 415.
 
-### Task 2.4: Legacy `PUT` publish
+**Pact document.** The stored JSON with `_id` added to every interaction and message,
+then `createdAt` and `_links` (self, pb:consumer, pb:consumer-version, pb:provider,
+pb:pact-version, pb:latest-pact-version, pb:all-pact-versions,
+pb:latest-untagged-pact-version, pb:latest-tagged-pact-version (templated),
+pb:previous-distinct, pb:diff-previous-distinct, pb:diff (templated), pb:pact-webhooks,
+pb:consumer-webhooks, pb:tag-prod-version (href ends `/tags/prod`, title says
+'production'), pb:tag-version, pb:publish-verification-results,
+pb:latest-verification-results, pb:triggered-webhooks, pb:matrix-for-consumer-version
+(query string percent-encoded `q%5B%5D%5Bpacticipant%5D=..&latestby=cvpv`), curies
+context=pact). Served as `application/hal+json` unless the client asks for exactly
+`application/json`. The same document is served by `/latest`, `/latest/{tag}`,
+`/latest-untagged`, `/pact-version/{sha}` and `/version/{v}`; `self` is always the
+`/version/{v}` href.
 
-### Task 2.5: Pact retrieval endpoints and version, branch and tag documents
+**Hashes (verified by recomputation).** Interaction `_id` = SHA-1 of the interaction
+serialised as compact JSON with object keys sorted recursively (`_id` excluded). Pact
+version sha = SHA-1 of compact, key-sorted JSON of `{"interactions": [...],
+"messages": [...], "pact_specification_version": "2.0.0"}` keeping only present keys, where
+the arrays are sorted by their compact key-sorted JSON string and contain no `_id`;
+`pact_specification_version` comes from `metadata.pactSpecification.version` (also
+`metadata.pact-specification.version` or `metadata.pactSpecificationVersion`, assumed).
+A pact with neither interactions nor messages hashes its whole key-sorted content.
 
-### Task 2.6: E2E `e2e/phase2_publish.sh` and `e2e/phase2_publish.test.js`
+**Versions, branches, tags.** Versions are ordered by creation (`order` column), newest
+first in lists. A version document has `number`, optional `buildUrl`, `updatedAt` only
+when updated, `createdAt`, `_embedded.branchVersions` (`{name, latest, _links.self}`) and
+`_embedded.tags`, links self, pb:pacticipant, pb:tag (templated),
+pb:latest-verification-results-where-pacticipant-is-consumer, pb:pact-versions (one per
+pact publication, ordered by provider name), and on the single-resource document only:
+pb:deployed-environments, pb:released-environments, pb:record-deployment,
+pb:record-release (empty arrays until Phase 4), curies context=version. `latest-version`
+and `latest-version/{tag}` and `branches/{b}/latest-version` return the version document
+with `self.href` equal to the request URL. Pacticipant documents gain
+`_embedded.latestVersion` plus a deprecated `latest-version` copy carrying `title` and
+`name` "DEPRECATED - please use latestVersion" once a version exists.
+`PUT /pacticipants/{p}/versions/{v}` creates (201, also the pacticipant) or updates (200,
+`buildUrl`). `PUT .../versions/{v}/tags/{t}` needs a JSON content type (else 415),
+creates the version if needed, 201 with `Location` or 200 when the tag exists; body
+`{name, createdAt, _links: {self, version, pacticipant}}`. `PUT
+.../branches/{b}/versions/{v}` likewise, body `{createdAt, _links: {self, pb:branch,
+pb:version}}`. Branch document `{name, [updatedAt], createdAt, _links: {self,
+pb:latest-version}}`; `/branches` is paged (`page: {number, size: 100, totalElements,
+totalPages}`) and ordered by name. Deletes return 204 (version, tag, branch-version,
+branch, pacticipant cascade) or the plain-JSON 404. Every unknown version, tag, branch or
+pact is the **plain JSON route 404** ("The requested document was not found on this
+server."); only an unknown pacticipant on `/pacticipants/{p}` is the HAL 404.
 
-CLI publish, pact-js `Publisher`, then `list-latest-pact-versions` shows the integration and `describe-version` shows branch and tag.
+**Ruby defaults reproduced.** `auto_detect_main_branch`: the first branch named
+`develop`, `main` or `master` becomes the pacticipant's `mainBranch` when it has none.
+`use_first_tag_as_branch` (10 s window): a tag put on a version that has no branch and was
+created less than 10 s earlier also creates a branch of that name (so
+`publish --tag prod` without `--branch` yields branch `prod`).
 
----
+**Lists.** `/pacts/latest`: `pacts` (top-level, not `_embedded`) ordered by consumer then
+provider name, each `{createdAt, _embedded: {consumer: {name, _embedded.version,
+_links.self}, provider: {name, _links.self}}, _links: {self: [latest href, version href]}}`;
+links `pb:pacts` and deprecated `pacts`, curies context=pacts. `/pacts/provider/{p}/...`
+lists have only `_links` (`self`, `pb:provider`, `pb:pacts` with `name` = consumer,
+deprecated `provider` and `pacts`). `/pacts/provider/{p}/consumer/{c}/versions`,
+`/tag/{t}`, `/branch/{b}` have `_embedded.pacts` (`{createdAt, _embedded.consumerVersion,
+_links.self}`) and links `consumer`/`provider`/`pact-versions` (the tag variant uses
+`pb:`-prefixed names). `/integrations` entries carry a relative `pb:matrix` href.
+
+### Task 2.2: Migration `0002_versions_and_pacts.sql`
+
+Tables `versions` (pacticipant_id, number, build_url, created_at, updated_at, UNIQUE
+pacticipant+number; `id` doubles as order), `branches` (pacticipant_id, name, created_at,
+updated_at), `branch_versions` (branch_id, version_id, created_at, UNIQUE), `tags`
+(version_id, name, created_at, UNIQUE), `pact_versions` (consumer_id, provider_id, sha,
+content, created_at, UNIQUE consumer+provider+sha), `pact_publications`
+(consumer_version_id, provider_id, pact_version_id, created_at, UNIQUE
+consumer_version+provider). All foreign keys `ON DELETE CASCADE`. Test: `tests/db.rs`
+inserts a version and deletes the pacticipant; the version is gone.
+
+### Task 2.3: Content hashing (`src/service/content.rs`)
+
+Pure functions `interaction_id(&Value) -> String`, `pact_version_sha(&Value) -> String`,
+`with_ids(Value) -> Value`. Unit tests assert the captured values:
+`72e9b4bb90f5cb675f1cea3e426b11616e6703a0` for the first fixture interaction,
+`0350e2d94a510324ee31cd7375bf1660e5d8c485` for the fixture pact,
+`ed7c1aebc3e11064ce9afc29297e1e36203583cd` for `{"interactions": []}`,
+`1d9541ef143e4acb6bad03910cd7cf2864b71473` for the three-interaction fixture.
+
+### Task 2.4: Versions, branches and tags (service + db + handlers)
+
+`service::versions`: `find_or_create_version`, `set_branch`, `add_tag` (with the 10 s
+first-tag-as-branch rule and main-branch auto-detection), deletes. Routes:
+`/pacticipants/{p}/versions`, `/versions/{v}` (GET, PUT, DELETE, OPTIONS),
+`/versions/{v}/tags/{t}` (GET, PUT, DELETE, OPTIONS), `/branches`, `/branches/{b}` (GET,
+DELETE), `/branches/{b}/versions/{v}` (GET, PUT, DELETE), `/branches/{b}/latest-version`,
+`/latest-version`, `/latest-version/{t}`. Fidelity tests compare against the phase2
+fixtures with hosts rewritten and timestamps stripped. Pacticipant documents embed the
+latest version.
+
+### Task 2.5: Publish (`service::publish`)
+
+`publish_contracts(db, request) -> Result<PublishOutcome>` and
+`publish_pact(db, consumer, provider, version, content) -> Result<(PactDocument, created)>`
+share one `store_pact` path: find/create pacticipants (display name defaulted as in
+Phase 1), version, branch, tags, pact_version by sha, pact_publication; 409 when the
+publication exists with another sha. `PublishOutcome` carries what the notices need
+(created vs updated version, per-contract created/republished, events with reasons).
+Handlers `POST /contracts/publish` and `PUT /pacts/provider/{p}/consumer/{c}/version/{v}`
+render the captured shapes; validation errors are collected into the `errors` object with
+the exact strings above. Unit tests cover every validation string and every event reason.
+
+### Task 2.6: Retrieval
+
+Pact document rendering (`src/http/pacts.rs`): by version, latest, latest/{tag},
+latest-untagged, pact-version/{sha}, DELETE; the `/pacts/latest` list; provider lists
+(`/pacts/provider/{p}`, `/latest`, `/latest/{tag}`, `/tag/{tag}`, `/branch`,
+`/branch/{b}`, `/branch/latest`, `/branch/{b}/latest`) and consumer-provider lists
+(`/versions`, `/tag/{t}`, `/branch/{b}`, `/branch/{b}/latest/versions`,
+`/branch/latest/versions`, `/branch/versions`); `/integrations`. Each compared to its
+fixture.
+
+### Task 2.7: E2E `e2e/phase2_publish.sh` and `e2e/consumer.test.js`
+
+A real pact-js 13 consumer test writes a pact into `e2e/pacts/`; `pact-broker publish`
+sends it with a branch and a tag; `list-latest-pact-versions`, `describe-version` and
+`create-version-tag` outputs match `tests/fixtures/cli/phase2/` (timestamps stripped);
+a second publish of changed content for the same version exits 1 with the 409 message.
 
 # Phase 3: Verification
 

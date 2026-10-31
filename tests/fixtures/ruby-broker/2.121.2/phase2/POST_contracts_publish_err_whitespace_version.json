@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "pacticipantVersionNumber": [
+            "cannot be blank"
+        ]
+    }
+}

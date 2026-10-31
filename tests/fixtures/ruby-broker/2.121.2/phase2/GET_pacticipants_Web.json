@@ -1,0 +1,85 @@
+{
+    "name": "Web",
+    "displayName": "Web",
+    "mainBranch": "main",
+    "updatedAt": "2026-10-31T05:28:26+00:00",
+    "createdAt": "2026-10-31T05:28:26+00:00",
+    "_embedded": {
+        "latestVersion": {
+            "number": "1",
+            "_links": {
+                "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://localhost:9292/pacticipants/Web/versions/1"
+                }
+            }
+        },
+        "labels": [],
+        "latest-version": {
+            "number": "1",
+            "_links": {
+                "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://localhost:9292/pacticipants/Web/versions/1"
+                }
+            },
+            "title": "DEPRECATED - please use latestVersion",
+            "name": "DEPRECATED - please use latestVersion"
+        }
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacticipants/Web"
+        },
+        "pb:versions": {
+            "href": "http://localhost:9292/pacticipants/Web/versions"
+        },
+        "pb:branches": {
+            "href": "http://localhost:9292/pacticipants/Web/branches"
+        },
+        "pb:deployed-environments": [],
+        "pb:version": {
+            "title": "Get, create or delete a pacticipant version",
+            "href": "http://localhost:9292/pacticipants/Web/versions/{version}",
+            "templated": true
+        },
+        "pb:version-tag": {
+            "title": "Get, create or delete a tag for a version of Web",
+            "href": "http://localhost:9292/pacticipants/Web/versions/{version}/tags/{tag}",
+            "templated": true
+        },
+        "pb:branch-version": {
+            "title": "Get or add/create a version for a branch of Web",
+            "href": "http://localhost:9292/pacticipants/Web/branches/{branch}/versions/{version}",
+            "templated": true
+        },
+        "pb:label": {
+            "title": "Get, create or delete a label for Web",
+            "href": "http://localhost:9292/pacticipants/Web/labels/{label}",
+            "templated": true
+        },
+        "versions": {
+            "title": "Deprecated - use pb:versions",
+            "href": "http://localhost:9292/pacticipants/Web/versions"
+        },
+        "pb:can-i-deploy-badge": {
+            "title": "Can I Deploy Web badge",
+            "href": "http://localhost:9292/pacticipants/Web/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+            "templated": true
+        },
+        "pb:can-i-deploy-branch-to-environment-badge": {
+            "title": "Can I Deploy Web from branch to environment badge",
+            "href": "http://localhost:9292/pacticipants/Web/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+            "templated": true
+        },
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                "templated": true
+            }
+        ]
+    }
+}

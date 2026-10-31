@@ -1,0 +1,17 @@
+{
+    "errors": {
+        "pacticipantName": [
+            "must be a string"
+        ],
+        "tags": [
+            "must be an array"
+        ],
+        "branch": [
+            "must be a string"
+        ],
+        "contracts": [
+            "contentType must be one of: application/json (at index 0)",
+            "specification must be one of: pact (at index 0)"
+        ]
+    }
+}

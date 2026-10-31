@@ -1,0 +1,110 @@
+{
+    "page": {
+        "number": 1,
+        "size": 100,
+        "totalElements": 5,
+        "totalPages": 1
+    },
+    "_embedded": {
+        "branches": [
+            {
+                "name": "release",
+                "createdAt": "2026-10-31T05:28:27+00:00",
+                "_links": {
+                    "self": {
+                        "title": "Branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/release"
+                    },
+                    "pb:latest-version": {
+                        "title": "Latest version for branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/release/latest-version"
+                    }
+                }
+            },
+            {
+                "name": "t1",
+                "createdAt": "2026-10-31T05:28:27+00:00",
+                "_links": {
+                    "self": {
+                        "title": "Branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/t1"
+                    },
+                    "pb:latest-version": {
+                        "title": "Latest version for branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/t1/latest-version"
+                    }
+                }
+            },
+            {
+                "name": "feat",
+                "createdAt": "2026-10-31T05:28:26+00:00",
+                "_links": {
+                    "self": {
+                        "title": "Branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/feat"
+                    },
+                    "pb:latest-version": {
+                        "title": "Latest version for branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/feat/latest-version"
+                    }
+                }
+            },
+            {
+                "name": "prod",
+                "createdAt": "2026-10-31T05:28:26+00:00",
+                "_links": {
+                    "self": {
+                        "title": "Branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/prod"
+                    },
+                    "pb:latest-version": {
+                        "title": "Latest version for branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/prod/latest-version"
+                    }
+                }
+            },
+            {
+                "name": "main",
+                "createdAt": "2026-10-31T05:28:25+00:00",
+                "_links": {
+                    "self": {
+                        "title": "Branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/main"
+                    },
+                    "pb:latest-version": {
+                        "title": "Latest version for branch",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/main/latest-version"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "title": "Consumer branches",
+            "href": "http://localhost:9292/pacticipants/Consumer/branches"
+        },
+        "pb:branches": [
+            {
+                "name": "release",
+                "href": "http://localhost:9292/pacticipants/Consumer/branches/release"
+            },
+            {
+                "name": "t1",
+                "href": "http://localhost:9292/pacticipants/Consumer/branches/t1"
+            },
+            {
+                "name": "feat",
+                "href": "http://localhost:9292/pacticipants/Consumer/branches/feat"
+            },
+            {
+                "name": "prod",
+                "href": "http://localhost:9292/pacticipants/Consumer/branches/prod"
+            },
+            {
+                "name": "main",
+                "href": "http://localhost:9292/pacticipants/Consumer/branches/main"
+            }
+        ]
+    }
+}

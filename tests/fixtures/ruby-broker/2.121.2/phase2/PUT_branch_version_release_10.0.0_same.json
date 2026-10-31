@@ -1,0 +1,19 @@
+{
+    "createdAt": "2026-10-31T05:28:27+00:00",
+    "_links": {
+        "self": {
+            "title": "Branch version",
+            "href": "http://localhost:9292/pacticipants/Consumer/branches/release/versions/10.0.0"
+        },
+        "pb:branch": {
+            "title": "Branch",
+            "name": "release",
+            "href": "http://localhost:9292/pacticipants/Consumer/branches/release"
+        },
+        "pb:version": {
+            "title": "Version",
+            "name": "10.0.0",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/10.0.0"
+        }
+    }
+}
