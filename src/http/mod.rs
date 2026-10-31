@@ -1,5 +1,10 @@
 pub mod base_url;
+pub mod environments;
 pub mod hal;
 pub mod index;
+pub mod integrations;
+pub mod matrix;
 pub mod method;
 pub mod pacticipants;
+pub mod pacts;
+pub mod webhooks;

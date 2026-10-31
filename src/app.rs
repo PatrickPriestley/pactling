@@ -22,6 +22,13 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
             "/pacticipants/{name}",
             get(http::pacticipants::get_pacticipant),
         )
+        .route("/pacticipants", get(http::pacticipants::list))
+        .route("/environments", get(http::environments::list))
+        .route("/webhooks", get(http::webhooks::list))
+        .route("/integrations", get(http::integrations::list))
+        .route("/pacts/latest", get(http::pacts::latest))
+        .route("/matrix", get(http::matrix::matrix))
+        .route("/can-i-deploy", get(http::matrix::can_i_deploy))
         .fallback(|| async { Error::NoRoute })
         .layer(SetResponseHeaderLayer::overriding(
             HeaderName::from_static("x-pact-broker-version"),
