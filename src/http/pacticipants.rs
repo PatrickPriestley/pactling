@@ -75,12 +75,17 @@ pub async fn resource(
         Method::PATCH => {
             let patch = Patch::from_json(&parse_body(&body)?);
             let saved = service::upsert(&state.db, &name, &patch).await?;
-            let status = if saved.created {
-                StatusCode::CREATED
-            } else {
-                StatusCode::OK
-            };
-            Ok((status, Hal(document(&saved.pacticipant, &l, true))).into_response())
+            let mut res = Hal(document(&saved.pacticipant, &l, true)).into_response();
+            if saved.created {
+                // Unlike POST, the PATCH Location is spelled correctly (verified).
+                *res.status_mut() = StatusCode::CREATED;
+                let location = l.href(&format!("/pacticipants/{}", encode(&name)));
+                res.headers_mut().insert(
+                    header::LOCATION,
+                    HeaderValue::from_str(&location).expect("ascii"),
+                );
+            }
+            Ok(res)
         }
         Method::PUT => {
             let patch = Patch::from_json(&parse_body(&body)?);

@@ -87,40 +87,33 @@ pub struct Saved {
 }
 
 /// Create-or-update, as `POST /pacticipants` and `PATCH /pacticipants/{name}` behave.
+/// One statement, so concurrent creates of the same name cannot collide.
 pub async fn upsert(db: &Db, name: &str, patch: &Patch) -> Result<Saved> {
-    match db.find_pacticipant(name).await? {
-        Some(_) => Ok(Saved {
-            pacticipant: apply_update(db, name, patch).await?,
-            created: false,
-        }),
-        None => {
-            let default = default_display_name(name);
-            let display_name = match &patch.display_name {
-                None => Some(default.as_str()),
-                Some(v) => v.as_deref(),
-            };
-            let pacticipant = db
-                .insert_pacticipant(
-                    name,
-                    display_name,
-                    patch.repository_url.as_ref().and_then(|v| v.as_deref()),
-                    patch.main_branch.as_ref().and_then(|v| v.as_deref()),
-                )
-                .await?;
-            Ok(Saved {
-                pacticipant,
-                created: true,
-            })
-        }
-    }
+    let (pacticipant, created) = db
+        .upsert_pacticipant(
+            name,
+            patch.display_name.as_ref().map(|v| v.as_deref()),
+            &default_display_name(name),
+            patch.repository_url.as_ref().map(|v| v.as_deref()),
+            patch.main_branch.as_ref().map(|v| v.as_deref()),
+        )
+        .await?;
+    Ok(Saved {
+        pacticipant,
+        created,
+    })
 }
 
 /// Update only, as `PUT /pacticipants/{name}` behaves: 404 when missing.
 pub async fn update(db: &Db, name: &str, patch: &Patch) -> Result<Pacticipant> {
-    if db.find_pacticipant(name).await?.is_none() {
-        return Err(not_found(name));
-    }
-    apply_update(db, name, patch).await
+    db.update_pacticipant(
+        name,
+        patch.display_name.as_ref().map(|v| v.as_deref()),
+        patch.repository_url.as_ref().map(|v| v.as_deref()),
+        patch.main_branch.as_ref().map(|v| v.as_deref()),
+    )
+    .await?
+    .ok_or_else(|| not_found(name))
 }
 
 pub async fn delete(db: &Db, name: &str) -> Result<()> {
@@ -139,17 +132,6 @@ pub async fn find(db: &Db, name: &str) -> Result<Pacticipant> {
 
 pub fn not_found(name: &str) -> Error {
     Error::NotFound(format!("No pacticipant with name '{name}' found"))
-}
-
-async fn apply_update(db: &Db, name: &str, patch: &Patch) -> Result<Pacticipant> {
-    Ok(db
-        .update_pacticipant(
-            name,
-            patch.display_name.as_ref().map(|v| v.as_deref()),
-            patch.repository_url.as_ref().map(|v| v.as_deref()),
-            patch.main_branch.as_ref().map(|v| v.as_deref()),
-        )
-        .await?)
 }
 
 #[cfg(test)]

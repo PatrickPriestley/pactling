@@ -30,6 +30,12 @@ unset PACT_BROKER_BASIC_AUTH_USERNAME PACT_BROKER_BASIC_AUTH_PASSWORD \
 for _ in $(seq 1 90); do curl -sf $B/ >/dev/null && break; sleep 1; done
 VERSION=$(curl -s -D - -o /dev/null $B/ | tr -d '\r' | awk -F': ' 'tolower($1)=="x-pact-broker-version"{print $2}')
 [ -n "$VERSION" ] || { echo "could not read x-pact-broker-version" >&2; exit 1; }
+EXPECTED_VERSION="${EXPECTED_BROKER_VERSION:-2.121.2}"
+[ "$VERSION" = "$EXPECTED_VERSION" ] || {
+  echo "Ruby broker is $VERSION but fixtures are for $EXPECTED_VERSION; update the image digest" \
+       "in scripts/ruby-broker/docker-compose.yml and EXPECTED_BROKER_VERSION together" >&2
+  exit 1
+}
 F="$OUT/ruby-broker/$VERSION"; A="$F/auth"; C="$OUT/cli"
 mkdir -p "$F" "$A" "$C"
 echo "Ruby broker version $VERSION, writing to $F"

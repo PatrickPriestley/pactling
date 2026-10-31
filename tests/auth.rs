@@ -196,3 +196,36 @@ async fn right_password_with_wrong_username_is_401() {
         assert_eq!(res.status(), 401, "{user}:{pass}");
     }
 }
+
+#[tokio::test]
+async fn incomplete_credentials_refuse_to_start() {
+    // A username without a password (or the reverse) must not silently open the broker.
+    for config in [
+        Config {
+            basic_auth_username: Some("rw".into()),
+            ..Config::in_memory()
+        },
+        Config {
+            basic_auth_password: Some("rwpass".into()),
+            ..Config::in_memory()
+        },
+        Config {
+            basic_auth_read_only_username: Some("ro".into()),
+            ..secured_rw_only()
+        },
+    ] {
+        let err = pactling::app::build(config.clone())
+            .await
+            .err()
+            .unwrap_or_else(|| panic!("expected startup failure for {config:?}"));
+        assert!(err.to_string().contains("password"), "{err}");
+    }
+}
+
+fn secured_rw_only() -> Config {
+    Config {
+        basic_auth_username: Some("rw".into()),
+        basic_auth_password: Some("rwpass".into()),
+        ..Config::in_memory()
+    }
+}

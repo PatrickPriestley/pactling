@@ -362,3 +362,60 @@ async fn head_is_405_with_allow_and_options_is_200() {
         .unwrap();
     assert_eq!(res.status(), 200);
 }
+
+#[tokio::test]
+async fn patch_create_sets_a_correctly_spelled_location_and_updates_do_not() {
+    let s = common::start().await;
+    let res = patch(&s, "Foo", json!({"displayName":"Foo Service"})).await;
+    assert_eq!(res.status(), 201);
+    assert_eq!(
+        res.headers()["location"],
+        format!("{}/pacticipants/Foo", s.base_url)
+    );
+    let res = patch(&s, "Foo", json!({"mainBranch":"main"})).await;
+    assert_eq!(res.status(), 200);
+    assert!(res.headers().get("location").is_none());
+    let res = s
+        .client
+        .put(format!("{}/pacticipants/Foo", s.base_url))
+        .header("content-type", JSON)
+        .json(&json!({"mainBranch":"main"}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(res.status(), 200);
+    assert!(res.headers().get("location").is_none());
+}
+
+#[tokio::test]
+async fn concurrent_creates_of_one_name_all_succeed() {
+    let s = common::start().await;
+    let client = s.client.clone();
+    let url = format!("{}/pacticipants", s.base_url);
+    let mut tasks = Vec::new();
+    for i in 0..32 {
+        let client = client.clone();
+        let url = url.clone();
+        tasks.push(tokio::spawn(async move {
+            client
+                .post(&url)
+                .header("content-type", JSON)
+                .json(&json!({"name":"Race","mainBranch":format!("b{i}")}))
+                .send()
+                .await
+                .unwrap()
+                .status()
+                .as_u16()
+        }));
+    }
+    let mut statuses = Vec::new();
+    for t in tasks {
+        statuses.push(t.await.unwrap());
+    }
+    assert!(
+        statuses.iter().all(|&st| st == 201),
+        "every concurrent POST must be 201, got {statuses:?}"
+    );
+    let body: Value = get(&s, "/pacticipants/Race").await.json().await.unwrap();
+    assert_eq!(body["name"], "Race");
+}

@@ -26,21 +26,33 @@ fn present(s: &Option<String>) -> Option<String> {
     s.as_deref().filter(|v| !v.is_empty()).map(str::to_owned)
 }
 
-fn pair(user: &Option<String>, pass: &Option<String>) -> Option<(String, String)> {
-    Some((present(user)?, present(pass)?))
+/// Both halves or neither: a username without a password would otherwise silently leave
+/// the broker open.
+fn pair(
+    what: &str,
+    user: &Option<String>,
+    pass: &Option<String>,
+) -> anyhow::Result<Option<(String, String)>> {
+    match (present(user), present(pass)) {
+        (Some(u), Some(p)) => Ok(Some((u, p))),
+        (None, None) => Ok(None),
+        (Some(_), None) => anyhow::bail!("{what} username is set but its password is not"),
+        (None, Some(_)) => anyhow::bail!("{what} password is set but its username is not"),
+    }
 }
 
 impl Credentials {
-    pub fn from_config(c: &Config) -> Self {
-        Self {
-            read_write: pair(&c.basic_auth_username, &c.basic_auth_password),
+    pub fn from_config(c: &Config) -> anyhow::Result<Self> {
+        Ok(Self {
+            read_write: pair("basic auth", &c.basic_auth_username, &c.basic_auth_password)?,
             read_only: pair(
+                "read-only basic auth",
                 &c.basic_auth_read_only_username,
                 &c.basic_auth_read_only_password,
-            ),
+            )?,
             allow_public_read: c.allow_public_read,
             bearer_token: present(&c.bearer_token),
-        }
+        })
     }
 
     pub fn enabled(&self) -> bool {

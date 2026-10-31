@@ -14,7 +14,9 @@ services:
       interval: 2s
       retries: 30
   pact-broker:
-    image: pactfoundation/pact-broker
+    # Pinned to the digest that reports x-pact-broker-version 2.121.2; the capture script
+    # asserts the version. Bump both together.
+    image: pactfoundation/pact-broker@sha256:420341d4fbfb00a621c313f47e530ad75703f969bbc7520d0d72bc71bb53cef9
     depends_on:
       postgres:
         condition: service_healthy

@@ -16,7 +16,7 @@ pub struct AppState {
 pub async fn build(config: Config) -> anyhow::Result<Router> {
     let db = Db::connect(&config.database_url).await?;
     db.migrate().await?;
-    let creds = Credentials::from_config(&config);
+    let creds = Credentials::from_config(&config)?;
     let state = AppState { db, config };
     Ok(Router::new()
         .route("/", any(http::index::index))
