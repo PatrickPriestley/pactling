@@ -1,0 +1,18 @@
+{
+    "_embedded": {
+        "pacticipants": []
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacticipants"
+        },
+        "pb:pacticipants-with-label": {
+            "title": "Find pacticipants by label",
+            "href": "http://localhost:9292/pacticipants/label/{label}",
+            "templated": true
+        },
+        "pb:pacticipants": [],
+        "pacticipants": []
+    },
+    "pacticipants": []
+}

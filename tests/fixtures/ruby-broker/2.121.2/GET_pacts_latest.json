@@ -1,0 +1,17 @@
+{
+    "pacts": [],
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/latest"
+        },
+        "pb:pacts": [],
+        "pacts": [],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/{rel}?context=pacts",
+                "templated": true
+            }
+        ]
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "_embedded": {
+        "integrations": []
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/integrations",
+            "title": "All integrations"
+        }
+    }
+}
