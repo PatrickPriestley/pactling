@@ -1,0 +1,691 @@
+{
+    "_embedded": {
+        "pacticipants": [
+            {
+                "name": "Bar",
+                "displayName": "Bar",
+                "repositoryUrl": "https://example.com/bar2",
+                "mainBranch": "trunk",
+                "updatedAt": "2026-10-31T02:54:30+00:00",
+                "createdAt": "2026-10-31T02:53:10+00:00",
+                "_embedded": {
+                    "labels": []
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/Bar"
+                    },
+                    "pb:versions": {
+                        "href": "http://localhost:9292/pacticipants/Bar/versions"
+                    },
+                    "pb:branches": {
+                        "href": "http://localhost:9292/pacticipants/Bar/branches"
+                    },
+                    "pb:version": {
+                        "title": "Get, create or delete a pacticipant version",
+                        "href": "http://localhost:9292/pacticipants/Bar/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:version-tag": {
+                        "title": "Get, create or delete a tag for a version of Bar",
+                        "href": "http://localhost:9292/pacticipants/Bar/versions/{version}/tags/{tag}",
+                        "templated": true
+                    },
+                    "pb:branch-version": {
+                        "title": "Get or add/create a version for a branch of Bar",
+                        "href": "http://localhost:9292/pacticipants/Bar/branches/{branch}/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:label": {
+                        "title": "Get, create or delete a label for Bar",
+                        "href": "http://localhost:9292/pacticipants/Bar/labels/{label}",
+                        "templated": true
+                    },
+                    "versions": {
+                        "title": "Deprecated - use pb:versions",
+                        "href": "http://localhost:9292/pacticipants/Bar/versions"
+                    },
+                    "pb:can-i-deploy-badge": {
+                        "title": "Can I Deploy Bar badge",
+                        "href": "http://localhost:9292/pacticipants/Bar/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                        "templated": true
+                    },
+                    "pb:can-i-deploy-branch-to-environment-badge": {
+                        "title": "Can I Deploy Bar from branch to environment badge",
+                        "href": "http://localhost:9292/pacticipants/Bar/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                        "templated": true
+                    },
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Baz",
+                "displayName": "Baz",
+                "repositoryUrl": "https://example.com/baz",
+                "mainBranch": "main",
+                "createdAt": "2026-10-31T02:53:44+00:00",
+                "_embedded": {
+                    "labels": []
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/Baz"
+                    },
+                    "pb:versions": {
+                        "href": "http://localhost:9292/pacticipants/Baz/versions"
+                    },
+                    "pb:branches": {
+                        "href": "http://localhost:9292/pacticipants/Baz/branches"
+                    },
+                    "pb:version": {
+                        "title": "Get, create or delete a pacticipant version",
+                        "href": "http://localhost:9292/pacticipants/Baz/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:version-tag": {
+                        "title": "Get, create or delete a tag for a version of Baz",
+                        "href": "http://localhost:9292/pacticipants/Baz/versions/{version}/tags/{tag}",
+                        "templated": true
+                    },
+                    "pb:branch-version": {
+                        "title": "Get or add/create a version for a branch of Baz",
+                        "href": "http://localhost:9292/pacticipants/Baz/branches/{branch}/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:label": {
+                        "title": "Get, create or delete a label for Baz",
+                        "href": "http://localhost:9292/pacticipants/Baz/labels/{label}",
+                        "templated": true
+                    },
+                    "versions": {
+                        "title": "Deprecated - use pb:versions",
+                        "href": "http://localhost:9292/pacticipants/Baz/versions"
+                    },
+                    "pb:can-i-deploy-badge": {
+                        "title": "Can I Deploy Baz badge",
+                        "href": "http://localhost:9292/pacticipants/Baz/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                        "templated": true
+                    },
+                    "pb:can-i-deploy-branch-to-environment-badge": {
+                        "title": "Can I Deploy Baz from branch to environment badge",
+                        "href": "http://localhost:9292/pacticipants/Baz/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                        "templated": true
+                    },
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Example App",
+                "displayName": "Example App",
+                "createdAt": "2026-10-31T02:54:30+00:00",
+                "_embedded": {
+                    "labels": []
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/Example%20App"
+                    },
+                    "pb:versions": {
+                        "href": "http://localhost:9292/pacticipants/Example%20App/versions"
+                    },
+                    "pb:branches": {
+                        "href": "http://localhost:9292/pacticipants/Example%20App/branches"
+                    },
+                    "pb:version": {
+                        "title": "Get, create or delete a pacticipant version",
+                        "href": "http://localhost:9292/pacticipants/Example%20App/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:version-tag": {
+                        "title": "Get, create or delete a tag for a version of Example App",
+                        "href": "http://localhost:9292/pacticipants/Example%20App/versions/{version}/tags/{tag}",
+                        "templated": true
+                    },
+                    "pb:branch-version": {
+                        "title": "Get or add/create a version for a branch of Example App",
+                        "href": "http://localhost:9292/pacticipants/Example%20App/branches/{branch}/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:label": {
+                        "title": "Get, create or delete a label for Example App",
+                        "href": "http://localhost:9292/pacticipants/Example%20App/labels/{label}",
+                        "templated": true
+                    },
+                    "versions": {
+                        "title": "Deprecated - use pb:versions",
+                        "href": "http://localhost:9292/pacticipants/Example%20App/versions"
+                    },
+                    "pb:can-i-deploy-badge": {
+                        "title": "Can I Deploy Example App badge",
+                        "href": "http://localhost:9292/pacticipants/Example%20App/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                        "templated": true
+                    },
+                    "pb:can-i-deploy-branch-to-environment-badge": {
+                        "title": "Can I Deploy Example App from branch to environment badge",
+                        "href": "http://localhost:9292/pacticipants/Example%20App/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                        "templated": true
+                    },
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "my-service_v2",
+                "displayName": "My Service V2",
+                "createdAt": "2026-10-31T02:54:30+00:00",
+                "_embedded": {
+                    "labels": []
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/my-service_v2"
+                    },
+                    "pb:versions": {
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/versions"
+                    },
+                    "pb:branches": {
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/branches"
+                    },
+                    "pb:version": {
+                        "title": "Get, create or delete a pacticipant version",
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:version-tag": {
+                        "title": "Get, create or delete a tag for a version of my-service_v2",
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/versions/{version}/tags/{tag}",
+                        "templated": true
+                    },
+                    "pb:branch-version": {
+                        "title": "Get or add/create a version for a branch of my-service_v2",
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/branches/{branch}/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:label": {
+                        "title": "Get, create or delete a label for my-service_v2",
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/labels/{label}",
+                        "templated": true
+                    },
+                    "versions": {
+                        "title": "Deprecated - use pb:versions",
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/versions"
+                    },
+                    "pb:can-i-deploy-badge": {
+                        "title": "Can I Deploy my-service_v2 badge",
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                        "templated": true
+                    },
+                    "pb:can-i-deploy-branch-to-environment-badge": {
+                        "title": "Can I Deploy my-service_v2 from branch to environment badge",
+                        "href": "http://localhost:9292/pacticipants/my-service_v2/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                        "templated": true
+                    },
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                            "templated": true
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Qux",
+                "displayName": "The Qux",
+                "repositoryUrl": "https://example.com/qux",
+                "mainBranch": "develop",
+                "createdAt": "2026-10-31T02:54:30+00:00",
+                "_embedded": {
+                    "labels": []
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/Qux"
+                    },
+                    "pb:versions": {
+                        "href": "http://localhost:9292/pacticipants/Qux/versions"
+                    },
+                    "pb:branches": {
+                        "href": "http://localhost:9292/pacticipants/Qux/branches"
+                    },
+                    "pb:version": {
+                        "title": "Get, create or delete a pacticipant version",
+                        "href": "http://localhost:9292/pacticipants/Qux/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:version-tag": {
+                        "title": "Get, create or delete a tag for a version of Qux",
+                        "href": "http://localhost:9292/pacticipants/Qux/versions/{version}/tags/{tag}",
+                        "templated": true
+                    },
+                    "pb:branch-version": {
+                        "title": "Get or add/create a version for a branch of Qux",
+                        "href": "http://localhost:9292/pacticipants/Qux/branches/{branch}/versions/{version}",
+                        "templated": true
+                    },
+                    "pb:label": {
+                        "title": "Get, create or delete a label for Qux",
+                        "href": "http://localhost:9292/pacticipants/Qux/labels/{label}",
+                        "templated": true
+                    },
+                    "versions": {
+                        "title": "Deprecated - use pb:versions",
+                        "href": "http://localhost:9292/pacticipants/Qux/versions"
+                    },
+                    "pb:can-i-deploy-badge": {
+                        "title": "Can I Deploy Qux badge",
+                        "href": "http://localhost:9292/pacticipants/Qux/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                        "templated": true
+                    },
+                    "pb:can-i-deploy-branch-to-environment-badge": {
+                        "title": "Can I Deploy Qux from branch to environment badge",
+                        "href": "http://localhost:9292/pacticipants/Qux/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                        "templated": true
+                    },
+                    "curies": [
+                        {
+                            "name": "pb",
+                            "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                            "templated": true
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacticipants"
+        },
+        "pb:pacticipants-with-label": {
+            "title": "Find pacticipants by label",
+            "href": "http://localhost:9292/pacticipants/label/{label}",
+            "templated": true
+        },
+        "pb:pacticipants": [
+            {
+                "href": "http://localhost:9292/pacticipants/Bar",
+                "title": "Pacticipant",
+                "name": "Bar"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Baz",
+                "title": "Pacticipant",
+                "name": "Baz"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Example%20App",
+                "title": "Pacticipant",
+                "name": "Example App"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/my-service_v2",
+                "title": "Pacticipant",
+                "name": "my-service_v2"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Qux",
+                "title": "Pacticipant",
+                "name": "Qux"
+            }
+        ],
+        "pacticipants": [
+            {
+                "href": "http://localhost:9292/pacticipants/Bar",
+                "title": "Bar",
+                "name": "DEPRECATED - please use pb:pacticipants"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Baz",
+                "title": "Baz",
+                "name": "DEPRECATED - please use pb:pacticipants"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Example%20App",
+                "title": "Example App",
+                "name": "DEPRECATED - please use pb:pacticipants"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/my-service_v2",
+                "title": "my-service_v2",
+                "name": "DEPRECATED - please use pb:pacticipants"
+            },
+            {
+                "href": "http://localhost:9292/pacticipants/Qux",
+                "title": "Qux",
+                "name": "DEPRECATED - please use pb:pacticipants"
+            }
+        ]
+    },
+    "pacticipants": [
+        {
+            "name": "Bar",
+            "displayName": "Bar",
+            "repositoryUrl": "https://example.com/bar2",
+            "mainBranch": "trunk",
+            "updatedAt": "2026-10-31T02:54:30+00:00",
+            "createdAt": "2026-10-31T02:53:10+00:00",
+            "title": "DEPRECATED - Please use the embedded pacticipants collection",
+            "_embedded": {
+                "labels": []
+            },
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/Bar"
+                },
+                "pb:versions": {
+                    "href": "http://localhost:9292/pacticipants/Bar/versions"
+                },
+                "pb:branches": {
+                    "href": "http://localhost:9292/pacticipants/Bar/branches"
+                },
+                "pb:version": {
+                    "title": "Get, create or delete a pacticipant version",
+                    "href": "http://localhost:9292/pacticipants/Bar/versions/{version}",
+                    "templated": true
+                },
+                "pb:version-tag": {
+                    "title": "Get, create or delete a tag for a version of Bar",
+                    "href": "http://localhost:9292/pacticipants/Bar/versions/{version}/tags/{tag}",
+                    "templated": true
+                },
+                "pb:branch-version": {
+                    "title": "Get or add/create a version for a branch of Bar",
+                    "href": "http://localhost:9292/pacticipants/Bar/branches/{branch}/versions/{version}",
+                    "templated": true
+                },
+                "pb:label": {
+                    "title": "Get, create or delete a label for Bar",
+                    "href": "http://localhost:9292/pacticipants/Bar/labels/{label}",
+                    "templated": true
+                },
+                "versions": {
+                    "title": "Deprecated - use pb:versions",
+                    "href": "http://localhost:9292/pacticipants/Bar/versions"
+                },
+                "pb:can-i-deploy-badge": {
+                    "title": "Can I Deploy Bar badge",
+                    "href": "http://localhost:9292/pacticipants/Bar/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                    "templated": true
+                },
+                "pb:can-i-deploy-branch-to-environment-badge": {
+                    "title": "Can I Deploy Bar from branch to environment badge",
+                    "href": "http://localhost:9292/pacticipants/Bar/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                    "templated": true
+                },
+                "curies": [
+                    {
+                        "name": "pb",
+                        "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                        "templated": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Baz",
+            "displayName": "Baz",
+            "repositoryUrl": "https://example.com/baz",
+            "mainBranch": "main",
+            "createdAt": "2026-10-31T02:53:44+00:00",
+            "title": "DEPRECATED - Please use the embedded pacticipants collection",
+            "_embedded": {
+                "labels": []
+            },
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/Baz"
+                },
+                "pb:versions": {
+                    "href": "http://localhost:9292/pacticipants/Baz/versions"
+                },
+                "pb:branches": {
+                    "href": "http://localhost:9292/pacticipants/Baz/branches"
+                },
+                "pb:version": {
+                    "title": "Get, create or delete a pacticipant version",
+                    "href": "http://localhost:9292/pacticipants/Baz/versions/{version}",
+                    "templated": true
+                },
+                "pb:version-tag": {
+                    "title": "Get, create or delete a tag for a version of Baz",
+                    "href": "http://localhost:9292/pacticipants/Baz/versions/{version}/tags/{tag}",
+                    "templated": true
+                },
+                "pb:branch-version": {
+                    "title": "Get or add/create a version for a branch of Baz",
+                    "href": "http://localhost:9292/pacticipants/Baz/branches/{branch}/versions/{version}",
+                    "templated": true
+                },
+                "pb:label": {
+                    "title": "Get, create or delete a label for Baz",
+                    "href": "http://localhost:9292/pacticipants/Baz/labels/{label}",
+                    "templated": true
+                },
+                "versions": {
+                    "title": "Deprecated - use pb:versions",
+                    "href": "http://localhost:9292/pacticipants/Baz/versions"
+                },
+                "pb:can-i-deploy-badge": {
+                    "title": "Can I Deploy Baz badge",
+                    "href": "http://localhost:9292/pacticipants/Baz/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                    "templated": true
+                },
+                "pb:can-i-deploy-branch-to-environment-badge": {
+                    "title": "Can I Deploy Baz from branch to environment badge",
+                    "href": "http://localhost:9292/pacticipants/Baz/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                    "templated": true
+                },
+                "curies": [
+                    {
+                        "name": "pb",
+                        "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                        "templated": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Example App",
+            "displayName": "Example App",
+            "createdAt": "2026-10-31T02:54:30+00:00",
+            "title": "DEPRECATED - Please use the embedded pacticipants collection",
+            "_embedded": {
+                "labels": []
+            },
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/Example%20App"
+                },
+                "pb:versions": {
+                    "href": "http://localhost:9292/pacticipants/Example%20App/versions"
+                },
+                "pb:branches": {
+                    "href": "http://localhost:9292/pacticipants/Example%20App/branches"
+                },
+                "pb:version": {
+                    "title": "Get, create or delete a pacticipant version",
+                    "href": "http://localhost:9292/pacticipants/Example%20App/versions/{version}",
+                    "templated": true
+                },
+                "pb:version-tag": {
+                    "title": "Get, create or delete a tag for a version of Example App",
+                    "href": "http://localhost:9292/pacticipants/Example%20App/versions/{version}/tags/{tag}",
+                    "templated": true
+                },
+                "pb:branch-version": {
+                    "title": "Get or add/create a version for a branch of Example App",
+                    "href": "http://localhost:9292/pacticipants/Example%20App/branches/{branch}/versions/{version}",
+                    "templated": true
+                },
+                "pb:label": {
+                    "title": "Get, create or delete a label for Example App",
+                    "href": "http://localhost:9292/pacticipants/Example%20App/labels/{label}",
+                    "templated": true
+                },
+                "versions": {
+                    "title": "Deprecated - use pb:versions",
+                    "href": "http://localhost:9292/pacticipants/Example%20App/versions"
+                },
+                "pb:can-i-deploy-badge": {
+                    "title": "Can I Deploy Example App badge",
+                    "href": "http://localhost:9292/pacticipants/Example%20App/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                    "templated": true
+                },
+                "pb:can-i-deploy-branch-to-environment-badge": {
+                    "title": "Can I Deploy Example App from branch to environment badge",
+                    "href": "http://localhost:9292/pacticipants/Example%20App/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                    "templated": true
+                },
+                "curies": [
+                    {
+                        "name": "pb",
+                        "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                        "templated": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "my-service_v2",
+            "displayName": "My Service V2",
+            "createdAt": "2026-10-31T02:54:30+00:00",
+            "title": "DEPRECATED - Please use the embedded pacticipants collection",
+            "_embedded": {
+                "labels": []
+            },
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/my-service_v2"
+                },
+                "pb:versions": {
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/versions"
+                },
+                "pb:branches": {
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/branches"
+                },
+                "pb:version": {
+                    "title": "Get, create or delete a pacticipant version",
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/versions/{version}",
+                    "templated": true
+                },
+                "pb:version-tag": {
+                    "title": "Get, create or delete a tag for a version of my-service_v2",
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/versions/{version}/tags/{tag}",
+                    "templated": true
+                },
+                "pb:branch-version": {
+                    "title": "Get or add/create a version for a branch of my-service_v2",
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/branches/{branch}/versions/{version}",
+                    "templated": true
+                },
+                "pb:label": {
+                    "title": "Get, create or delete a label for my-service_v2",
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/labels/{label}",
+                    "templated": true
+                },
+                "versions": {
+                    "title": "Deprecated - use pb:versions",
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/versions"
+                },
+                "pb:can-i-deploy-badge": {
+                    "title": "Can I Deploy my-service_v2 badge",
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                    "templated": true
+                },
+                "pb:can-i-deploy-branch-to-environment-badge": {
+                    "title": "Can I Deploy my-service_v2 from branch to environment badge",
+                    "href": "http://localhost:9292/pacticipants/my-service_v2/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                    "templated": true
+                },
+                "curies": [
+                    {
+                        "name": "pb",
+                        "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                        "templated": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Qux",
+            "displayName": "The Qux",
+            "repositoryUrl": "https://example.com/qux",
+            "mainBranch": "develop",
+            "createdAt": "2026-10-31T02:54:30+00:00",
+            "title": "DEPRECATED - Please use the embedded pacticipants collection",
+            "_embedded": {
+                "labels": []
+            },
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/Qux"
+                },
+                "pb:versions": {
+                    "href": "http://localhost:9292/pacticipants/Qux/versions"
+                },
+                "pb:branches": {
+                    "href": "http://localhost:9292/pacticipants/Qux/branches"
+                },
+                "pb:version": {
+                    "title": "Get, create or delete a pacticipant version",
+                    "href": "http://localhost:9292/pacticipants/Qux/versions/{version}",
+                    "templated": true
+                },
+                "pb:version-tag": {
+                    "title": "Get, create or delete a tag for a version of Qux",
+                    "href": "http://localhost:9292/pacticipants/Qux/versions/{version}/tags/{tag}",
+                    "templated": true
+                },
+                "pb:branch-version": {
+                    "title": "Get or add/create a version for a branch of Qux",
+                    "href": "http://localhost:9292/pacticipants/Qux/branches/{branch}/versions/{version}",
+                    "templated": true
+                },
+                "pb:label": {
+                    "title": "Get, create or delete a label for Qux",
+                    "href": "http://localhost:9292/pacticipants/Qux/labels/{label}",
+                    "templated": true
+                },
+                "versions": {
+                    "title": "Deprecated - use pb:versions",
+                    "href": "http://localhost:9292/pacticipants/Qux/versions"
+                },
+                "pb:can-i-deploy-badge": {
+                    "title": "Can I Deploy Qux badge",
+                    "href": "http://localhost:9292/pacticipants/Qux/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                    "templated": true
+                },
+                "pb:can-i-deploy-branch-to-environment-badge": {
+                    "title": "Can I Deploy Qux from branch to environment badge",
+                    "href": "http://localhost:9292/pacticipants/Qux/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                    "templated": true
+                },
+                "curies": [
+                    {
+                        "name": "pb",
+                        "href": "http://localhost:9292/doc/{rel}?context=pacticipant",
+                        "templated": true
+                    }
+                ]
+            }
+        }
+    ]
+}

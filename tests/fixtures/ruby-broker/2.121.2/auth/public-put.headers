@@ -1,0 +1,5 @@
+HTTP/1.1 401 Unauthorized
+content-type: text/plain
+www-authenticate: Basic realm="Restricted area"
+content-length: 0
+

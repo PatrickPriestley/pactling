@@ -11,8 +11,9 @@ pub fn method_not_allowed(allowed: &'static str) -> Response {
     res
 }
 
+/// The Ruby broker answers OPTIONS with 200 and an empty body.
 pub fn options(allowed: &'static str) -> Response {
-    let mut res = StatusCode::NO_CONTENT.into_response();
+    let mut res = StatusCode::OK.into_response();
     res.headers_mut()
         .insert(header::ALLOW, HeaderValue::from_static(allowed));
     res

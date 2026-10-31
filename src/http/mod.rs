@@ -1,3 +1,4 @@
+pub mod auth;
 pub mod base_url;
 pub mod environments;
 pub mod hal;

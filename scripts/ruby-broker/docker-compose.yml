@@ -1,0 +1,33 @@
+# The reference Ruby Pact broker, used only to capture fixtures and to probe behaviour.
+# Start:  docker compose -p pactling-probe -f scripts/ruby-broker/docker-compose.yml up -d
+# Reset:  docker compose -p pactling-probe -f scripts/ruby-broker/docker-compose.yml down -v
+# Auth:   export PACT_BROKER_BASIC_AUTH_USERNAME=rw PACT_BROKER_BASIC_AUTH_PASSWORD=rwpass ... then up -d --force-recreate
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: pactbroker
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pactbroker
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pactbroker"]
+      interval: 2s
+      retries: 30
+  pact-broker:
+    image: pactfoundation/pact-broker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PACT_BROKER_DATABASE_USERNAME: pactbroker
+      PACT_BROKER_DATABASE_PASSWORD: password
+      PACT_BROKER_DATABASE_HOST: postgres
+      PACT_BROKER_DATABASE_NAME: pactbroker
+      PACT_BROKER_SEED_EXAMPLE_DATA: "false"
+      PACT_BROKER_BASIC_AUTH_USERNAME: ${PACT_BROKER_BASIC_AUTH_USERNAME:-}
+      PACT_BROKER_BASIC_AUTH_PASSWORD: ${PACT_BROKER_BASIC_AUTH_PASSWORD:-}
+      PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME: ${PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME:-}
+      PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD: ${PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD:-}
+      PACT_BROKER_ALLOW_PUBLIC_READ: ${PACT_BROKER_ALLOW_PUBLIC_READ:-}
+    ports:
+      - "9292:9292"
