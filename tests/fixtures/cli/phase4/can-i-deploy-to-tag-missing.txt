@@ -1,0 +1,8 @@
+[31mComputer says no ¯\_(ツ)_/¯[0m
+
+CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS? | RESULT#
+---------|-----------|----------|-----------|----------|--------
+Consumer | 1.0.0     | Provider | ???       | ???      |        
+
+[31mThere is no verified pact between version 1.0.0 of Consumer and the latest version of Provider with tag prod (no such version exists)[0m
+exit=1

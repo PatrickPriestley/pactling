@@ -1,0 +1,82 @@
+{
+    "summary": {
+        "deployable": null,
+        "reason": "There is no verified pact between version 2.0.0 of Consumer and the version of Provider currently in test (1)",
+        "success": 0,
+        "failed": 0,
+        "unknown": 1
+    },
+    "notices": [
+        {
+            "type": "error",
+            "text": "There is no verified pact between version 2.0.0 of Consumer and the version of Provider currently in test (1)"
+        }
+    ],
+    "matrix": [
+        {
+            "consumer": {
+                "name": "Consumer",
+                "version": {
+                    "number": "2.0.0",
+                    "branch": "main",
+                    "branches": [
+                        {
+                            "name": "main",
+                            "latest": true,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "main",
+                                    "href": "http://localhost:9292/pacticipants/Consumer/branches/main/versions/2.0.0"
+                                }
+                            }
+                        }
+                    ],
+                    "branchVersions": [
+                        {
+                            "name": "main",
+                            "latest": true,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "main",
+                                    "href": "http://localhost:9292/pacticipants/Consumer/branches/main/versions/2.0.0"
+                                }
+                            }
+                        }
+                    ],
+                    "environments": [],
+                    "_links": {
+                        "self": {
+                            "href": "http://localhost:9292/pacticipants/Consumer/versions/2.0.0"
+                        }
+                    },
+                    "tags": []
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/Consumer"
+                    }
+                }
+            },
+            "provider": {
+                "name": "Provider",
+                "version": null,
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/Provider"
+                    }
+                }
+            },
+            "pact": {
+                "createdAt": "2026-10-31T13:05:21+00:00",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.0"
+                    }
+                }
+            },
+            "verificationResult": null
+        }
+    ]
+}

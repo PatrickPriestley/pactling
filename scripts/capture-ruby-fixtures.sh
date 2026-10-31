@@ -398,4 +398,145 @@ cap3 GET_pacticipants_Provider_versions "${J[@]}" "$B/pacticipants/Provider/vers
 cap3 GET_pact_1.0.0_after_verification "${J[@]}" "$B/pacts/provider/Provider/consumer/Consumer/version/1.0.0"
 for p in "verification-results" "verification-results/1" "verification-results/latest"; do cap3 "OPTIONS_$(echo "$p" | tr '/' '_')" -X OPTIONS "$PV/$p"; done
 "$PB" describe-version --pacticipant Provider --version 1 --broker-base-url $B > "$C3/describe-version-Provider-1.txt" 2>&1 || true
+
+# ---------------------------------------------------------------------------------------
+# Phase 4: environments, deployments, releases, matrix and can-i-deploy. Fresh broker;
+# CLI commands run through the proxy; matrix documents are captured with curl using the
+# exact query strings the CLI sends.
+# ---------------------------------------------------------------------------------------
+echo "phase 4: resetting the Ruby broker"
+"${COMPOSE[@]}" down -v >/dev/null 2>&1 || true
+"${COMPOSE[@]}" up -d >/dev/null 2>&1
+for _ in $(seq 1 90); do curl -sf $B/ >/dev/null && break; sleep 1; done
+F4="$F/phase4"; C4="$C/phase4"; mkdir -p "$F4" "$C4"
+cap4() { local n=$1; shift; curl -s -D "$F4/$n.json.headers" "$@" | pretty > "$F4/$n.json"; }
+cli4() { # <name> <cli args...>: runs the CLI through the proxy, keeping stdout and the traffic
+  local n=$1; shift
+  local port; port=$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1])')
+  node "$ROOT/e2e/proxy.js" "$port" $B "$C4/$n.jsonl" & local pid=$!
+  trap 'kill '"$pid"' 2>/dev/null; rm -rf "$TMP"' EXIT
+  sleep 0.4
+  set +e; "$PB" "$@" --broker-base-url "http://127.0.0.1:$port" > "$C4/$n.txt" 2>&1; echo "exit=$?" >> "$C4/$n.txt"; set -e
+  kill $pid 2>/dev/null || true; wait $pid 2>/dev/null || true
+  trap 'rm -rf "$TMP"' EXIT
+}
+matrix4() { cap4 "GET_matrix_$1" "${J[@]}" "$B/matrix?$2"; }
+mkdir -p "$TMP/p1" "$TMP/p2" "$TMP/web"; cp "$PACT" "$TMP/p1/"; cp "$TMP/changed/consumer-provider.json" "$TMP/p2/"; cp "$TMP/web-provider.json" "$TMP/web/"
+"$PB" publish "$TMP/p1" --consumer-app-version 1.0.0 --branch main --tag dev --broker-base-url $B >/dev/null
+"$PB" publish "$TMP/web" --consumer-app-version 1 --branch main --broker-base-url $B >/dev/null
+BROKER=$B PROVIDER_VERSION=1 PROVIDER_BRANCH=main node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
+
+echo "phase 4: environments"
+cli4 create-environment-test create-environment --name test --display-name "Test" --no-production
+cli4 create-environment-production create-environment --name production --display-name "Production" --production --contact-name "Ops" --contact-email-address ops@example.com
+cli4 create-environment-duplicate create-environment --name test
+cli4 list-environments list-environments
+cli4 list-environments-json list-environments --output json
+TEST_UUID=$(sed '/^exit=/d' "$C4/list-environments-json.txt" | python3 -c 'import json,sys; d=json.load(sys.stdin); print([e["uuid"] for e in d["_embedded"]["environments"] if e["name"]=="test"][0])')
+PROD_UUID=$(sed '/^exit=/d' "$C4/list-environments-json.txt" | python3 -c 'import json,sys; d=json.load(sys.stdin); print([e["uuid"] for e in d["_embedded"]["environments"] if e["name"]=="production"][0])')
+cli4 describe-environment describe-environment --uuid "$TEST_UUID"
+cli4 update-environment update-environment --uuid "$TEST_UUID" --display-name "Test env" --contact-name "QA"
+cap4 GET_environments "${J[@]}" "$B/environments"
+cap4 GET_environment_test "${J[@]}" "$B/environments/$TEST_UUID"
+cap4 GET_environment_unknown "${J[@]}" "$B/environments/00000000-0000-0000-0000-000000000000"
+cap4 POST_environments_err_empty "${J[@]}" -X POST -d '{}' "$B/environments"
+cap4 POST_environments_err_types "${J[@]}" -X POST -d '{"name":"bad name!","production":"yes"}' "$B/environments"
+cap4 POST_environments_err_no_production "${J[@]}" -X POST -d '{"name":"ok","displayName":""}' "$B/environments"
+cap4 PUT_environment_unknown "${J[@]}" -X PUT -d '{"name":"x","production":false}' "$B/environments/00000000-0000-0000-0000-000000000000"
+for p in "environments" "environments/$TEST_UUID"; do cap4 "OPTIONS_$(echo "$p" | tr '/' '_' | sed "s/$TEST_UUID/uuid/")" -X OPTIONS "$B/$p"; done
+
+echo "phase 4: deployments and releases"
+cli4 record-deployment-provider record-deployment --pacticipant Provider --version 1 --environment test
+cli4 record-deployment-consumer record-deployment --pacticipant Consumer --version 1.0.0 --environment test
+cli4 record-deployment-again record-deployment --pacticipant Consumer --version 1.0.0 --environment test
+cli4 record-deployment-unknown-environment record-deployment --pacticipant Consumer --version 1.0.0 --environment nope
+cli4 record-deployment-unknown-version record-deployment --pacticipant Consumer --version 9.9.9 --environment test
+cli4 record-deployment-instance record-deployment --pacticipant Web --version 1 --environment test --application-instance blue
+cap4 GET_pacticipants_Consumer_versions_1.0.0 "${J[@]}" "$B/pacticipants/Consumer/versions/1.0.0"
+cap4 GET_currently-deployed "${J[@]}" "$B/environments/$TEST_UUID/deployed-versions/currently-deployed"
+cap4 GET_currently-deployed_consumer "${J[@]}" "$B/environments/$TEST_UUID/deployed-versions/currently-deployed?pacticipant=Consumer"
+cap4 GET_currently-supported_empty "${J[@]}" "$B/environments/$TEST_UUID/released-versions/currently-supported"
+DV=$(python3 -c 'import json; d=json.load(open("'"$F4"'/GET_currently-deployed_consumer.json")); print(d["_embedded"]["deployedVersions"][0]["uuid"])')
+cap4 GET_deployed-version "${J[@]}" "$B/deployed-versions/$DV"
+cap4 GET_deployed-version_unknown "${J[@]}" "$B/deployed-versions/00000000-0000-0000-0000-000000000000"
+cap4 POST_deployed-version_unknown_version "${J[@]}" -X POST -d '{}' "$B/pacticipants/Consumer/versions/9.9.9/deployed-versions/environment/$TEST_UUID"
+cap4 POST_deployed-version_unknown_environment "${J[@]}" -X POST -d '{}' "$B/pacticipants/Consumer/versions/1.0.0/deployed-versions/environment/00000000-0000-0000-0000-000000000000"
+cap4 OPTIONS_deployed-version -X OPTIONS "$B/deployed-versions/$DV"
+cap4 OPTIONS_currently-deployed -X OPTIONS "$B/environments/$TEST_UUID/deployed-versions/currently-deployed"
+cap4 OPTIONS_record-deployment -X OPTIONS "$B/pacticipants/Consumer/versions/1.0.0/deployed-versions/environment/$TEST_UUID"
+
+echo "phase 4: can-i-deploy"
+cli4 can-i-deploy-yes can-i-deploy --pacticipant Consumer --version 1.0.0 --to-environment test
+cli4 can-i-deploy-yes-json can-i-deploy --pacticipant Consumer --version 1.0.0 --to-environment test --output json
+matrix4 consumer_1.0.0_test 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvp&environment=test'
+"$PB" publish "$TMP/p2" --consumer-app-version 2.0.0 --branch main --broker-base-url $B >/dev/null
+cli4 can-i-deploy-unverified can-i-deploy --pacticipant Consumer --version 2.0.0 --to-environment test
+matrix4 consumer_2.0.0_test_unverified 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=2.0.0&latestby=cvp&environment=test'
+# provider v2 on main fails everything it verifies; then provider v1 verifies 2.0.0 and fails (its answers fit 1.0.0 only)
+BROKER=$B PROVIDER_VERSION=2 PROVIDER_BRANCH=main FAIL=true node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
+BROKER=$B PROVIDER_VERSION=1 PROVIDER_BRANCH=main 'SELECTORS=[{"branch":"main"}]' node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
+cli4 can-i-deploy-failed can-i-deploy --pacticipant Consumer --version 2.0.0 --to-environment test
+matrix4 consumer_2.0.0_test_failed 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=2.0.0&latestby=cvp&environment=test'
+cli4 can-i-deploy-provider-yes can-i-deploy --pacticipant Provider --version 1 --to-environment test
+matrix4 provider_1_test 'q%5B%5D%5Bpacticipant%5D=Provider&q%5B%5D%5Bversion%5D=1&latestby=cvp&environment=test'
+cli4 can-i-deploy-provider-failed can-i-deploy --pacticipant Provider --version 2 --to-environment test
+matrix4 provider_2_test 'q%5B%5D%5Bpacticipant%5D=Provider&q%5B%5D%5Bversion%5D=2&latestby=cvp&environment=test'
+cli4 can-i-deploy-unknown-version can-i-deploy --pacticipant Consumer --version 9.9.9 --to-environment test
+matrix4 consumer_9.9.9_test 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=9.9.9&latestby=cvp&environment=test'
+matrix4 unknown_environment 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvp&environment=nope'
+matrix4 unknown_pacticipant 'q%5B%5D%5Bpacticipant%5D=Nope&q%5B%5D%5Bversion%5D=1&latestby=cvp&environment=test'
+cli4 can-i-deploy-no-to can-i-deploy --pacticipant Consumer --version 1.0.0
+matrix4 consumer_1.0.0_latest 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvp&latest=true'
+cli4 can-i-deploy-main-branch can-i-deploy --pacticipant Consumer --main-branch --to-environment test
+matrix4 consumer_main_branch_test 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&latestby=cvp&environment=test'
+cli4 can-i-deploy-latest-tag can-i-deploy --pacticipant Consumer --latest dev --to-environment test
+matrix4 consumer_latest_dev_test 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=dev&latestby=cvp&environment=test'
+cli4 can-i-deploy-branch can-i-deploy --pacticipant Consumer --branch main --to-environment test
+matrix4 consumer_branch_main_test 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bbranch%5D=main&latestby=cvp&environment=test'
+cli4 can-i-deploy-to-tag-missing can-i-deploy --pacticipant Consumer --version 1.0.0 --to prod
+matrix4 consumer_1.0.0_to_prod_missing 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvp&latest=true&tag=prod'
+"$PB" create-version-tag --pacticipant Provider --version 1 --tag prod --broker-base-url $B >/dev/null
+cli4 can-i-deploy-to-tag can-i-deploy --pacticipant Consumer --version 1.0.0 --to prod
+matrix4 consumer_1.0.0_to_prod 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvp&latest=true&tag=prod'
+cli4 can-i-deploy-two can-i-deploy --pacticipant Consumer --version 1.0.0 --pacticipant Provider --version 1
+matrix4 consumer_1.0.0_provider_1 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&q%5B%5D%5Bpacticipant%5D=Provider&q%5B%5D%5Bversion%5D=1&latestby=cvpv'
+matrix4 consumer_1.0.0_provider_2 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&q%5B%5D%5Bpacticipant%5D=Provider&q%5B%5D%5Bversion%5D=2&latestby=cvpv'
+cli4 can-i-deploy-ignore can-i-deploy --pacticipant Consumer --version 2.0.0 --to-environment test --ignore Provider
+matrix4 consumer_2.0.0_test_ignore_provider 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=2.0.0&latestby=cvp&environment=test&ignore%5B%5D%5Bpacticipant%5D=Provider'
+cli4 can-i-deploy-dry-run can-i-deploy --pacticipant Consumer --version 9.9.9 --to-environment test --dry-run
+cli4 can-i-deploy-empty-environment can-i-deploy --pacticipant Consumer --version 1.0.0 --to-environment production
+matrix4 consumer_1.0.0_production_empty 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvp&environment=production'
+matrix4 consumer_1.0.0_no_latestby 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0'
+matrix4 consumer_only 'q%5B%5D%5Bpacticipant%5D=Consumer'
+cap4 GET_matrix_integration "${J[@]}" "$B/matrix/provider/Provider/consumer/Consumer"
+cap4 GET_can-i-deploy_environment "${J[@]}" "$B/can-i-deploy?pacticipant=Consumer&version=1.0.0&environment=test"
+cap4 GET_can-i-deploy_to_tag "${J[@]}" "$B/can-i-deploy?pacticipant=Consumer&version=1.0.0&to=prod"
+cap4 OPTIONS_matrix -X OPTIONS "$B/matrix"
+cap4 POST_for-verification_deployed "${J[@]}" -X POST -d '{"consumerVersionSelectors":[{"deployed":true}]}' "$B/pacts/provider/Provider/for-verification"
+cap4 POST_for-verification_deployedOrReleased "${J[@]}" -X POST -d '{"consumerVersionSelectors":[{"deployedOrReleased":true}]}' "$B/pacts/provider/Provider/for-verification"
+cap4 POST_for-verification_environment "${J[@]}" -X POST -d '{"consumerVersionSelectors":[{"environment":"test"}]}' "$B/pacts/provider/Provider/for-verification"
+cap4 GET_for-verification_with_deployments "${J[@]}" "$B/pacts/provider/Provider/for-verification"
+
+echo "phase 4: releases, support ended, undeployment"
+cli4 record-release record-release --pacticipant Consumer --version 1.0.0 --environment production
+cli4 record-release-again record-release --pacticipant Consumer --version 1.0.0 --environment production
+cap4 GET_currently-supported "${J[@]}" "$B/environments/$PROD_UUID/released-versions/currently-supported"
+cap4 GET_currently-supported_filtered "${J[@]}" "$B/environments/$PROD_UUID/released-versions/currently-supported?pacticipant=Consumer&version=1.0.0"
+RV=$(python3 -c 'import json; d=json.load(open("'"$F4"'/GET_currently-supported.json")); print(d["_embedded"]["releasedVersions"][0]["uuid"])')
+cap4 GET_released-version "${J[@]}" "$B/released-versions/$RV"
+cap4 POST_for-verification_released "${J[@]}" -X POST -d '{"consumerVersionSelectors":[{"released":true}]}' "$B/pacts/provider/Provider/for-verification"
+cap4 GET_pacticipants_Consumer_versions_1.0.0_released "${J[@]}" "$B/pacticipants/Consumer/versions/1.0.0"
+cli4 record-support-ended record-support-ended --pacticipant Consumer --version 1.0.0 --environment production
+cli4 record-support-ended-again record-support-ended --pacticipant Consumer --version 1.0.0 --environment production
+cli4 record-undeployment record-undeployment --pacticipant Consumer --environment test
+cli4 record-undeployment-again record-undeployment --pacticipant Consumer --environment test
+cli4 record-undeployment-instance record-undeployment --pacticipant Web --environment test --application-instance blue
+cli4 record-deployment-newer record-deployment --pacticipant Consumer --version 2.0.0 --environment test
+cap4 GET_pacticipants_Consumer_versions_1.0.0_after "${J[@]}" "$B/pacticipants/Consumer/versions/1.0.0"
+cap4 GET_pacticipants_Consumer_versions_2.0.0_after "${J[@]}" "$B/pacticipants/Consumer/versions/2.0.0"
+cap4 GET_currently-deployed_after "${J[@]}" "$B/environments/$TEST_UUID/deployed-versions/currently-deployed"
+cap4 GET_deployed-version_undeployed "${J[@]}" "$B/deployed-versions/$DV"
+cap4 GET_released-version_support_ended "${J[@]}" "$B/released-versions/$RV"
+cli4 delete-environment delete-environment --uuid "$PROD_UUID"
+cap4 GET_environments_after_delete "${J[@]}" "$B/environments"
 echo "done: $(find "$F" "$C" -type f | wc -l | tr -d ' ') files"

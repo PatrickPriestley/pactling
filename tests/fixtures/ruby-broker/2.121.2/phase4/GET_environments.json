@@ -1,0 +1,90 @@
+{
+    "_embedded": {
+        "environments": [
+            {
+                "uuid": "3e8d1b77-a308-427f-bb0d-651aafa8516f",
+                "name": "production",
+                "displayName": "Production",
+                "production": true,
+                "contacts": [
+                    {
+                        "name": "Ops",
+                        "details": {
+                            "emailAddress": "ops@example.com"
+                        }
+                    }
+                ],
+                "createdAt": "2026-10-31T13:05:09+00:00",
+                "_links": {
+                    "self": {
+                        "title": "Environment",
+                        "name": "production",
+                        "href": "http://localhost:9292/environments/3e8d1b77-a308-427f-bb0d-651aafa8516f"
+                    },
+                    "pb:currently-deployed-deployed-versions": {
+                        "title": "Versions currently deployed to Production environment",
+                        "href": "http://localhost:9292/environments/3e8d1b77-a308-427f-bb0d-651aafa8516f/deployed-versions/currently-deployed"
+                    },
+                    "pb:currently-supported-released-versions": {
+                        "title": "Versions released and supported in Production environment",
+                        "href": "http://localhost:9292/environments/3e8d1b77-a308-427f-bb0d-651aafa8516f/released-versions/currently-supported"
+                    },
+                    "pb:environments": {
+                        "title": "Environments",
+                        "href": "http://localhost:9292/environments"
+                    }
+                }
+            },
+            {
+                "uuid": "9ce2bb2b-b78a-48ab-96df-672119a79d72",
+                "name": "test",
+                "displayName": "Test env",
+                "production": false,
+                "contacts": [
+                    {
+                        "name": "QA"
+                    }
+                ],
+                "updatedAt": "2026-10-31T13:05:14+00:00",
+                "createdAt": "2026-10-31T13:05:09+00:00",
+                "_links": {
+                    "self": {
+                        "title": "Environment",
+                        "name": "test",
+                        "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72"
+                    },
+                    "pb:currently-deployed-deployed-versions": {
+                        "title": "Versions currently deployed to Test env environment",
+                        "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72/deployed-versions/currently-deployed"
+                    },
+                    "pb:currently-supported-released-versions": {
+                        "title": "Versions released and supported in Test env environment",
+                        "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72/released-versions/currently-supported"
+                    },
+                    "pb:environments": {
+                        "title": "Environments",
+                        "href": "http://localhost:9292/environments"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "title": "Environments",
+            "href": "http://localhost:9292/environments"
+        },
+        "pb:environments": [
+            {
+                "title": "Environment",
+                "name": "production",
+                "href": "http://localhost:9292/environments/3e8d1b77-a308-427f-bb0d-651aafa8516f"
+            },
+            {
+                "title": "Environment",
+                "name": "test",
+                "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72"
+            }
+        ]
+    }
+}

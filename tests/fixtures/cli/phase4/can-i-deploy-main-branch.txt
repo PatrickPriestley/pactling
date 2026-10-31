@@ -1,0 +1,9 @@
+[31mComputer says no ¯\_(ツ)_/¯[0m
+
+CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS? | RESULT#
+---------|-----------|----------|-----------|----------|--------
+Consumer | 2.0.0     | Provider | ???       | ???      |        
+
+[33mWARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.[0m
+[31mThere is no verified pact between the latest version of Consumer from branch main (2.0.0) and the version of Provider currently in test (1)[0m
+exit=1

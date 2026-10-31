@@ -1,0 +1,2 @@
+[32mUpdated test environment in the Pact Broker[0m
+exit=0

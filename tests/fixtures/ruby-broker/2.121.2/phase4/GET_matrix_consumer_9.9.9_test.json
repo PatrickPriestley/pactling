@@ -1,0 +1,16 @@
+{
+    "summary": {
+        "deployable": false,
+        "reason": "No pacts or verifications have been published for version 9.9.9 of Consumer",
+        "success": 0,
+        "failed": 0,
+        "unknown": 0
+    },
+    "notices": [
+        {
+            "type": "error",
+            "text": "No pacts or verifications have been published for version 9.9.9 of Consumer"
+        }
+    ],
+    "matrix": []
+}

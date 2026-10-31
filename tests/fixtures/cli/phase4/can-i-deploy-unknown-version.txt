@@ -1,0 +1,4 @@
+[31mComputer says no ¯\_(ツ)_/¯[0m
+
+[31mNo pacts or verifications have been published for version 9.9.9 of Consumer[0m
+exit=1

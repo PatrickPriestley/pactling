@@ -1,0 +1,108 @@
+{
+    "summary": {
+        "deployable": null,
+        "reason": "There is no verified pact between version 1.0.0 of Consumer and the latest version of Provider with tag prod (no such version exists)",
+        "success": 0,
+        "failed": 0,
+        "unknown": 1
+    },
+    "notices": [
+        {
+            "type": "error",
+            "text": "There is no verified pact between version 1.0.0 of Consumer and the latest version of Provider with tag prod (no such version exists)"
+        }
+    ],
+    "matrix": [
+        {
+            "consumer": {
+                "name": "Consumer",
+                "version": {
+                    "number": "1.0.0",
+                    "branch": "main",
+                    "branches": [
+                        {
+                            "name": "main",
+                            "latest": false,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "main",
+                                    "href": "http://localhost:9292/pacticipants/Consumer/branches/main/versions/1.0.0"
+                                }
+                            }
+                        }
+                    ],
+                    "branchVersions": [
+                        {
+                            "name": "main",
+                            "latest": false,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "main",
+                                    "href": "http://localhost:9292/pacticipants/Consumer/branches/main/versions/1.0.0"
+                                }
+                            }
+                        }
+                    ],
+                    "environments": [
+                        {
+                            "uuid": "9ce2bb2b-b78a-48ab-96df-672119a79d72",
+                            "name": "test",
+                            "displayName": "Test env",
+                            "production": false,
+                            "updatedAt": "2026-10-31T13:05:14+00:00",
+                            "createdAt": "2026-10-31T13:05:09+00:00",
+                            "_links": {
+                                "self": {
+                                    "title": "Environment",
+                                    "name": "test",
+                                    "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72"
+                                }
+                            }
+                        }
+                    ],
+                    "_links": {
+                        "self": {
+                            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0"
+                        }
+                    },
+                    "tags": [
+                        {
+                            "name": "dev",
+                            "latest": true,
+                            "_links": {
+                                "self": {
+                                    "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/tags/dev"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/Consumer"
+                    }
+                }
+            },
+            "provider": {
+                "name": "Provider",
+                "version": null,
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacticipants/Provider"
+                    }
+                }
+            },
+            "pact": {
+                "createdAt": "2026-10-31T13:05:05+00:00",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0"
+                    }
+                }
+            },
+            "verificationResult": null
+        }
+    ]
+}

@@ -153,10 +153,44 @@ pub fn version_document(
         .collect();
     links.insert("pb:pact-versions".into(), Value::Array(pacts));
     if single {
-        links.insert("pb:deployed-environments".into(), json!([]));
-        links.insert("pb:released-environments".into(), json!([]));
-        links.insert("pb:record-deployment".into(), json!([]));
-        links.insert("pb:record-release".into(), json!([]));
+        let display = |e: &crate::db::environments::Environment| {
+            e.display_name.clone().unwrap_or_else(|| e.name.clone())
+        };
+        let deployed: Vec<Value> = d
+            .deployments
+            .iter()
+            .map(|(dv, e)| json!({
+                "title": format!("Version deployed to {}", display(e)), "name": display(e),
+                "href": l.href(&format!("/deployed-versions/{}", dv.uuid)),
+                "currently_deployed": dv.currently_deployed, "deployed_at": dv.created_at, "undeployed_at": dv.undeployed_at
+            }))
+            .collect();
+        let released: Vec<Value> = d
+            .releases
+            .iter()
+            .map(|(rv, e)| json!({
+                "title": format!("Version released to {}", display(e)), "name": display(e),
+                "href": l.href(&format!("/released-versions/{}", rv.uuid)),
+                "currently_supported": rv.currently_supported, "released_at": rv.created_at, "support_ended_at": rv.support_ended_at
+            }))
+            .collect();
+        let record_deployment: Vec<Value> = d
+            .environments
+            .iter()
+            .map(|e| json!({ "title": format!("Record deployment to {}", display(e)), "name": e.name, "href": format!("{href}/deployed-versions/environment/{}", e.uuid) }))
+            .collect();
+        let record_release: Vec<Value> = d
+            .environments
+            .iter()
+            .map(|e| json!({ "title": format!("Record release to {}", display(e)), "name": e.name, "href": format!("{href}/released-versions/environment/{}", e.uuid) }))
+            .collect();
+        links.insert("pb:deployed-environments".into(), Value::Array(deployed));
+        links.insert("pb:released-environments".into(), Value::Array(released));
+        links.insert(
+            "pb:record-deployment".into(),
+            Value::Array(record_deployment),
+        );
+        links.insert("pb:record-release".into(), Value::Array(record_release));
     }
     links.insert(
         "curies".into(),

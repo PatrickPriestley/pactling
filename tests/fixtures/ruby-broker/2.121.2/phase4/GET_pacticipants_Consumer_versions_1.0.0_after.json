@@ -1,0 +1,110 @@
+{
+    "number": "1.0.0",
+    "createdAt": "2026-10-31T13:05:05+00:00",
+    "_embedded": {
+        "branchVersions": [
+            {
+                "name": "main",
+                "latest": false,
+                "_links": {
+                    "self": {
+                        "title": "Branch version",
+                        "name": "main",
+                        "href": "http://localhost:9292/pacticipants/Consumer/branches/main/versions/1.0.0"
+                    }
+                }
+            }
+        ],
+        "tags": [
+            {
+                "name": "dev",
+                "_links": {
+                    "self": {
+                        "title": "Tag",
+                        "name": "dev",
+                        "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/tags/dev"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "title": "Version",
+            "name": "1.0.0",
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0"
+        },
+        "pb:pacticipant": {
+            "title": "Pacticipant",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        },
+        "pb:tag": {
+            "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/tags/{tag}",
+            "title": "Get, create or delete a tag for this pacticipant version",
+            "templated": true
+        },
+        "pb:latest-verification-results-where-pacticipant-is-consumer": {
+            "title": "Latest verification results for consumer version",
+            "href": "http://localhost:9292/verification-results/consumer/Consumer/version/1.0.0/latest"
+        },
+        "pb:pact-versions": [
+            {
+                "title": "Pact",
+                "name": "Pact between Consumer (1.0.0) and Provider",
+                "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0"
+            }
+        ],
+        "pb:deployed-environments": [
+            {
+                "title": "Version deployed to Test env",
+                "name": "Test env",
+                "href": "http://localhost:9292/deployed-versions/397ae4a4-cb06-41b9-bc94-da570a77167a",
+                "currently_deployed": false,
+                "deployed_at": "2026-10-31T13:05:15+00:00",
+                "undeployed_at": "2026-10-31T13:05:41+00:00"
+            }
+        ],
+        "pb:released-environments": [
+            {
+                "title": "Version released to Production",
+                "name": "Production",
+                "href": "http://localhost:9292/released-versions/40249127-6934-4241-98b1-a3e84b973378",
+                "currently_supported": false,
+                "released_at": "2026-10-31T13:05:38+00:00",
+                "support_ended_at": "2026-10-31T13:05:39+00:00"
+            }
+        ],
+        "pb:record-deployment": [
+            {
+                "title": "Record deployment to Production",
+                "name": "production",
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/deployed-versions/environment/3e8d1b77-a308-427f-bb0d-651aafa8516f"
+            },
+            {
+                "title": "Record deployment to Test env",
+                "name": "test",
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/deployed-versions/environment/9ce2bb2b-b78a-48ab-96df-672119a79d72"
+            }
+        ],
+        "pb:record-release": [
+            {
+                "title": "Record release to Production",
+                "name": "production",
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/released-versions/environment/3e8d1b77-a308-427f-bb0d-651aafa8516f"
+            },
+            {
+                "title": "Record release to Test env",
+                "name": "test",
+                "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0/released-versions/environment/9ce2bb2b-b78a-48ab-96df-672119a79d72"
+            }
+        ],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/{rel}?context=version",
+                "templated": true
+            }
+        ]
+    }
+}

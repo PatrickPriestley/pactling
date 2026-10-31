@@ -1,0 +1,6 @@
+[33m[dry-run] [0mComputer says no ¯\_(ツ)_/¯ (but you're ignoring this by enabling dry run)
+[33m[dry-run] [0m
+[33m[dry-run] [0mNo pacts or verifications have been published for version 9.9.9 of Consumer
+[33m[dry-run] [0m
+[33m[dry-run] [0m[32mDry run enabled - ignoring any failures[0m
+exit=0

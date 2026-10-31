@@ -1,0 +1,72 @@
+{
+    "_embedded": {
+        "deployedVersions": [
+            {
+                "uuid": "44628e5a-c71e-4c08-84ab-0a34afa48996",
+                "currentlyDeployed": true,
+                "createdAt": "2026-10-31T13:05:43+00:00",
+                "_embedded": {
+                    "pacticipant": {
+                        "name": "Consumer",
+                        "_links": {
+                            "self": {
+                                "href": "http://localhost:9292/pacticipants/Consumer"
+                            }
+                        }
+                    },
+                    "version": {
+                        "number": "2.0.0",
+                        "_links": {
+                            "self": {
+                                "title": "Version",
+                                "name": "2.0.0",
+                                "href": "http://localhost:9292/pacticipants/Consumer/versions/2.0.0"
+                            }
+                        }
+                    }
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/deployed-versions/44628e5a-c71e-4c08-84ab-0a34afa48996"
+                    }
+                }
+            },
+            {
+                "uuid": "adb8b62a-e84f-4a07-b2d1-b66fbcf9b19c",
+                "currentlyDeployed": true,
+                "createdAt": "2026-10-31T13:05:14+00:00",
+                "_embedded": {
+                    "pacticipant": {
+                        "name": "Provider",
+                        "_links": {
+                            "self": {
+                                "href": "http://localhost:9292/pacticipants/Provider"
+                            }
+                        }
+                    },
+                    "version": {
+                        "number": "1",
+                        "_links": {
+                            "self": {
+                                "title": "Version",
+                                "name": "1",
+                                "href": "http://localhost:9292/pacticipants/Provider/versions/1"
+                            }
+                        }
+                    }
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/deployed-versions/adb8b62a-e84f-4a07-b2d1-b66fbcf9b19c"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72/deployed-versions/currently-deployed",
+            "title": "Currently deployed versions for Test env"
+        }
+    }
+}

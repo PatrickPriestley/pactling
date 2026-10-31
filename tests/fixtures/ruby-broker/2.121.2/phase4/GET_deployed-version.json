@@ -1,0 +1,62 @@
+{
+    "uuid": "397ae4a4-cb06-41b9-bc94-da570a77167a",
+    "currentlyDeployed": true,
+    "createdAt": "2026-10-31T13:05:15+00:00",
+    "_embedded": {
+        "pacticipant": {
+            "name": "Consumer",
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/Consumer"
+                }
+            }
+        },
+        "version": {
+            "number": "1.0.0",
+            "_links": {
+                "self": {
+                    "title": "Version",
+                    "name": "1.0.0",
+                    "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0"
+                }
+            }
+        },
+        "environment": {
+            "uuid": "9ce2bb2b-b78a-48ab-96df-672119a79d72",
+            "name": "test",
+            "displayName": "Test env",
+            "production": false,
+            "contacts": [
+                {
+                    "name": "QA"
+                }
+            ],
+            "updatedAt": "2026-10-31T13:05:14+00:00",
+            "createdAt": "2026-10-31T13:05:09+00:00",
+            "_links": {
+                "self": {
+                    "title": "Environment",
+                    "name": "test",
+                    "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72"
+                },
+                "pb:currently-deployed-deployed-versions": {
+                    "title": "Versions currently deployed to Test env environment",
+                    "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72/deployed-versions/currently-deployed"
+                },
+                "pb:currently-supported-released-versions": {
+                    "title": "Versions released and supported in Test env environment",
+                    "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72/released-versions/currently-supported"
+                },
+                "pb:environments": {
+                    "title": "Environments",
+                    "href": "http://localhost:9292/environments"
+                }
+            }
+        }
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/deployed-versions/397ae4a4-cb06-41b9-bc94-da570a77167a"
+        }
+    }
+}

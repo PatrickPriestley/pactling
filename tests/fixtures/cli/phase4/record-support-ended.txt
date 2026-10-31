@@ -1,0 +1,2 @@
+[32mRecorded support ended for Consumer version 1.0.0 in production environment in the Pact Broker.[0m
+exit=0

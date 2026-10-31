@@ -1,0 +1,10 @@
+{
+    "errors": {
+        "production": [
+            "must be one of: true, false"
+        ],
+        "name": [
+            "cannot contain spaces"
+        ]
+    }
+}

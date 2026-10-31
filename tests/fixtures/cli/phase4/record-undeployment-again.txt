@@ -1,0 +1,2 @@
+[31mConsumer is not currently deployed to test environment. Cannot record undeployment.[0m
+exit=1

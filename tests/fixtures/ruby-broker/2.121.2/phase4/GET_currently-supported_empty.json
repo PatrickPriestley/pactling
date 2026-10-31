@@ -1,0 +1,11 @@
+{
+    "_embedded": {
+        "releasedVersions": []
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/environments/9ce2bb2b-b78a-48ab-96df-672119a79d72/released-versions/currently-supported",
+            "title": "Currently supported versions in Test env"
+        }
+    }
+}

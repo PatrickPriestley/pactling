@@ -4,6 +4,7 @@ use chrono::{DateTime, Utc};
 
 use crate::db::{
     Db,
+    environments::{DeployedVersion, Environment, ReleasedVersion},
     pacticipants::Pacticipant,
     versions::{Branch, BranchVersion, Tag, Version},
 };
@@ -27,6 +28,11 @@ pub struct VersionDetail {
     pub tags: Vec<Tag>,
     /// Providers this version has pacts with, by name.
     pub providers: Vec<String>,
+    /// Every deployment record of the version with its environment, oldest first.
+    pub deployments: Vec<(DeployedVersion, Environment)>,
+    pub releases: Vec<(ReleasedVersion, Environment)>,
+    /// All environments, for the record-deployment and record-release links.
+    pub environments: Vec<Environment>,
 }
 
 pub async fn find_or_create_pacticipant(db: &Db, name: &str) -> Result<Pacticipant> {
@@ -40,10 +46,27 @@ pub async fn find_or_create_pacticipant(db: &Db, name: &str) -> Result<Pacticipa
 }
 
 pub async fn detail(db: &Db, version: Version) -> Result<VersionDetail> {
+    let environments = db.list_environments().await?;
+    let env = |id: i64| environments.iter().find(|e| e.id == id).cloned();
+    let deployments = db
+        .deployments_of_version(version.id)
+        .await?
+        .into_iter()
+        .filter_map(|d| env(d.environment_id).map(|e| (d, e)))
+        .collect();
+    let releases = db
+        .releases_of_version(version.id)
+        .await?
+        .into_iter()
+        .filter_map(|r| env(r.environment_id).map(|e| (r, e)))
+        .collect();
     Ok(VersionDetail {
         branch_versions: db.branch_versions_for_version(version.id).await?,
         tags: db.tags_for_version(version.id).await?,
         providers: db.providers_for_consumer_version(version.id).await?,
+        deployments,
+        releases,
+        environments,
         version,
     })
 }

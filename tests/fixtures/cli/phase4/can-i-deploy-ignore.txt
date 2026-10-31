@@ -1,0 +1,8 @@
+[32mComputer says yes \o/ [0m
+
+CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS?      | RESULT#
+---------|-----------|----------|-----------|---------------|--------
+Consumer | 2.0.0     | Provider | ???       | ??? [ignored] |        
+
+[32mThere are no missing dependencies[0m
+exit=0

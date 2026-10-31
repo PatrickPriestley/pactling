@@ -1,0 +1,15 @@
+[31mComputer says no ¯\_(ツ)_/¯[0m
+
+CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS? | RESULT#
+---------|-----------|----------|-----------|----------|--------
+Consumer | 1.0.0     | Provider | 2         | false    | 1      
+Web      | 1         | Provider | 2         | false    | 2      
+
+VERIFICATION RESULTS
+--------------------
+1. http://127.0.0.1:56807/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4w/verification-results/202 (failure)
+2. http://127.0.0.1:56807/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTE/verification-results/204 (failure)
+
+[31mThe verification for the pact between the version of Consumer currently in test (1.0.0) and version 2 of Provider failed[0m
+[31mThe verification for the pact between the version of Web currently in test (1) and version 2 of Provider failed[0m
+exit=1

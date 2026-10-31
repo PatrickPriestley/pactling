@@ -1,0 +1,2 @@
+[32mRecorded deployment of Web version 1 to test environment (application instance blue) in the Pact Broker.[0m
+exit=0

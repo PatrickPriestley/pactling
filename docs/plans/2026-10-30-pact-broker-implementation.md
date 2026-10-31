@@ -1011,29 +1011,106 @@ run reports the pact no longer pending, a failing provider publishes a failure.
 
 # Phase 4: Environments, deployments and can-i-deploy
 
-### Task 4.1: Capture
+### Task 4.1: Capture (done 2026-10-31)
 
-Against the Ruby broker with Phase 2 and 3 data: `create-environment`, `list-environments`, `record-deployment`, `record-undeployment`, `record-release`, `record-support-ended`, `can-i-deploy --to-environment` (yes and no cases, and the `--to tag` form), plus `GET /matrix?q[][pacticipant]=...` as the CLI sends it, and `GET /environments/{uuid}/deployed-versions/currently-deployed`. Save the CLI's stdout for the yes and no cases, since the reason strings are part of the contract users read.
+Recorded by the Phase 4 section of `scripts/capture-ruby-fixtures.sh` into
+`tests/fixtures/ruby-broker/2.121.2/phase4/` and `tests/fixtures/cli/phase4/`. Verified
+unless marked.
 
-### Task 4.2: Migrations for `environments`, `deployed_versions`, `released_versions`, and the `matrix` view
+**Environments.** `POST /environments` `{name, displayName, production, [contacts:
+[{name, details: {emailAddress}}]]}` → 201 `{uuid, name, displayName, production,
+[contacts], createdAt, _links: {self: {title: "Environment", name, href},
+pb:currently-deployed-deployed-versions: {title: "Versions currently deployed to
+{displayName} environment", href: .../deployed-versions/currently-deployed},
+pb:currently-supported-released-versions: {title: "Versions released and supported in
+{displayName} environment", href}, pb:environments: {title: "Environments", href}}}`.
+Errors: `name: ["is missing"]`, `["cannot contain spaces"]`, `["name 'test' is already used
+by an existing environment."]`; `production: ["is missing"]`, `["must be one of: true,
+false"]`. `GET /environments` lists by name with `pb:environments` links; `PUT` replaces
+(200, adds `updatedAt`); `DELETE` 204; unknown uuid is the plain 404. The CLI finds
+environments by name from the list, so `create-environment --name nope` errors are its own.
+
+**Deployments.** The CLI `GET`s the version and `POST`s to the version's
+`pb:record-deployment` link `/pacticipants/{p}/versions/{v}/deployed-versions/environment/
+{uuid}` with `{}` or `{applicationInstance, target}` → 201 `{uuid, currentlyDeployed:
+true, [target, applicationInstance], createdAt, _embedded: {pacticipant: {name, _links},
+version: stub, environment: full doc}, _links: {self: /deployed-versions/{uuid}}}`.
+Re-recording the same version answers 201 with the same uuid. Recording a different
+version marks the earlier one undeployed (per pacticipant, environment and application
+instance). Undeployment: `GET .../deployed-versions/currently-deployed?pacticipant=X`
+then `PATCH /deployed-versions/{uuid}` (merge-patch) `{"currentlyDeployed": false}` →
+200 with `undeployedAt`. Releases: `POST .../released-versions/environment/{uuid}` → 201
+`{uuid, currentlySupported: true, ...}`, 200 when already released; support ended:
+`GET .../released-versions/currently-supported?pacticipant&version` then `PATCH
+/released-versions/{uuid}` `{"currentlySupported": false}` → `supportEndedAt`. Version
+documents gain `pb:deployed-environments: [{title: "Version deployed to {displayName}",
+name: displayName, href: /deployed-versions/{uuid}, currently_deployed, deployed_at,
+undeployed_at}]`, `pb:released-environments`, and one `pb:record-deployment` /
+`pb:record-release` link per environment (`title: "Record deployment to {displayName}",
+name: env name`). Unknown version or environment on these routes is the plain 404.
+
+**Matrix.** `GET /matrix` with `q[][pacticipant]`, `q[][version]` or `q[][latest]=true`
+plus `q[][tag]`, `q[][branch]` or `q[][mainBranch]=true`; `latestby=cvp|cvpv`;
+`environment=NAME`; `latest=true` [+ `tag=T`] for the other side; `ignore[][pacticipant]`
+[+ `ignore[][version]`]. Response `{summary: {deployable: true|false|null, reason,
+success, failed, unknown, [ignored]}, notices: [{type: success|warning|error, text}],
+matrix: [rows]}`; `reason` is the notice texts joined with "\n". Row: `{consumer: {name,
+version: {number, branch, branches, branchVersions, environments: [env stub with
+_links.self], _links.self, tags: [{name, latest, _links.self}]}, _links.self}, provider:
+{name, version|null, _links}, pact: {createdAt, _links.self}, verificationResult:
+{success, verifiedAt, _links.self}|null, [ignored: true]}`. Errors 400: `["Please provide
+1 or more version selectors."]`, `["Pacticipant Nope not found"]`, `["Environment with
+name 'nope' does not exist"]`. `GET /can-i-deploy?pacticipant&version&environment|to`
+is the same document. `/matrix/provider/{p}/consumer/{c}` is the integration's rows
+("any version of C and any version of P").
+
+**Verdict.** With `environment`: for each integration of the selected version, the other
+side is what is currently deployed or released there. Reason strings:
+- success: "All required verification results are published and successful"
+- unknown (other side deployed, no verification of this content): "There is no verified
+  pact between version V of C and the version of P currently in {env} (W)";
+  nothing deployed: "... and a version of P currently in {env} (no version is currently
+  recorded as deployed/released in this environment)" → `deployable: null`
+- failed: "The verification for the pact between version V of C and the version of P
+  currently in {env} (W) failed"; as provider: "... between the version of C currently
+  in {env} (CV) and version V of P failed" → `deployable: false`
+- no rows: "No pacts or verifications have been published for version V of P" →
+  `deployable: false`
+- ignored provider: `ignored: true` rows, `summary.ignored`, "There are no missing
+  dependencies" when nothing else is required
+- without `environment`, `latest=true`: warning "WARN: It is recommended to specify the
+  environment into which you are deploying. Without the environment, this result will not
+  be reliable." then "... and the latest version of P (W)"; with `tag=T`: "... the latest
+  version of P with tag T (W)" or "(no such version exists)" → null
+- version chosen by `latest` + branch/mainBranch/tag: warning "WARN: It is recommended to
+  specify the version number (rather than the tag or branch) of the pacticipant you wish
+  to deploy to avoid race conditions. Without a version number, this result will not be
+  reliable." and the subject "the latest version of C from branch B (V)"
+- both sides pinned (`cvpv`): "version V of C and version W of P"; no version at all:
+  "any version of C".
+Rows are ordered by consumer then provider name; `verificationResult` is the latest
+result of that pact content by that provider version.
+
+**Selectors.** With environments, `deployed`, `released`, `deployedOrReleased` and
+`environment: NAME` select the consumer versions currently deployed/released; short
+descriptions "deployed to test" / "released to test" (assumed for released) and bullets
+"consumer version(s) currently deployed to test (2.0.0)".
+
+### Task 4.2: Migration `0004_environments.sql`
+
+`environments` (uuid, name UNIQUE, display_name, production, contacts JSON, created_at,
+updated_at), `deployed_versions` (uuid, version_id, environment_id, application_instance,
+currently_deployed, undeployed_at, created_at), `released_versions` (uuid, version_id,
+environment_id, currently_supported, support_ended_at, created_at). Cascade from
+versions and environments.
 
 ### Task 4.3: Environment CRUD and deployment recording
 
-Includes the rule that recording a deployment marks the previous deployment of the same pacticipant to the same environment as undeployed.
-
 ### Task 4.4: Matrix query
-
-Service `matrix(db, selectors, options) -> Matrix` with unit tests for: one integration verified, one unverified, verification of older content does not count for newer content, `latestby=cvp` and `cvpv`, environment filter, tag filter.
 
 ### Task 4.5: can-i-deploy verdict and reasons
 
-Service `can_i_deploy(matrix) -> Verdict` with unit tests for each reason string captured in 4.1. Mutation-check every guard.
-
 ### Task 4.6: E2E `e2e/phase4_can_i_deploy.sh`
-
-Record-deployment of the provider to `test`; can-i-deploy consumer to `test` says yes; publish a changed consumer pact; can-i-deploy says no with the captured reason; provider verifies the new pact; can-i-deploy says yes.
-
----
 
 # Phase 5: Webhooks
 

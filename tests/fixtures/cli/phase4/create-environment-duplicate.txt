@@ -1,0 +1,2 @@
+[31mError making request to http://127.0.0.1:56672/environments status=400 {"errors":{"name":["name 'test' is already used by an existing environment."]}}[0m
+exit=1

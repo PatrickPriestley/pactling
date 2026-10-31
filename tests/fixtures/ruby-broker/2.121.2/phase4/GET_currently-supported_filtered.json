@@ -1,0 +1,42 @@
+{
+    "_embedded": {
+        "releasedVersions": [
+            {
+                "uuid": "40249127-6934-4241-98b1-a3e84b973378",
+                "currentlySupported": true,
+                "createdAt": "2026-10-31T13:05:38+00:00",
+                "_embedded": {
+                    "pacticipant": {
+                        "name": "Consumer",
+                        "_links": {
+                            "self": {
+                                "href": "http://localhost:9292/pacticipants/Consumer"
+                            }
+                        }
+                    },
+                    "version": {
+                        "number": "1.0.0",
+                        "_links": {
+                            "self": {
+                                "title": "Version",
+                                "name": "1.0.0",
+                                "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0"
+                            }
+                        }
+                    }
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/released-versions/40249127-6934-4241-98b1-a3e84b973378"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/environments/3e8d1b77-a308-427f-bb0d-651aafa8516f/released-versions/currently-supported?pacticipant=Consumer&version=1.0.0",
+            "title": "Currently supported versions in Production"
+        }
+    }
+}

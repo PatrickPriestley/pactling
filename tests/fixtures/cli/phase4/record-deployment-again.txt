@@ -1,0 +1,2 @@
+[32mRecorded deployment of Consumer version 1.0.0 to test environment in the Pact Broker.[0m
+exit=0

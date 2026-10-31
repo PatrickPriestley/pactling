@@ -1,0 +1,65 @@
+{
+    "uuid": "40249127-6934-4241-98b1-a3e84b973378",
+    "currentlySupported": false,
+    "createdAt": "2026-10-31T13:05:38+00:00",
+    "supportEndedAt": "2026-10-31T13:05:39+00:00",
+    "_embedded": {
+        "pacticipant": {
+            "name": "Consumer",
+            "_links": {
+                "self": {
+                    "href": "http://localhost:9292/pacticipants/Consumer"
+                }
+            }
+        },
+        "version": {
+            "number": "1.0.0",
+            "_links": {
+                "self": {
+                    "title": "Version",
+                    "name": "1.0.0",
+                    "href": "http://localhost:9292/pacticipants/Consumer/versions/1.0.0"
+                }
+            }
+        },
+        "environment": {
+            "uuid": "3e8d1b77-a308-427f-bb0d-651aafa8516f",
+            "name": "production",
+            "displayName": "Production",
+            "production": true,
+            "contacts": [
+                {
+                    "name": "Ops",
+                    "details": {
+                        "emailAddress": "ops@example.com"
+                    }
+                }
+            ],
+            "createdAt": "2026-10-31T13:05:09+00:00",
+            "_links": {
+                "self": {
+                    "title": "Environment",
+                    "name": "production",
+                    "href": "http://localhost:9292/environments/3e8d1b77-a308-427f-bb0d-651aafa8516f"
+                },
+                "pb:currently-deployed-deployed-versions": {
+                    "title": "Versions currently deployed to Production environment",
+                    "href": "http://localhost:9292/environments/3e8d1b77-a308-427f-bb0d-651aafa8516f/deployed-versions/currently-deployed"
+                },
+                "pb:currently-supported-released-versions": {
+                    "title": "Versions released and supported in Production environment",
+                    "href": "http://localhost:9292/environments/3e8d1b77-a308-427f-bb0d-651aafa8516f/released-versions/currently-supported"
+                },
+                "pb:environments": {
+                    "title": "Environments",
+                    "href": "http://localhost:9292/environments"
+                }
+            }
+        }
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/released-versions/40249127-6934-4241-98b1-a3e84b973378"
+        }
+    }
+}

@@ -1,0 +1,2 @@
+[32mRecorded release of Consumer version 1.0.0 to production environment in the Pact Broker.[0m
+exit=0

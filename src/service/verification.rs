@@ -27,6 +27,9 @@ pub enum Selector {
     Deployed,
     Released,
     DeployedOrReleased,
+    Environment {
+        name: String,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -130,6 +133,9 @@ fn parse_selector(item: &Value) -> Option<Selector> {
             latest: flag("latest"),
             consumer,
         });
+    }
+    if let Some(name) = text("environment") {
+        return Some(Selector::Environment { name });
     }
     if flag("deployedOrReleased") {
         return Some(Selector::DeployedOrReleased);
@@ -312,8 +318,75 @@ pub async fn pacts_for_verification(
                     (p, r)
                 })
                 .collect(),
-            // Environments arrive in Phase 4; until then nothing is deployed or released.
-            Selector::Deployed | Selector::Released | Selector::DeployedOrReleased => vec![],
+            Selector::Deployed
+            | Selector::Released
+            | Selector::DeployedOrReleased
+            | Selector::Environment { .. } => {
+                let (deployed, released, wanted) = match selector {
+                    Selector::Deployed => (true, false, None),
+                    Selector::Released => (false, true, None),
+                    Selector::Environment { name } => {
+                        match db.find_environment_by_name(name).await? {
+                            Some(e) => (true, true, Some(e)),
+                            None => continue,
+                        }
+                    }
+                    _ => (true, true, None),
+                };
+                let ids = db
+                    .version_ids_deployed_anywhere(
+                        deployed,
+                        released,
+                        wanted.as_ref().map(|e| e.id),
+                    )
+                    .await?;
+                let mut out = vec![];
+                for id in ids {
+                    for p in db.publications_for_consumer_version(id).await? {
+                        if p.provider_id != provider.id {
+                            continue;
+                        }
+                        for e in db.environments_of_version(id).await? {
+                            if let Some(w) = &wanted
+                                && w.id != e.id
+                            {
+                                continue;
+                            }
+                            let r = match selector {
+                                Selector::Environment { .. } => Reason {
+                                    short: format!("in {}", e.name),
+                                    bullet: format!(
+                                        "a consumer version in environment {} ({})",
+                                        e.name, p.consumer_version_number
+                                    ),
+                                    metadata: vec![("e", e.name.clone())],
+                                    consumer_version_id: p.consumer_version_id,
+                                },
+                                Selector::Released => Reason {
+                                    short: format!("released to {}", e.name),
+                                    bullet: format!(
+                                        "consumer version(s) currently released to {} ({})",
+                                        e.name, p.consumer_version_number
+                                    ),
+                                    metadata: vec![("e", e.name.clone()), ("r", "true".to_owned())],
+                                    consumer_version_id: p.consumer_version_id,
+                                },
+                                _ => Reason {
+                                    short: format!("deployed to {}", e.name),
+                                    bullet: format!(
+                                        "consumer version(s) currently deployed to {} ({})",
+                                        e.name, p.consumer_version_number
+                                    ),
+                                    metadata: vec![("e", e.name.clone()), ("d", "true".to_owned())],
+                                    consumer_version_id: p.consumer_version_id,
+                                },
+                            };
+                            out.push((p.clone(), r));
+                        }
+                    }
+                }
+                out
+            }
         };
         for (publication, reason) in matches {
             if let Some(existing) = out

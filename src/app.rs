@@ -58,7 +58,14 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
             "/pacticipants/{name}/latest-version/{tag}",
             any(http::versions::latest_version_with_tag),
         )
-        .route("/environments", get(http::environments::list))
+        .route("/environments", any(http::environments::environments))
+        .route("/environments/{uuid}", any(http::environments::environment))
+        .route("/environments/{uuid}/deployed-versions/currently-deployed", any(http::environments::currently_deployed))
+        .route("/environments/{uuid}/released-versions/currently-supported", any(http::environments::currently_supported))
+        .route("/pacticipants/{name}/versions/{version}/deployed-versions/environment/{uuid}", any(http::environments::record_deployment))
+        .route("/pacticipants/{name}/versions/{version}/released-versions/environment/{uuid}", any(http::environments::record_release))
+        .route("/deployed-versions/{uuid}", any(http::environments::deployed_version))
+        .route("/released-versions/{uuid}", any(http::environments::released_version))
         .route("/webhooks", get(http::webhooks::list))
         .route("/integrations", any(http::pact_lists::integrations))
         .route("/contracts/publish", any(http::contracts::publish))
@@ -146,8 +153,9 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
         .route("/pacts/provider/{provider}/consumer/{consumer}/version/{version}/verification-results/latest", any(http::verification::latest_result_for_version))
         .route("/pacts/provider/{provider}/for-verification", any(http::verification::for_verification))
         .route("/verification-results/consumer/{consumer}/version/{version}/latest", any(http::verification::latest_results_for_consumer_version))
-        .route("/matrix", get(http::matrix::matrix))
-        .route("/can-i-deploy", get(http::matrix::can_i_deploy))
+        .route("/matrix", any(http::matrix::matrix))
+        .route("/matrix/provider/{provider}/consumer/{consumer}", any(http::matrix::integration))
+        .route("/can-i-deploy", any(http::matrix::can_i_deploy))
         .fallback(|| async { Error::NoRoute })
         .layer(middleware::from_fn_with_state(creds, http::auth::require))
         .layer(SetResponseHeaderLayer::overriding(

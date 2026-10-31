@@ -1,4 +1,6 @@
 //! All SQL lives here. Handlers and services call these methods and never write queries.
+pub mod environments;
+pub mod matrix;
 pub mod pact_lists;
 pub mod pacticipants;
 pub mod pacts;

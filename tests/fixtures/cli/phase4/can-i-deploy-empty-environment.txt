@@ -1,0 +1,8 @@
+[31mComputer says no ¯\_(ツ)_/¯[0m
+
+CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS? | RESULT#
+---------|-----------|----------|-----------|----------|--------
+Consumer | 1.0.0     | Provider | ???       | ???      |        
+
+[31mThere is no verified pact between version 1.0.0 of Consumer and a version of Provider currently in production (no version is currently recorded as deployed/released in this environment)[0m
+exit=1

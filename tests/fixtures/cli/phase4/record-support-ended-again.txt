@@ -1,0 +1,2 @@
+[31mConsumer version 1.0.0 is not currently released in production environment. Cannot record support ended.[0m
+exit=1

@@ -1,0 +1,2 @@
+[31mNo environment found with name 'nope'. Available options: production, test[0m
+exit=1

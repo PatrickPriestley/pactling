@@ -91,6 +91,9 @@ async fn count(db: &Db, table: &str) -> i64 {
         "pact_versions" => "SELECT COUNT(*) FROM pact_versions",
         "pact_publications" => "SELECT COUNT(*) FROM pact_publications",
         "verifications" => "SELECT COUNT(*) FROM verifications",
+        "environments" => "SELECT COUNT(*) FROM environments",
+        "deployed_versions" => "SELECT COUNT(*) FROM deployed_versions",
+        "released_versions" => "SELECT COUNT(*) FROM released_versions",
         other => panic!("unknown table {other}"),
     };
     sqlx::query_scalar(sql).fetch_one(db.pool()).await.unwrap()
@@ -116,5 +119,42 @@ async fn verifications_cascade_from_pact_versions_and_provider_versions() {
         count(&db, "verifications").await,
         0,
         "deleting the provider removes its verifications"
+    );
+}
+
+#[tokio::test]
+async fn deployments_cascade_from_versions_and_environments() {
+    let db = Db::connect("sqlite::memory:").await.unwrap();
+    db.migrate().await.unwrap();
+    let pool = db.pool();
+    sqlx::query("INSERT INTO pacticipants (id, name, created_at) VALUES (1, 'C', 't')")
+        .execute(pool)
+        .await
+        .unwrap();
+    sqlx::query("INSERT INTO versions (id, pacticipant_id, number, created_at) VALUES (10, 1, '1', 't'), (11, 1, '2', 't')").execute(pool).await.unwrap();
+    sqlx::query("INSERT INTO environments (id, uuid, name, created_at) VALUES (5, 'u5', 'test', 't'), (6, 'u6', 'prod', 't')").execute(pool).await.unwrap();
+    sqlx::query("INSERT INTO deployed_versions (uuid, version_id, environment_id, created_at) VALUES ('d1', 10, 5, 't'), ('d2', 11, 6, 't')").execute(pool).await.unwrap();
+    sqlx::query("INSERT INTO released_versions (uuid, version_id, environment_id, created_at) VALUES ('r1', 10, 5, 't'), ('r2', 11, 6, 't')").execute(pool).await.unwrap();
+    sqlx::query("DELETE FROM environments WHERE id = 6")
+        .execute(pool)
+        .await
+        .unwrap();
+    assert_eq!(
+        count(&db, "deployed_versions").await,
+        1,
+        "deleting an environment removes its deployments"
+    );
+    assert_eq!(count(&db, "released_versions").await, 1);
+    db.delete_pacticipant("C").await.unwrap();
+    assert_eq!(
+        count(&db, "deployed_versions").await,
+        0,
+        "deleting the pacticipant removes the rest"
+    );
+    assert_eq!(count(&db, "released_versions").await, 0);
+    assert_eq!(
+        count(&db, "environments").await,
+        1,
+        "environments survive pacticipant deletion"
     );
 }

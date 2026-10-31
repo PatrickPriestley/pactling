@@ -1,0 +1,2 @@
+[32mRecorded deployment of Provider version 1 to test environment in the Pact Broker.[0m
+exit=0
