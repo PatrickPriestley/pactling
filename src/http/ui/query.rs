@@ -114,3 +114,49 @@ pub fn matrix_query(
     }
     Ok((q, canonical))
 }
+
+pub fn explanation_query(raw: &str) -> Result<(MatrixQuery, String), Error> {
+    let fields = fields(raw);
+    let canonical = if field(&fields, "ui_form") == "explanation" {
+        let name = field(&fields, "pacticipant");
+        let target = field(&fields, "target_value");
+        if name.is_empty() || target.is_empty() {
+            return Err(Error::BadRequest(
+                "Pacticipant and target are required.".into(),
+            ));
+        }
+        let mut out = selector_fields(
+            name,
+            field(&fields, "selector_mode"),
+            field(&fields, "selector_value"),
+        )?;
+        let key = match field(&fields, "target_mode") {
+            "environment" => "environment",
+            "tag" => "to",
+            _ => return Err(Error::BadRequest("Unknown target mode.".into())),
+        };
+        out.push((key.into(), target.into()));
+        for (_, ignore) in fields.iter().filter(|(key, _)| key == "ignore") {
+            if ignore.is_empty() {
+                continue;
+            }
+            let (name, version) = ignore
+                .split_once('=')
+                .map(|(n, v)| (n, Some(v)))
+                .unwrap_or((ignore, None));
+            if name.is_empty() {
+                return Err(Error::BadRequest(
+                    "An ignore must name a pacticipant.".into(),
+                ));
+            }
+            out.push(("ignore[][pacticipant]".into(), name.into()));
+            if let Some(version) = version {
+                out.push(("ignore[][version]".into(), version.into()));
+            }
+        }
+        encode_fields(&out)
+    } else {
+        raw.to_owned()
+    };
+    Ok((MatrixQuery::parse(Some(&canonical)), canonical))
+}

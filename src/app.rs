@@ -22,6 +22,7 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
     Ok(Router::new()
         .route("/", any(http::index::index))
         .route("/ui/", any(http::ui::index::index))
+        .route("/ui/deployment-explanation", any(http::ui::explanation::explanation))
         .route("/ui/style.css", any(http::ui::style))
         .route("/ui/matrix/provider/{provider}/consumer/{consumer}", any(http::ui::matrix::matrix))
         .route("/ui/pacts/provider/{provider}/consumer/{consumer}/version/{version}", any(http::ui::pact::pact))
