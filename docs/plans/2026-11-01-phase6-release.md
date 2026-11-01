@@ -74,3 +74,11 @@ are unverified here. No tag, release, registry image, or tap update was publishe
 The checked-in formula hashes identify local artifacts only; release.yml renders
 and attaches a formula using its own actual artifact hashes for tap publication.
 Unsigned macOS binaries were exercised locally, not through browser-download quarantine.
+
+Final local checks: `brew test pactling-phase6/probe/pactling` passes; the x86_64
+binary also passes the distroless publish/restart/new-container persistence smoke
+under emulation. This runtime probe reuses the built binary; it is not a second
+full x86_64 Dockerfile build. Corrupting a copy of an archive makes SHA-256 verification
+fail. The final fmt/clippy/cargo-test/e2e run passes after all changes. Linux Homebrew
+installation has not been tested. Probe logs are in /tmp/pactling-phase6-probe on
+this machine; the local Homebrew probe tap and stopped Docker probe volumes are retained.
