@@ -202,6 +202,11 @@ impl Db {
         }
     }
 
+    /// Read-snapshot seam; characterization placeholder uses the old transaction.
+    pub async fn begin_read(&self) -> sqlx::Result<Db> {
+        self.begin().await
+    }
+
     /// Commits the transaction this handle opened. On a handle handed to an inner
     /// operation it does nothing; on the owner it is an error while such a handle is
     /// still alive, since that handle's drop would roll back what was just reported
