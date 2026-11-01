@@ -677,6 +677,9 @@ async fn ui_matrix_escapes_names_and_database_error() {
     let body = r.text().await.unwrap();
     assert!(body.contains("Pay &lt;&amp;"));
     assert!(!body.contains("Pay <&"));
+    assert!(body.contains("Check &lt;&amp;"));
+    assert!(!body.contains("Check <&"));
+    assert!(body.contains("action=\"/ui/matrix/provider/Pay%20%3C%26/consumer/Check%20%3C%26\""));
     assert!(body.contains("Pay%20%3C%26"));
     let path = std::env::temp_dir().join(format!("ui-matrix-{}.db", uuid::Uuid::new_v4()));
     let url = format!("sqlite://{}?mode=rwc", path.display());
