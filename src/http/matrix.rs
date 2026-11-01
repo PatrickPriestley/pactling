@@ -15,7 +15,8 @@ use crate::http::hal::{Hal, Links, encode};
 use crate::http::method;
 use crate::http::pacts::pact_href;
 use crate::http::versions::{pacticipant_href, version_href};
-use crate::service::matrix::{self as service, Matrix, MatrixQuery, Row, Selector};
+use crate::service::matrix::evaluation::{DecisionEvaluation, VersionDetails};
+use crate::service::matrix::{self as service, MatrixQuery, Row, Selector};
 
 const ALLOWED: &str = "GET, OPTIONS";
 
@@ -29,8 +30,8 @@ pub async fn matrix(
     match m {
         Method::GET => {
             let q = MatrixQuery::parse(query.as_deref());
-            let result = service::matrix(&state.db, &q).await?;
-            Ok(Hal(document(&state, &l, &result).await?).into_response())
+            let result = service::decision(&state.db, &q).await?;
+            Ok(Hal(document(&l, &result)).into_response())
         }
         Method::OPTIONS => Ok(method::options(ALLOWED)),
         _ => Ok(method::method_not_allowed(ALLOWED)),
@@ -65,8 +66,8 @@ pub async fn can_i_deploy(
             if !errors.is_empty() {
                 return Err(Error::Validation(Value::Object(errors)));
             }
-            let result = service::matrix(&state.db, &q).await?;
-            Ok(Hal(document(&state, &l, &result).await?).into_response())
+            let result = service::decision(&state.db, &q).await?;
+            Ok(Hal(document(&l, &result)).into_response())
         }
         Method::OPTIONS => Ok(method::options(ALLOWED)),
         _ => Ok(method::method_not_allowed(ALLOWED)),
@@ -95,18 +96,19 @@ pub async fn integration(
                 ],
                 ..Default::default()
             };
-            let result = service::matrix(&state.db, &q).await?;
-            Ok(Hal(document(&state, &l, &result).await?).into_response())
+            let result = service::decision(&state.db, &q).await?;
+            Ok(Hal(document(&l, &result)).into_response())
         }
         Method::OPTIONS => Ok(method::options(ALLOWED)),
         _ => Ok(method::method_not_allowed(ALLOWED)),
     }
 }
 
-async fn document(state: &AppState, l: &Links, r: &Matrix) -> Result<Value> {
+pub fn document(l: &Links, decision: &DecisionEvaluation) -> Value {
+    let r = decision.matrix();
     let mut rows = Vec::with_capacity(r.rows.len());
     for row in &r.rows {
-        rows.push(row_document(state, l, row).await?);
+        rows.push(row_document(l, row, decision));
     }
     let mut summary = Map::new();
     summary.insert("deployable".into(), json!(r.deployable));
@@ -131,22 +133,21 @@ async fn document(state: &AppState, l: &Links, r: &Matrix) -> Result<Value> {
         .iter()
         .map(|n| json!({ "type": n.kind, "text": n.text }))
         .collect();
-    Ok(json!({ "summary": summary, "notices": notices, "matrix": rows }))
+    json!({ "summary": summary, "notices": notices, "matrix": rows })
 }
 
-async fn version_document(state: &AppState, l: &Links, v: &Version) -> Result<Value> {
-    let branches = state.db.branch_versions_for_version(v.id).await?;
+fn version_document(l: &Links, v: &Version, details: &VersionDetails) -> Value {
+    let branches = &details.branches;
     let branch_docs: Vec<Value> = branches
         .iter()
         .map(|b| json!({ "name": b.branch_name, "latest": b.latest, "_links": { "self": { "title": "Branch version", "name": b.branch_name, "href": format!("{}/branches/{}/versions/{}", pacticipant_href(l, &v.pacticipant_name), encode(&b.branch_name), encode(&v.number)) } } }))
         .collect();
     let mut envs = vec![];
-    for e in state.db.environments_of_version(v.id).await? {
-        envs.push(environment_stub(l, &e));
+    for e in &details.environments {
+        envs.push(environment_stub(l, e));
     }
     let mut tags = vec![];
-    for t in state.db.tags_for_version(v.id).await? {
-        let latest = state.db.is_latest_with_tag(v, &t.name).await?;
+    for (t, latest) in &details.tags {
         tags.push(json!({ "name": t.name, "latest": latest, "_links": { "self": { "href": format!("{}/tags/{}", version_href(l, &v.pacticipant_name, &v.number), encode(&t.name)) } } }));
     }
     let mut doc = Map::new();
@@ -162,16 +163,16 @@ async fn version_document(state: &AppState, l: &Links, v: &Version) -> Result<Va
         json!({ "self": { "href": version_href(l, &v.pacticipant_name, &v.number) } }),
     );
     doc.insert("tags".into(), json!(tags));
-    Ok(Value::Object(doc))
+    Value::Object(doc)
 }
 
-async fn row_document(state: &AppState, l: &Links, row: &Row) -> Result<Value> {
+fn row_document(l: &Links, row: &Row, decision: &DecisionEvaluation) -> Value {
     let consumer_version = match &row.consumer.version {
-        Some(v) => version_document(state, l, v).await?,
+        Some(v) => version_document(l, v, decision.version_details(v)),
         None => Value::Null,
     };
     let provider_version = match &row.provider.version {
-        Some(v) => version_document(state, l, v).await?,
+        Some(v) => version_document(l, v, decision.version_details(v)),
         None => Value::Null,
     };
     let verification = match &row.verification {
@@ -195,7 +196,7 @@ async fn row_document(state: &AppState, l: &Links, row: &Row) -> Result<Value> {
     if row.ignored {
         doc.insert("ignored".into(), json!(true));
     }
-    Ok(Value::Object(doc))
+    Value::Object(doc)
 }
 
 fn base64_url(s: &str) -> String {
