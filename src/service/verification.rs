@@ -375,10 +375,11 @@ pub async fn pacts_for_verification(
                             {
                                 continue;
                             }
-                            let e = db
-                                .find_environment_by_id(environment_id)
-                                .await?
-                                .expect("exists");
+                            // The environment can be deleted between the two reads; a
+                            // record left behind is then not a reason (review finding).
+                            let Some(e) = db.find_environment_by_id(environment_id).await? else {
+                                continue;
+                            };
                             let r = match selector {
                                 Selector::Environment { .. } => Reason {
                                     short: format!("in {}", e.name),
