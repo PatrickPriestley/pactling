@@ -157,6 +157,17 @@ async fn unverified_candidates_omitted_by_resolver_remain_excluded_evidence() {
         Some(&older)
     );
     assert_eq!(d.provenance().candidates.len(), 2);
+    let doc = explanation(&d);
+    assert_eq!(
+        doc["resolution"]["excluded"][0]["kind"],
+        "unverified_candidate"
+    );
+    assert!(doc["resolution"]["excluded"][0]["selectedRowRef"].is_null());
+    assert!(doc["resolution"]["excluded"][0]["evidence"]["providerVersion"].is_null());
+    assert_eq!(
+        doc["resolution"]["excluded"][0]["candidateRefs"],
+        json!(["/resolution/candidates/1"])
+    );
 }
 
 #[tokio::test]
@@ -171,6 +182,9 @@ async fn duplicate_rows_merge_selector_provenance() {
     )
     .await;
     assert_eq!(d.provenance().rows[0].selector_indices, vec![0, 1, 2]);
+    assert_eq!(d.provenance().candidates.len(), 1);
+    assert_eq!(d.provenance().rows[0].candidate_indices, vec![0]);
+    assert_eq!(d.provenance().candidates[0].selector_indices, vec![0, 1, 2]);
     assert_eq!(d.provenance().excluded.len(), 1);
     assert_eq!(d.provenance().excluded[0].kind, ExclusionKind::Duplicate);
     assert_eq!(d.provenance().excluded[0].selected_row, Some(0));
@@ -330,4 +344,191 @@ async fn self_integration_consumer_direction_preserves_distinct_target_version()
         .unwrap();
     let d = decision(&db, "pacticipant=Self&version=1&environment=prod").await;
     assert_eq!(d.provenance().candidates[0].version, target);
+}
+
+#[tokio::test]
+async fn resolver_requires_a_read_snapshot_not_a_composed_write_transaction() {
+    let (db, _, _) = seed().await;
+    let write = db.begin().await.unwrap();
+    let q = MatrixQuery::parse(Some("pacticipant=C&version=1&pacticipant=P&version=2"));
+    assert!(matrix::resolve(&write, &q).await.is_err());
+    write.commit().await.unwrap();
+    assert!(matrix::resolve(&db, &q).await.is_ok());
+}
+
+fn explanation(d: &matrix::evaluation::DecisionEvaluation) -> serde_json::Value {
+    pactling::http::deployment_explanations::document(
+        &pactling::http::hal::Links::new("http://broker"),
+        d,
+        "original=query",
+    )
+}
+
+#[tokio::test]
+async fn renderer_preserves_requested_resolutions_and_all_target_modes() {
+    let (db, _, _) = seed().await;
+    let env = db
+        .create_environment("prod", None, true, None)
+        .await
+        .unwrap();
+    for (query, target) in [
+        (
+            "pacticipant=C&version=1&pacticipant=P&version=2&environment=prod",
+            json!({"kind":"selected_versions","selectorIndices":[0,1]}),
+        ),
+        (
+            "pacticipant=C&version=1&environment=prod",
+            json!({"kind":"environment","name":"prod","uuid":env.uuid,"href":format!("http://broker/environments/{}",env.uuid)}),
+        ),
+        (
+            "pacticipant=C&version=1&latest=true&tag=prod",
+            json!({"kind":"latest","tag":"prod"}),
+        ),
+        (
+            "pacticipant=C&version=1&latest=true",
+            json!({"kind":"latest","tag":null}),
+        ),
+        ("pacticipant=C&version=1", json!({"kind":"any"})),
+        ("pacticipant=C&version=1&tag=prod", json!({"kind":"any"})),
+    ] {
+        let d = decision(&db, query).await;
+        let doc = explanation(&d);
+        assert_eq!(doc["resolution"]["target"], target, "{query}");
+        assert_eq!(
+            doc["resolution"]["selectors"][0],
+            json!({"index":0,"pacticipant":"C","versions":["1"],"missingReason":null,"requested":{"pacticipant":"C","version":"1","latest":false,"tag":null,"branch":null,"mainBranch":false}})
+        );
+    }
+    let d = decision(&db, "pacticipant=C&version=missing&pacticipant=P&version=2").await;
+    let doc = explanation(&d);
+    assert_eq!(doc["resolution"]["selectors"][0]["versions"], json!([]));
+    assert_eq!(
+        doc["resolution"]["selectors"][0]["missingReason"],
+        "SELECTOR_VERSION_MISSING"
+    );
+    assert_eq!(doc["resolution"]["selectors"][1]["versions"], json!(["2"]));
+}
+
+#[tokio::test]
+async fn renderer_preserves_membership_timestamps_context_ignores_and_null_candidates() {
+    let (db, pact, pv) = seed().await;
+    let env = db
+        .create_environment("prod", None, true, None)
+        .await
+        .unwrap();
+    let (deployment, _) = db
+        .record_deployment(pv.id, pact.provider_id, env.id, Some("blue"))
+        .await
+        .unwrap();
+    let (release, _) = db.record_release(pv.id, env.id).await.unwrap();
+    let d = decision(&db, "pacticipant=C&version=1&environment=prod&ignore[][pacticipant]=P&ignore[][version]=2&ignore[][pacticipant]=Other&ignore[][pacticipant]=P&ignore[][version]=absent&ignore[][pacticipant]=C").await;
+    let doc = explanation(&d);
+    assert_eq!(
+        doc["resolution"]["candidates"][0],
+        json!({"id":"candidate-1","pacticipant":"P","version":"2","selectorIndices":[0],"sources":[
+            {"kind":"deployed","uuid":deployment.uuid,"href":format!("http://broker/deployed-versions/{}",deployment.uuid),"applicationInstance":"blue","recordedAt":deployment.created_at},
+            {"kind":"released","uuid":release.uuid,"href":format!("http://broker/released-versions/{}",release.uuid),"applicationInstance":null,"recordedAt":release.created_at}
+        ]})
+    );
+    assert_eq!(
+        doc["resolution"]["ignores"],
+        json!([
+            {"index":0,"pacticipant":"P","version":"2","status":"resolved"},
+            {"index":1,"pacticipant":"Other","version":null,"status":"participant_missing"},
+            {"index":2,"pacticipant":"P","version":"absent","status":"version_missing"},
+            {"index":3,"pacticipant":"C","version":null,"status":"resolved"}
+        ])
+    );
+    assert_eq!(doc["rows"][0]["providerVersion"], serde_json::Value::Null);
+    assert_eq!(
+        doc["rows"][0]["candidateRefs"],
+        json!(["/resolution/candidates/0"])
+    );
+    assert_eq!(
+        doc["rows"][0]["ignoreRefs"],
+        json!(["/resolution/ignores/3"])
+    );
+    assert_eq!(doc["rows"][0]["disposition"], "ignored");
+    assert_eq!(doc["evaluation"]["id"], d.context().id);
+    assert_eq!(doc["evaluation"]["startedAt"], d.context().started_at);
+    assert_eq!(doc["evaluation"]["evaluatedAt"], d.context().evaluated_at);
+    assert_eq!(
+        doc["evaluation"]["snapshot"],
+        json!({"kind":"read_transaction","retained":false})
+    );
+    assert_eq!(doc["request"]["query"], "original=query");
+    assert_eq!(doc["evidence"]["currentness"], "not_checked");
+    assert_eq!(doc, explanation(&d));
+}
+
+#[tokio::test]
+async fn renderer_preserves_exclusion_representatives_and_verification_evidence() {
+    let (db, pact, older) = seed().await;
+    let (newer, _) = db
+        .find_or_create_version(pact.provider_id, "3")
+        .await
+        .unwrap();
+    let env = db
+        .create_environment("prod", None, true, None)
+        .await
+        .unwrap();
+    db.record_release(older.id, env.id).await.unwrap();
+    db.record_deployment(newer.id, pact.provider_id, env.id, None)
+        .await
+        .unwrap();
+    for (pv, success) in [(&older, false), (&newer, true)] {
+        db.create_verification(pact.pact_version_id, pv.id, None, success, None, None, None)
+            .await
+            .unwrap();
+    }
+    let d = decision(&db, "pacticipant=C&version=1&environment=prod&latestby=cvp").await;
+    let doc = explanation(&d);
+    assert_eq!(doc["resolution"]["excluded"][0]["kind"], "latestby");
+    assert_eq!(
+        doc["resolution"]["excluded"][0]["selectedRowRef"],
+        "/rows/0"
+    );
+    assert_eq!(
+        doc["resolution"]["excluded"][0]["evidence"]["providerVersion"],
+        "2"
+    );
+    assert_eq!(
+        doc["resolution"]["excluded"][0]["evidence"]["disposition"],
+        "excluded"
+    );
+    assert_eq!(
+        doc["resolution"]["excluded"][0]["evidence"]["verification"]["success"],
+        false
+    );
+    assert_eq!(doc["rows"][0]["disposition"], "considered");
+    let row = &d.matrix().rows[0];
+    let verification = row.verification.as_ref().unwrap();
+    assert_eq!(
+        doc["rows"][0]["verification"]["verifiedAt"],
+        verification.created_at
+    );
+    assert_eq!(
+        doc["rows"][0]["verification"]["number"],
+        verification.number
+    );
+    assert_eq!(doc["rows"][0]["contract"]["hash"]["value"], pact.sha);
+    assert_eq!(
+        doc["rows"][0]["verification"]["href"],
+        format!(
+            "http://broker/pacts/provider/P/consumer/C/pact-version/{}/verification-results/{}",
+            pact.sha, verification.number
+        )
+    );
+    let d = decision(
+        &db,
+        "pacticipant=C&version=1&pacticipant=C&version=1&pacticipant=P&version=2",
+    )
+    .await;
+    let doc = explanation(&d);
+    assert_eq!(doc["resolution"]["excluded"][0]["kind"], "duplicate");
+    assert_eq!(
+        doc["resolution"]["excluded"][0]["selectedRowRef"],
+        "/rows/0"
+    );
+    assert_eq!(doc["rows"][0]["selectorIndices"], json!([0, 1, 2]));
 }
