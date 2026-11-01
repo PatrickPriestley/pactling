@@ -1559,3 +1559,54 @@ async fn ui_assets_are_embedded() {
     assert!(!css.contains("@import"));
     assert!(!css.contains("url("));
 }
+
+#[tokio::test]
+async fn ui_preserves_pending_webhook_deliveries() {
+    let file = std::env::temp_dir().join(format!("pactling-ui-queue-{}.db", uuid::Uuid::new_v4()));
+    let mut config = pactling::config::Config::in_memory();
+    config.database_url = format!("sqlite://{}?mode=rwc", file.display());
+    config.webhook_initial_delay = 3600;
+    let s = common::start_with(config.clone()).await;
+    explanation_seed(&s).await;
+    let response = s
+        .client
+        .post(format!("{}/webhooks", s.base_url))
+        .json(&json!({
+            "consumer":{"name":"Checkout"},"provider":{"name":"Payments"},
+            "events":[{"name":"contract_published"}],
+            "request":{"method":"POST","url":"https://example.invalid/ui-probe"}
+        }))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(response.status(), 201);
+    publish(&s, "Checkout", "Payments", "4").await;
+    let pool = sqlx::SqlitePool::connect(&config.database_url)
+        .await
+        .unwrap();
+    let before = database_contents(&pool).await;
+    assert!(
+        !before
+            .iter()
+            .find(|(name, _)| name == "triggered_webhooks")
+            .unwrap()
+            .1
+            .is_empty()
+    );
+    for path in UI_READ_PATHS {
+        assert_eq!(
+            s.client
+                .get(format!("{}{path}", s.base_url))
+                .send()
+                .await
+                .unwrap()
+                .status(),
+            200
+        );
+    }
+    assert_eq!(
+        database_contents(&pool).await,
+        before,
+        "UI altered a pending delivery or its evidence"
+    );
+}
