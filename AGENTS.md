@@ -36,6 +36,16 @@ how to get at that evidence quickly.
   `access-control-allow-methods`.
 - `src/service/` holds the rules (publish, selectors, pending, event detection). No HTTP
   types.
+- **Transactions.** `Db::begin()` returns a `Db` whose statements share one `BEGIN
+  IMMEDIATE` transaction; `commit()` ends it and dropping it rolls back. A business
+  operation that writes more than one row (publish batch and its webhook triggers, the
+  legacy PUT, a verification result, a deployment or release, a webhook upsert) runs
+  entirely on the transactional `Db` and renders its response after `commit()`. Inside a
+  transaction never touch the pool `Db` (`state.db`): the in-memory test database has one
+  connection, so that shows up as an acquire timeout. `begin()` on a transactional `Db`
+  returns a clone sharing the transaction, so operations compose. Concurrent writers wait
+  (5 s busy timeout) rather than fail; a conflicting publish that waits sees the winner's
+  rows and is refused with 409 before writing anything.
 - `src/db/` holds all SQL (sqlx 0.9 wants static SQL strings; the `publication_query!`
   macro builds the common SELECT). Migrations live in `migrations/`; add a file and
   `build.rs` makes cargo notice it.

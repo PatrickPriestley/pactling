@@ -36,7 +36,7 @@ impl Db {
                            WHERE v2.pacticipant_id = c.id AND pp2.provider_id = p.id)
              ORDER BY c.name, p.name"
         ))
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -49,7 +49,7 @@ impl Db {
              JOIN pacticipants p ON p.id = pp.provider_id
              GROUP BY c.id, p.id ORDER BY MIN(pp.id)",
         )
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -123,7 +123,7 @@ impl Db {
         if let Some(p) = param {
             q = q.bind(p);
         }
-        q.fetch_all(&self.pool).await
+        q.fetch_all(&self.conn).await
     }
 
     /// An integration's pacts: all of them newest first, or the selected ones. Branch
@@ -183,7 +183,7 @@ impl Db {
         if let Some(p) = param {
             q = q.bind(p);
         }
-        q.fetch_all(&self.pool).await
+        q.fetch_all(&self.conn).await
     }
 
     /// Deletes every publication between the two pacticipants. Returns how many.
@@ -202,7 +202,7 @@ impl Db {
         )
         .bind(provider)
         .bind(consumer)
-        .execute(&self.pool)
+        .execute(&self.conn)
         .await?;
         Ok(r.rows_affected())
     }

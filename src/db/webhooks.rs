@@ -116,7 +116,7 @@ impl Db {
                 "SELECT name FROM webhook_events WHERE webhook_id = ? ORDER BY id",
             )
             .bind(w.id)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await?;
         }
         Ok(webhooks)
@@ -142,7 +142,7 @@ impl Db {
         .bind(&f.username)
         .bind(&f.password)
         .bind(now())
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await?;
         self.replace_events(id, &f.events).await?;
         Ok(self.find_webhook_by_id(id).await?.expect("just created"))
@@ -168,7 +168,7 @@ impl Db {
         .bind(&f.password)
         .bind(now())
         .bind(id)
-        .execute(&self.pool)
+        .execute(&self.conn)
         .await?;
         self.replace_events(id, &f.events).await?;
         Ok(self.find_webhook_by_id(id).await?.expect("exists"))
@@ -177,13 +177,13 @@ impl Db {
     async fn replace_events(&self, webhook_id: i64, events: &[String]) -> sqlx::Result<()> {
         sqlx::query("DELETE FROM webhook_events WHERE webhook_id = ?")
             .bind(webhook_id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         for name in events {
             sqlx::query("INSERT OR IGNORE INTO webhook_events (webhook_id, name) VALUES (?, ?)")
                 .bind(webhook_id)
                 .bind(name)
-                .execute(&self.pool)
+                .execute(&self.conn)
                 .await?;
         }
         Ok(())
@@ -192,7 +192,7 @@ impl Db {
     pub async fn find_webhook_by_id(&self, id: i64) -> sqlx::Result<Option<Webhook>> {
         let w: Option<Webhook> = sqlx::query_as(webhook_query!("WHERE w.id = ?"))
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await?;
         Ok(self.attach_events(w.into_iter().collect()).await?.pop())
     }
@@ -200,7 +200,7 @@ impl Db {
     pub async fn find_webhook_by_uuid(&self, uuid: &str) -> sqlx::Result<Option<Webhook>> {
         let w: Option<Webhook> = sqlx::query_as(webhook_query!("WHERE w.uuid = ?"))
             .bind(uuid)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await?;
         Ok(self.attach_events(w.into_iter().collect()).await?.pop())
     }
@@ -208,7 +208,7 @@ impl Db {
     /// Every webhook, oldest first.
     pub async fn list_webhooks(&self) -> sqlx::Result<Vec<Webhook>> {
         let ws = sqlx::query_as(webhook_query!("ORDER BY w.id"))
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await?;
         self.attach_events(ws).await
     }
@@ -225,7 +225,7 @@ impl Db {
         ))
         .bind(consumer_id)
         .bind(provider_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await?;
         self.attach_events(ws).await
     }
@@ -250,7 +250,7 @@ impl Db {
         .bind(event)
         .bind(consumer_id)
         .bind(provider_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await?;
         self.attach_events(ws).await
     }
@@ -258,7 +258,7 @@ impl Db {
     pub async fn delete_webhook(&self, id: i64) -> sqlx::Result<()> {
         sqlx::query("DELETE FROM webhooks WHERE id = ?")
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(())
     }
@@ -274,7 +274,7 @@ impl Db {
                 "SELECT id, triggered_webhook_id, success, logs, created_at FROM webhook_executions WHERE triggered_webhook_id = ? ORDER BY id",
             )
             .bind(t.id)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await?;
         }
         Ok(rows)
@@ -311,7 +311,7 @@ impl Db {
         .bind(event_context)
         .bind(next_attempt_at)
         .bind(now())
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await?;
         Ok(self
             .find_triggered_webhook_by_id(id)
@@ -325,7 +325,7 @@ impl Db {
     ) -> sqlx::Result<Option<TriggeredWebhook>> {
         let t: Option<TriggeredWebhook> = sqlx::query_as(triggered_query!("WHERE t.id = ?"))
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await?;
         Ok(self.attach_executions(t.into_iter().collect()).await?.pop())
     }
@@ -336,7 +336,7 @@ impl Db {
     ) -> sqlx::Result<Option<TriggeredWebhook>> {
         let t: Option<TriggeredWebhook> = sqlx::query_as(triggered_query!("WHERE t.uuid = ?"))
             .bind(uuid)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await?;
         Ok(self.attach_executions(t.into_iter().collect()).await?.pop())
     }
@@ -351,7 +351,7 @@ impl Db {
             "WHERE t.pact_publication_id = ? ORDER BY t.id DESC"
         ))
         .bind(pact_publication_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await?;
         self.attach_executions(rows).await
     }
@@ -364,7 +364,7 @@ impl Db {
             "WHERE t.verification_id = ? ORDER BY t.id DESC"
         ))
         .bind(verification_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await?;
         self.attach_executions(rows).await
     }
@@ -385,7 +385,7 @@ impl Db {
         ))
         .bind(consumer_id)
         .bind(provider_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await?;
         self.attach_executions(rows).await
     }
@@ -399,7 +399,7 @@ impl Db {
             "WHERE t.status IN ('not_run', 'retrying') AND t.next_attempt_at IS NOT NULL AND t.next_attempt_at <= ? ORDER BY t.id"
         ))
         .bind(now_rfc3339)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await?;
         self.attach_executions(rows).await
     }
@@ -418,7 +418,7 @@ impl Db {
         .bind(success)
         .bind(logs)
         .bind(now())
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await
     }
 
@@ -431,20 +431,20 @@ impl Db {
         status: &str,
         next_attempt_at: Option<&str>,
     ) -> sqlx::Result<()> {
-        let mut tx = self.pool.begin().await?;
+        let tx = self.begin().await?;
         sqlx::query("INSERT INTO webhook_executions (triggered_webhook_id, success, logs, created_at) VALUES (?, ?, ?, ?)")
             .bind(triggered_webhook_id)
             .bind(success)
             .bind(logs)
             .bind(now())
-            .execute(&mut *tx)
+            .execute(&tx.conn)
             .await?;
         sqlx::query("UPDATE triggered_webhooks SET status = ?, next_attempt_at = ?, updated_at = ? WHERE id = ?")
             .bind(status)
             .bind(next_attempt_at)
             .bind(now())
             .bind(triggered_webhook_id)
-            .execute(&mut *tx)
+            .execute(&tx.conn)
             .await?;
         tx.commit().await
     }
@@ -460,7 +460,7 @@ impl Db {
             .bind(next_attempt_at)
             .bind(now())
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(())
     }

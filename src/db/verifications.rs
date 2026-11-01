@@ -74,11 +74,11 @@ impl Db {
         .bind(verified_by)
         .bind(build_url)
         .bind(now())
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await?;
         sqlx::query_as(verification_query!("WHERE vf.id = ?"))
             .bind(id)
-            .fetch_one(&self.pool)
+            .fetch_one(&self.conn)
             .await
     }
 
@@ -97,7 +97,7 @@ impl Db {
         )
         .bind(consumer_id)
         .bind(provider_id)
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await?;
         Ok(n > 0)
     }
@@ -119,14 +119,14 @@ impl Db {
         .bind(pact_version_id)
         .bind(provider_id)
         .bind(branch)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
     pub async fn find_verification_by_id(&self, id: i64) -> sqlx::Result<Option<Verification>> {
         sqlx::query_as(verification_query!("WHERE vf.id = ?"))
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
@@ -136,7 +136,7 @@ impl Db {
     ) -> sqlx::Result<Option<Verification>> {
         sqlx::query_as(verification_query!("WHERE vf.number = ?"))
             .bind(number)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
@@ -149,7 +149,7 @@ impl Db {
             "WHERE vf.pact_version_id = ? ORDER BY vf.id DESC LIMIT 1"
         ))
         .bind(pact_version_id)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -170,7 +170,7 @@ impl Db {
         .bind(pact_version_id)
         .bind(provider_id)
         .bind(branch)
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await
     }
 
@@ -187,7 +187,7 @@ impl Db {
         )
         .bind(pact_version_id)
         .bind(provider_id)
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await
     }
 
@@ -207,7 +207,7 @@ impl Db {
         .bind(pact_version_id)
         .bind(provider_id)
         .bind(tag)
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await
     }
 
@@ -223,7 +223,7 @@ impl Db {
         )
         .bind(provider_id)
         .bind(branch)
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await
     }
 
@@ -242,7 +242,7 @@ impl Db {
              ORDER BY c.name"
         ))
         .bind(provider_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -264,7 +264,7 @@ impl Db {
         .bind(provider_id)
         .bind(branch)
         .bind(consumer)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -282,7 +282,7 @@ impl Db {
         ))
         .bind(provider_id)
         .bind(consumer)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -314,14 +314,14 @@ impl Db {
             .bind(provider_id)
             .bind(tag)
             .bind(consumer)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await
     }
 
     pub async fn find_publication_by_id(&self, id: i64) -> sqlx::Result<Option<PactPublication>> {
         sqlx::query_as(publication_query!("WHERE pp.id = ?"))
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
@@ -334,7 +334,7 @@ impl Db {
             "WHERE pp.pact_version_id = ? ORDER BY v.id DESC"
         ))
         .bind(pact_version_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -347,7 +347,7 @@ impl Db {
             "WHERE pp.consumer_version_id = ? ORDER BY p.name"
         ))
         .bind(consumer_version_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await?;
         let mut out = Vec::with_capacity(publications.len());
         for p in publications {

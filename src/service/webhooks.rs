@@ -474,14 +474,20 @@ async fn fields(
 }
 
 pub async fn create(db: &Db, uuid: Option<&str>, req: &WebhookRequest) -> Result<Webhook> {
-    let f = fields(db, req, None).await?;
+    let tx = db.begin().await?;
+    let f = fields(&tx, req, None).await?;
     let uuid = uuid.map(str::to_owned).unwrap_or_else(new_uuid);
-    Ok(db.create_webhook(&uuid, &f).await?)
+    let w = tx.create_webhook(&uuid, &f).await?;
+    tx.commit().await?;
+    Ok(w)
 }
 
 pub async fn update(db: &Db, existing: &Webhook, req: &WebhookRequest) -> Result<Webhook> {
-    let f = fields(db, req, Some(existing)).await?;
-    Ok(db.update_webhook(existing.id, &f).await?)
+    let tx = db.begin().await?;
+    let f = fields(&tx, req, Some(existing)).await?;
+    let w = tx.update_webhook(existing.id, &f).await?;
+    tx.commit().await?;
+    Ok(w)
 }
 
 pub async fn find(db: &Db, uuid: &str) -> Result<Webhook> {

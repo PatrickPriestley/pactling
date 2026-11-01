@@ -155,11 +155,11 @@ pub async fn pact_by_version(
             }
             let json: Value = serde_json::from_slice(&body)
                 .map_err(|e| Error::BadRequest(format!("JSON::ParserError - {e}")))?;
-            let (p, created) =
-                publish::put_pact(&state.db, &provider, &consumer, &version, json).await?;
-            let (events, _) = publish::events_for_publication(&state.db, &p, created).await?;
+            let tx = state.db.begin().await?;
+            let (p, created) = publish::put_pact(&tx, &provider, &consumer, &version, json).await?;
+            let (events, _) = publish::events_for_publication(&tx, &p, created).await?;
             crate::service::webhook_trigger::trigger_publish_events(
-                &state.db,
+                &tx,
                 &state.config,
                 &l.href(""),
                 &p,
@@ -167,6 +167,7 @@ pub async fn pact_by_version(
                 None,
             )
             .await?;
+            tx.commit().await?;
             let mut res = render_pact(&headers, pact_document(&l, &p, None));
             if created {
                 *res.status_mut() = StatusCode::CREATED;
