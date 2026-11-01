@@ -1258,3 +1258,16 @@ async fn ui_explanation_guard_regressions() {
         );
     }
 }
+
+#[tokio::test]
+async fn ui_explanation_ignores_keep_one_empty_control() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    let(status,body)=explanation_html(&s,"ui_form=explanation&pacticipant=Checkout&selector_mode=version&selector_value=1&target_mode=environment&target_value=test&ignore=&ignore=Payments%3D1&ignore=&ignore=").await;
+    assert_eq!(status, 200);
+    assert_eq!(body.matches("name=\"ignore\" value=\"\"").count(), 1);
+    assert_eq!(
+        body.matches("name=\"ignore\" value=\"Payments=1\"").count(),
+        1
+    );
+}
