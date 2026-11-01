@@ -54,7 +54,9 @@ curl -sf -o /dev/null -X POST -H 'content-type: application/json' -d '{"request"
 
 echo "test-webhook executes the webhook against the latest pact and prints the logs"
 uuid=$(curl -sf "$BROKER/webhooks" | python3 -c 'import json,sys; print(json.load(sys.stdin)["_links"]["pb:webhooks"][0]["href"].rsplit("/",1)[1])')
-cli 0 test-webhook.txt test-webhook --uuid "$uuid"
+# End option parsing before the UUID: the real CLI rejects leading '-' even with '='.
+out=$("$PB" test-webhook --broker-base-url "$BROKER" --uuid -- "$uuid")
+expect_output "$out" "$FIX/test-webhook.txt"
 received=$(python3 -c 'import json; r=[json.loads(l) for l in open("'"$E2E_TMP"'/receiver.jsonl")]; print(len(r), r[0]["path"], json.loads(r[0]["body"])["event"], json.loads(r[0]["body"])["consumerVersion"], r[0]["headers"]["authorization"])')
 [ "$received" = "1 /hook/Consumer test 1.0.0 Bearer hook-secret" ] || fail "unexpected test execution at the receiver: $received"
 
