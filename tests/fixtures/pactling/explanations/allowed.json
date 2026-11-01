@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0",
+  "decision": "allowed",
+  "summary": "All considered contract verifications succeeded.",
+  "compatibility": {
+    "deployable": true,
+    "success": 1,
+    "failed": 0,
+    "unknown": 0,
+    "ignored": 0,
+    "hasIgnores": false
+  },
+  "request": {
+    "query": "pacticipant=Checkout&version=1&environment=production&latestby=cvp"
+  },
+  "evaluation": {
+    "id": "00000000-0000-4000-8000-000000000001",
+    "startedAt": "2026-11-01T12:00:00Z",
+    "evaluatedAt": "2026-11-01T12:00:01Z",
+    "brokerVersion": "0.1.0",
+    "engineRevision": null,
+    "snapshot": {
+      "kind": "read_transaction",
+      "retained": false
+    }
+  },
+  "evidence": {
+    "completeness": "complete",
+    "coverage": "recorded_only",
+    "currentness": "not_checked"
+  },
+  "resolution": {
+    "selectors": [
+      {
+        "index": 0,
+        "pacticipant": "Checkout",
+        "versions": [
+          "1"
+        ],
+        "missingReason": null,
+        "requested": {
+          "pacticipant": "Checkout",
+          "version": "1",
+          "latest": false,
+          "tag": null,
+          "branch": null,
+          "mainBranch": false
+        }
+      }
+    ],
+    "target": {
+      "kind": "environment",
+      "name": "production",
+      "uuid": "00000000-0000-4000-8000-000000000010",
+      "href": "/environments/00000000-0000-4000-8000-000000000010"
+    },
+    "candidates": [
+      {
+        "id": "candidate-1",
+        "pacticipant": "Payments",
+        "version": "2",
+        "selectorIndices": [
+          0
+        ],
+        "sources": [
+          {
+            "kind": "deployed",
+            "uuid": "00000000-0000-4000-8000-000000000020",
+            "href": "/deployed-versions/00000000-0000-4000-8000-000000000020",
+            "applicationInstance": null,
+            "recordedAt": "2026-11-01T09:00:00Z"
+          }
+        ]
+      }
+    ],
+    "excluded": [],
+    "ignores": []
+  },
+  "rows": [
+    {
+      "id": "row-1",
+      "consumer": "Checkout",
+      "consumerVersion": "1",
+      "provider": "Payments",
+      "providerVersion": "2",
+      "candidateRefs": [
+        "/resolution/candidates/0"
+      ],
+      "disposition": "considered",
+      "contract": {
+        "hash": {
+          "algorithm": "sha1",
+          "value": "1234567890abcdef1234567890abcdef12345678"
+        },
+        "href": "/pacts/provider/Payments/consumer/Checkout/pact-version/1234567890abcdef1234567890abcdef12345678",
+        "publicationHref": "/pacts/provider/Payments/consumer/Checkout/version/1"
+      },
+      "verification": {
+        "number": 1,
+        "success": true,
+        "verifiedAt": "2026-11-01T10:00:00Z",
+        "href": "/pacts/provider/Payments/consumer/Checkout/pact-version/1234567890abcdef1234567890abcdef12345678/verification-results/1"
+      }
+    }
+  ],
+  "reasons": [
+    {
+      "code": "ALL_REQUIRED_VERIFICATIONS_SUCCESSFUL",
+      "role": "decisive",
+      "message": "All considered contract verifications succeeded.",
+      "evidenceRefs": [
+        "/rows/0/contract",
+        "/resolution/candidates/0",
+        "/rows/0/verification"
+      ],
+      "actionIds": []
+    }
+  ],
+  "nextActions": []
+}
