@@ -50,13 +50,19 @@ Release artifacts are published by a `v<version>` tag matching `Cargo.toml`.
 The first release and tap publication are still pending; until then use
 `docker compose up --build -d` from this checkout or build with Cargo below.
 
+Before distributing the first image, the maintainer must set the GHCR package's
+visibility to **Public** in its package settings; GitHub defaults new packages to
+private ([registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)).
+Stable releases update `latest`; prerelease tags publish only their versioned image.
+
 After a release, run the container with persistent storage:
 
 ```bash
 docker run -d --name pact-broker -p 9292:9292 -v pact-data:/data \
   ghcr.io/patrickpriestley/pactling:latest
 # Or use this repository's docker-compose.yml:
-docker compose up -d
+docker compose pull
+docker compose up -d --no-build
 ```
 
 To swap a Ruby broker Compose service, keep its service name, port mapping and auth /
@@ -128,6 +134,7 @@ With no credentials configured the broker is open, as the Ruby broker is.
 
 ```bash
 cargo test                 # unit and fidelity tests
+python3 scripts/test-release.py # packaging contracts
 (cd e2e && npm ci)         # once
 bash e2e/run.sh            # real clients against the binary
 ```

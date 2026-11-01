@@ -8,5 +8,5 @@ version=$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml", "rb"
 [ "$tag" = "v$version" ] || { echo 'tag does not match Cargo.toml' >&2; exit 1; }
 mkdir -p dist
 archive="pactling-$version-$target.tar.gz"
-tar -czf "dist/$archive" -C "${CARGO_TARGET_DIR:-target}/$target/release" pactling
+COPYFILE_DISABLE=1 tar -czf "dist/$archive" -C "${CARGO_TARGET_DIR:-target}/$target/release" pactling -C "$PWD" LICENSE
 (cd dist && shasum -a 256 "$archive" >"$archive.sha256")

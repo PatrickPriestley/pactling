@@ -14,6 +14,8 @@ trap 'docker stop "$name" "$name-recreated" >/dev/null 2>&1 || true' EXIT
 mkdir -p "$probe/pacts"
 PACT_DIR="$probe/pacts" node --test e2e/consumer.test.js >"$probe/consumer.log" 2>&1
 docker run -d --name "$name" -p 127.0.0.1::9292 -v "$volume:/data" "$image" >/dev/null
+docker cp "$name:/usr/share/licenses/pactling/LICENSE" "$probe/LICENSE"
+cmp LICENSE "$probe/LICENSE"
 port=$(docker port "$name" 9292/tcp | sed 's/.*://')
 url="http://127.0.0.1:$port"
 for _ in $(seq 1 100); do curl -sf "$url/" >/dev/null && break; sleep .2; done

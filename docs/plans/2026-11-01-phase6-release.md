@@ -82,3 +82,45 @@ full x86_64 Dockerfile build. Corrupting a copy of an archive makes SHA-256 veri
 fail. The final fmt/clippy/cargo-test/e2e run passes after all changes. Linux Homebrew
 installation has not been tested. Probe logs are in /tmp/pactling-phase6-probe on
 this machine; the local Homebrew probe tap and stopped Docker probe volumes are retained.
+
+## Independent review and dispositions
+
+Claude completed `agent-review code main..HEAD` with `<<AGENT-REVIEW-END>>`.
+Findings were checked individually:
+
+1. Hosted publication remains unverified, as requested. No PAT acquisition, registry
+   push, throwaway release, or deletion is needed/authorized for this PR.
+2. Confirmed missing license text. Added the MIT text from GitHub's licenses/mit API
+   with the owner's GitHub profile name. A new archive test failed because LICENSE
+   was absent, then passed after packaging it. The runtime image includes it at
+   /usr/share/licenses/pactling/LICENSE; the smoke test copies and compares it.
+3. QEMU speed/robustness and publication ordering are retained operational limits,
+   not a reproduced failure. The local reverse-architecture build took 6 minutes.
+   Hosted ARM64-under-x86 QEMU and registry publication remain unverified; no claim
+   of atomic publication or rollback is made.
+4. Confirmed prerelease tags would move latest. Added a tested tag generator that
+   omits latest for hyphenated prerelease versions. Its inverted guard is killed by
+   tests. Stable versions continue to publish both tags.
+5. Packaging tests now run in the Linux release job and are listed in Develop.
+   ci.yml stays unchanged per the explicit handoff requirement.
+6. Dismissed the assumed compiler override: dtolnay/rust-toolchain@stable action.yml
+   calls `rustup default`, never exports RUSTUP_TOOLCHAIN. Locally `rustup default`
+   reports stable while `rustup show active-toolchain` reports 1.99.0 overridden by
+   this repo's file. Evidence: receiver's exact source and real rustup.
+7. Dismissed "builds instead of pulling": an actual Compose v2.39.4 scratch project
+   with image + build tries to pull first, then builds on registry failure. README
+   now explicitly uses compose pull and up --no-build for published images, avoiding
+   stale images or fallback builds in that path.
+8. Confirmed GitHub's documented initial private GHCR visibility. README now tells
+   the maintainer to make the first package public before distributing install commands.
+   Source: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+9. brew test had completed after the pinned review snapshot; its log shows the
+   installed binary's --version assertion passing. Repeated after adding LICENSE.
+10. Restored the CLI helper's captured diagnostics and exit assertion by putting
+    broker options immediately after the command, before the remaining arguments.
+    The webhook call retains --uuid -- <uuid>; the real-client suite checks the change.
+
+The archive test uses synthetic binary bytes to test archive contents, not executable
+compatibility; both real release executables were built and run separately. Archive
+creation disables macOS AppleDouble metadata. Rebuilt tarballs and their formula
+hashes reflect LICENSE inclusion, and both checksum sets pass in Debian coreutils.

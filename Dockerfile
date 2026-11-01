@@ -8,6 +8,7 @@ RUN cargo build --locked --release && mkdir /data && chown 65532:65532 /data
 FROM gcr.io/distroless/cc-debian12:nonroot
 COPY --from=build /build/target/release/pactling /usr/local/bin/pactling
 COPY --from=build --chown=65532:65532 /data /data
+COPY LICENSE /usr/share/licenses/pactling/LICENSE
 ENV PACTLING_DATABASE_URL=sqlite:///data/pactling.db?mode=rwc
 VOLUME ["/data"]
 EXPOSE 9292

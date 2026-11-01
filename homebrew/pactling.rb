@@ -8,13 +8,13 @@ class Pactling < Formula
   on_macos do
     depends_on arch: :arm64
     url "https://github.com/PatrickPriestley/pactling/releases/download/v0.1.0/pactling-0.1.0-aarch64-apple-darwin.tar.gz"
-    sha256 "9e3e6e307ac402ecd509b35e2ce6af59829965b4c28458d29bcb61136d4fa560"
+    sha256 "bda2554f5770b9f47ec65c6f194cca421f7f93e9ad617d2618c7e18570443e6e"
   end
 
   on_linux do
     depends_on arch: :x86_64
     url "https://github.com/PatrickPriestley/pactling/releases/download/v0.1.0/pactling-0.1.0-x86_64-unknown-linux-gnu.tar.gz"
-    sha256 "f9b091485c8eab81d1f89aad711da5b41b14f7e7af64a9672e3ff008940a2de5"
+    sha256 "e98501a89efd58e18c48424b8a4b59f397ba7bb9c9e2bf59f9dc9919d72f8312"
   end
 
   def install

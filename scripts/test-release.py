@@ -5,12 +5,40 @@ import subprocess
 import tempfile
 import unittest
 import tomllib
+import shutil
+import tarfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VERSION = tomllib.loads((ROOT / "Cargo.toml").read_text())["package"]["version"]
 
 
 class ReleaseTests(unittest.TestCase):
+    def test_archives_include_license(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / 'scripts').mkdir()
+            shutil.copy(ROOT / 'scripts/package-release.sh', root / 'scripts')
+            shutil.copy(ROOT / 'Cargo.toml', root)
+            (root / 'LICENSE').write_text('license notice')
+            binary = root / 'target/aarch64-apple-darwin/release/pactling'
+            binary.parent.mkdir(parents=True)
+            binary.write_text('test binary')
+            subprocess.run(['bash', str(root / 'scripts/package-release.sh'),
+                            'aarch64-apple-darwin', f'v{VERSION}'], check=True)
+            with tarfile.open(next((root / 'dist').glob('*.tar.gz'))) as archive:
+                self.assertIn('LICENSE', archive.getnames())
+                self.assertEqual(archive.extractfile('LICENSE').read(), b'license notice')
+
+    def test_image_tags_keep_prereleases_off_latest(self):
+        script = ROOT / 'scripts/release-tags.py'
+        self.assertTrue(script.is_file(), 'release image tag generator must exist')
+        for tag, latest in [('v0.1.0', True), ('v0.2.0-rc1', False)]:
+            result = subprocess.run(['python3', str(script), tag], check=True,
+                                    capture_output=True, text=True)
+            tags = result.stdout.splitlines()
+            self.assertIn(f'ghcr.io/patrickpriestley/pactling:{tag}', tags)
+            self.assertEqual('ghcr.io/patrickpriestley/pactling:latest' in tags, latest)
+
     def test_release_tools_exist(self):
         self.assertTrue((ROOT / 'scripts/package-release.sh').is_file(),
                         'release archive command must exist')
