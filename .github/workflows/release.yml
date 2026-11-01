@@ -58,12 +58,7 @@ jobs:
         working-directory: dist
       - run: python3 scripts/release-formula.py dist > dist/pactling.rb
       - id: tags
-        run: |
-          {
-            echo 'value<<PACTLING_TAGS'
-            python3 scripts/release-tags.py "$RELEASE_TAG"
-            echo PACTLING_TAGS
-          } >> "$GITHUB_OUTPUT"
+        run: python3 scripts/release-tags.py "$RELEASE_TAG" >> "$GITHUB_OUTPUT"
         env:
           RELEASE_TAG: ${{ github.ref_name }}
       - uses: docker/setup-qemu-action@v3
@@ -79,7 +74,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.tags.outputs.value }}
-      - run: gh release create "$RELEASE_TAG" dist/* --verify-tag --generate-notes
+      - run: gh release create "$RELEASE_TAG" dist/* --verify-tag --generate-notes --prerelease="$PRERELEASE"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PRERELEASE: ${{ steps.tags.outputs.prerelease }}
           RELEASE_TAG: ${{ github.ref_name }}

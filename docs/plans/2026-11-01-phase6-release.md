@@ -124,3 +124,14 @@ The archive test uses synthetic binary bytes to test archive contents, not execu
 compatibility; both real release executables were built and run separately. Archive
 creation disables macOS AppleDouble metadata. Rebuilt tarballs and their formula
 hashes reflect LICENSE inclusion, and both checksum sets pass in Debian coreutils.
+
+The second Claude review completed with its end marker and one remaining finding:
+GitHub releases also need the prerelease flag. Added an explicit true/false step
+output alongside the image tags and passed it to `gh release create --prerelease=`.
+The extended regression assertion failed before the change and passes afterward;
+inverting prerelease classification is killed by the test. The test also asserts
+the GITHUB_OUTPUT delimiter layout. Installed gh 2.92.0 accepts both boolean forms;
+its exact v2.92.0 create.go declares the bool flag at line 209 and places the value
+in the API's `prerelease` field at line 450. This is receiver-source evidence, not a
+published release. Also executed all five packaging tests inside the exact Linux
+Rust/Debian image (not just the host); they pass.

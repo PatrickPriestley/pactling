@@ -36,8 +36,11 @@ class ReleaseTests(unittest.TestCase):
             result = subprocess.run(['python3', str(script), tag], check=True,
                                     capture_output=True, text=True)
             tags = result.stdout.splitlines()
+            self.assertEqual(tags[0], "value<<PACTLING_TAGS")
+            self.assertEqual(tags[-2], "PACTLING_TAGS")
             self.assertIn(f'ghcr.io/patrickpriestley/pactling:{tag}', tags)
             self.assertEqual('ghcr.io/patrickpriestley/pactling:latest' in tags, latest)
+            self.assertIn(f'prerelease={str(not latest).lower()}', tags)
 
     def test_release_tools_exist(self):
         self.assertTrue((ROOT / 'scripts/package-release.sh').is_file(),
