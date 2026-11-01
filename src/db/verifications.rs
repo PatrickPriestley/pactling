@@ -235,10 +235,9 @@ impl Db {
         provider_id: i64,
     ) -> sqlx::Result<Vec<PactPublication>> {
         sqlx::query_as(publication_query!(
-            "WHERE pp.provider_id = ?1 AND c.main_branch IS NOT NULL AND v.id = (
-                SELECT MAX(v2.id) FROM pact_publications pp2 JOIN versions v2 ON v2.id = pp2.consumer_version_id
-                JOIN branch_versions bv2 ON bv2.version_id = v2.id JOIN branches b2 ON b2.id = bv2.branch_id AND b2.name = c.main_branch
-                WHERE v2.pacticipant_id = c.id AND pp2.provider_id = pp.provider_id)
+            "WHERE pp.provider_id = ?1 AND c.main_branch IS NOT NULL AND (v.pacticipant_id, v.id) IN (SELECT v2.pacticipant_id, MAX(v2.id) FROM pact_publications pp2 JOIN versions v2 ON v2.id = pp2.consumer_version_id JOIN pacticipants c2 ON c2.id = v2.pacticipant_id
+                JOIN branch_versions bv2 ON bv2.version_id = v2.id JOIN branches b2 ON b2.id = bv2.branch_id AND b2.name = c2.main_branch
+                WHERE pp2.provider_id = ?1 GROUP BY v2.pacticipant_id)
              ORDER BY c.name"
         ))
         .bind(provider_id)
@@ -255,10 +254,9 @@ impl Db {
         consumer: Option<&str>,
     ) -> sqlx::Result<Vec<PactPublication>> {
         sqlx::query_as(publication_query!(
-            "WHERE pp.provider_id = ?1 AND (?3 IS NULL OR c.name = ?3) AND v.id = (
-                SELECT MAX(v2.id) FROM pact_publications pp2 JOIN versions v2 ON v2.id = pp2.consumer_version_id
+            "WHERE pp.provider_id = ?1 AND (?3 IS NULL OR c.name = ?3) AND (v.pacticipant_id, v.id) IN (SELECT v2.pacticipant_id, MAX(v2.id) FROM pact_publications pp2 JOIN versions v2 ON v2.id = pp2.consumer_version_id
                 JOIN branch_versions bv2 ON bv2.version_id = v2.id JOIN branches b2 ON b2.id = bv2.branch_id AND b2.name = ?2
-                WHERE v2.pacticipant_id = c.id AND pp2.provider_id = pp.provider_id)
+                WHERE pp2.provider_id = ?1 GROUP BY v2.pacticipant_id)
              ORDER BY c.name"
         ))
         .bind(provider_id)
@@ -275,9 +273,8 @@ impl Db {
         consumer: Option<&str>,
     ) -> sqlx::Result<Vec<PactPublication>> {
         sqlx::query_as(publication_query!(
-            "WHERE pp.provider_id = ?1 AND (?2 IS NULL OR c.name = ?2) AND v.id = (
-                SELECT MAX(v2.id) FROM pact_publications pp2 JOIN versions v2 ON v2.id = pp2.consumer_version_id
-                WHERE v2.pacticipant_id = c.id AND pp2.provider_id = pp.provider_id)
+            "WHERE pp.provider_id = ?1 AND (?2 IS NULL OR c.name = ?2) AND (v.pacticipant_id, v.id) IN (SELECT v2.pacticipant_id, MAX(v2.id) FROM pact_publications pp2 JOIN versions v2 ON v2.id = pp2.consumer_version_id
+                WHERE pp2.provider_id = ?1 GROUP BY v2.pacticipant_id)
              ORDER BY c.name"
         ))
         .bind(provider_id)
@@ -297,10 +294,9 @@ impl Db {
     ) -> sqlx::Result<Vec<PactPublication>> {
         let sql = if latest_only {
             publication_query!(
-                "WHERE pp.provider_id = ?1 AND (?3 IS NULL OR c.name = ?3) AND v.id = (
-                    SELECT MAX(v2.id) FROM pact_publications pp2 JOIN versions v2 ON v2.id = pp2.consumer_version_id
+                "WHERE pp.provider_id = ?1 AND (?3 IS NULL OR c.name = ?3) AND (v.pacticipant_id, v.id) IN (SELECT v2.pacticipant_id, MAX(v2.id) FROM pact_publications pp2 JOIN versions v2 ON v2.id = pp2.consumer_version_id
                     JOIN tags t2 ON t2.version_id = v2.id AND t2.name = ?2
-                    WHERE v2.pacticipant_id = c.id AND pp2.provider_id = pp.provider_id)
+                    WHERE pp2.provider_id = ?1 GROUP BY v2.pacticipant_id)
                  ORDER BY c.name"
             )
         } else {
