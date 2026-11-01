@@ -99,3 +99,165 @@ async fn all_108_matrix_decisions_are_characterized() {
     db.pool().close().await;
     std::fs::remove_file(path).unwrap();
 }
+
+async fn seed_decision() -> (
+    Db,
+    pactling::db::pacts::PactPublication,
+    pactling::db::versions::Version,
+) {
+    let db = Db::connect("sqlite::memory:").await.unwrap();
+    db.migrate().await.unwrap();
+    let (pact, _) =
+        pactling::service::publish::put_pact(&db, "P", "C", "1", json!({"interactions": []}))
+            .await
+            .unwrap();
+    let (provider, _) = db
+        .find_or_create_version(pact.provider_id, "2")
+        .await
+        .unwrap();
+    (db, pact, provider)
+}
+
+#[tokio::test]
+async fn one_evaluation_owns_verdict_and_causes() {
+    use pactling::service::matrix::evaluation::{Cause, RowOutcome};
+    let (db, pact, provider) = seed_decision().await;
+    db.create_verification(
+        pact.pact_version_id,
+        provider.id,
+        None,
+        false,
+        None,
+        None,
+        None,
+    )
+    .await
+    .unwrap();
+    let query = MatrixQuery::parse(Some(
+        "pacticipant=C&version=1&pacticipant=P&version=2&latestby=cvpv",
+    ));
+    let result = matrix::decision(&db, &query).await.unwrap();
+    assert_eq!(result.matrix().deployable, Some(false));
+    assert_eq!(result.row_outcomes(), &[RowOutcome::Failed]);
+    assert_eq!(result.matrix().notices[0].cause, Cause::VerificationFailed);
+    let missing = MatrixQuery::parse(Some("pacticipant=C&version=1&pacticipant=P&version=999"));
+    let result = matrix::decision(&db, &missing).await.unwrap();
+    assert_eq!(result.matrix().deployable, Some(false));
+    assert_eq!(result.row_outcomes(), &[RowOutcome::Unverified]);
+    assert!(
+        matches!(&result.matrix().notices[0].cause, Cause::MissingSelector(s) if s.pacticipant == "P" && s.version.as_deref() == Some("999"))
+    );
+}
+
+#[tokio::test]
+async fn compatibility_renderer_needs_no_database() {
+    use pactling::http::{hal::Links, matrix::document};
+    use pactling::service::matrix::evaluation::evaluate;
+    let (db, pact, provider) = seed_decision().await;
+    db.create_verification(
+        pact.pact_version_id,
+        provider.id,
+        None,
+        true,
+        None,
+        None,
+        None,
+    )
+    .await
+    .unwrap();
+    let query = MatrixQuery::parse(Some("pacticipant=C&version=1&pacticipant=P&version=2"));
+    let resolved = matrix::resolve(&db, &query).await.unwrap();
+    // Later database changes must not alter either the decision or its rendered evidence.
+    db.create_verification(
+        pact.pact_version_id,
+        provider.id,
+        None,
+        false,
+        None,
+        None,
+        None,
+    )
+    .await
+    .unwrap();
+    db.pool().close().await;
+    let first = evaluate(resolved.clone());
+    assert_eq!(first.query(), &query);
+    assert_eq!(
+        first.row_outcomes(),
+        &[pactling::service::matrix::evaluation::RowOutcome::Successful]
+    );
+    let second = evaluate(resolved);
+    let links = Links::new("http://broker");
+    let doc = document(&links, &first);
+    assert_eq!(doc, document(&links, &second));
+    assert_eq!(doc["summary"]["deployable"], true);
+    assert_eq!(doc["matrix"][0]["verificationResult"]["success"], true);
+    assert_eq!(doc["matrix"][0]["provider"]["version"]["number"], "2");
+}
+
+#[tokio::test]
+async fn unverified_candidate_is_retained_without_changing_null_semantics() {
+    use pactling::http::{hal::Links, matrix::document};
+    use pactling::service::matrix::evaluation::RowOutcome;
+    let (db, _, provider) = seed_decision().await;
+    let query = MatrixQuery::parse(Some(
+        "pacticipant=C&version=1&pacticipant=P&version=2&ignore[][pacticipant]=P&ignore[][version]=2",
+    ));
+    let result = matrix::decision(&db, &query).await.unwrap();
+    assert_eq!(result.matrix().deployable, None);
+    assert_eq!(result.row_outcomes(), &[RowOutcome::Unverified]);
+    assert_eq!(result.matrix().rows[0].provider_candidate, Some(provider));
+    assert!(result.matrix().rows[0].provider.version.is_none());
+    assert!(!result.matrix().rows[0].ignored);
+    let doc = document(&Links::new("http://broker"), &result);
+    assert!(doc["matrix"][0]["provider"]["version"].is_null());
+}
+
+#[tokio::test]
+async fn ignored_rows_have_a_typed_disposition_without_becoming_successful() {
+    use pactling::service::matrix::evaluation::{Cause, RowOutcome};
+    let (db, pact, provider) = seed_decision().await;
+    db.create_verification(
+        pact.pact_version_id,
+        provider.id,
+        None,
+        false,
+        None,
+        None,
+        None,
+    )
+    .await
+    .unwrap();
+    let query = MatrixQuery::parse(Some(
+        "pacticipant=C&version=1&pacticipant=P&version=2&ignore[][pacticipant]=P",
+    ));
+    let result = matrix::decision(&db, &query).await.unwrap();
+    assert_eq!(result.matrix().deployable, Some(true));
+    assert_eq!(result.row_outcomes(), &[RowOutcome::Ignored]);
+    assert_eq!(result.matrix().success, 0);
+    assert_eq!(result.matrix().ignored, 1);
+    assert_eq!(result.matrix().notices[0].cause, Cause::NoRequiredRows);
+}
+
+#[tokio::test]
+async fn overlapping_selectors_are_deduplicated_without_latestby() {
+    let (db, pact, provider) = seed_decision().await;
+    db.create_verification(
+        pact.pact_version_id,
+        provider.id,
+        None,
+        true,
+        None,
+        None,
+        None,
+    )
+    .await
+    .unwrap();
+    let query = MatrixQuery::parse(Some(
+        "pacticipant=C&version=1&pacticipant=C&version=1&pacticipant=P&version=2",
+    ));
+    let result = matrix::decision(&db, &query).await.unwrap();
+    assert_eq!(result.matrix().success, 1);
+    assert_eq!(result.matrix().rows.len(), 1);
+    assert_eq!(result.row_outcomes().len(), 1);
+}
