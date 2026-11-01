@@ -1,6 +1,6 @@
 Created Consumer version 1.0.0 with branch main and tags dev
 [32mPact successfully published for Consumer version 1.0.0 and provider Provider.[0m
-  View the published pact at [35mhttp://127.0.0.1:62339/pacts/provider/Provider/consumer/Consumer/version/1.0.0[0m
+  View the published pact at [35mhttp://127.0.0.1:56536/pacts/provider/Provider/consumer/Consumer/version/1.0.0[0m
   Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged dev)
 [33m  Next steps:[0m
 [33m    * Add Pact verification tests to the Provider build. See [35mhttps://docs.pact.io/go/provider_verification[0m[0m

@@ -1,40 +1,40 @@
 TAP version 13
-# (node:55402) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+# (node:59889) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 # (Use `node --trace-deprecation ...` to show where the warning was created)
-# [08:05:31.876] WARN (55402): pact@13.2.0: no state handler found for state: ""
-# [08:05:32.834] WARN (55402): pact@13.2.0: no state handler found for state: ""
-# 2026-10-31T12:05:33.142373Z  WARN ThreadId(09) pact_matching::metrics: 
+# [20:41:28.937] WARN (59889): pact@13.2.0: no state handler found for state: ""
+# [20:41:29.817] WARN (59889): pact@13.2.0: no state handler found for state: ""
+# 2026-11-01T00:41:30.124893Z  WARN ThreadId(09) pact_matching::metrics: 
 # Please note:
 # We are tracking events anonymously to gather important usage statistics like Pact version and operating system. To disable tracking, set the 'PACT_DO_NOT_TRACK' environment variable to 'true'.
-# The pact at http://127.0.0.1:62783/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer versions matching the following criteria:
+# The pact at http://127.0.0.1:56820/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer versions matching the following criteria:
 #     * latest version from branch 'main' (1.0.0)
 #     * latest version from the main branch 'main' (1.0.0)
 # This pact has previously been successfully verified by a version of Provider from branch 'main'. If this verification fails, it will fail the build. Read more at https://docs.pact.io/go/pending
 # Verifying a pact between [1mConsumer[0m and [1mProvider[0m
-#   a request for an order (192ms loading, 379ms verification)
+#   a request for an order (189ms loading, 379ms verification)
 #      Given an order exists
 #     returns a response which
 #       has status code [1m200[0m ([31mFAILED[0m)
 #       includes headers
 #         "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
-#   a request for a missing order (192ms loading, 373ms verification)
+#   a request for a missing order (189ms loading, 377ms verification)
 #     returns a response which
 #       has status code [1m404[0m ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
-# The pact at http://127.0.0.1:62783/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer versions matching the following criteria:
+# The pact at http://127.0.0.1:56820/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer versions matching the following criteria:
 #     * latest version from branch 'main' (1)
 #     * latest version from the main branch 'main' (1)
 # This pact has previously been successfully verified by a version of Provider from branch 'main'. If this verification fails, it will fail the build. Read more at https://docs.pact.io/go/pending
 # Verifying a pact between [1mWeb[0m and [1mProvider[0m
-#   a request for an order (192ms loading, 407ms verification)
+#   a request for an order (189ms loading, 355ms verification)
 #      Given an order exists
 #     returns a response which
 #       has status code [1m200[0m ([31mFAILED[0m)
 #       includes headers
 #         "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
-#   a request for a missing order (192ms loading, 376ms verification)
+#   a request for a missing order (189ms loading, 368ms verification)
 #     returns a response which
 #       has status code [1m404[0m ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
@@ -46,13 +46,13 @@ TAP version 13
 #     2.1) has status code 200
 #            expected [31m200[0m but was [32m500[0m
 # There were 2 pact failures
-# [08:05:33.272] ERROR (55402): pact-core@15.2.1: Verification unsuccessful
+# [20:41:30.247] ERROR (59889): pact-core@15.2.1: Verification unsuccessful
 # Subtest: provider verifies the pacts the broker selects and publishes results
 not ok 1 - provider verifies the pacts the broker selects and publishes results
   ---
-  duration_ms: 2223.319792
+  duration_ms: 2146.909792
   type: 'test'
-  location: '/Users/patrickpriestley/Code/pactling/e2e/provider.test.js:21:1'
+  location: '/private/tmp/claude-501/-Users-patrickpriestley-Code/5a7093c5-df74-4630-9b30-e971d6a6410c/scratchpad/wt/e2e/provider.test.js:21:1'
   failureType: 'testCodeFailure'
   error: 'Verfication failed'
   code: 'ERR_TEST_FAILURE'
@@ -67,5 +67,5 @@ not ok 1 - provider verifies the pacts the broker selects and publishes results
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 2424.050625
+# duration_ms 2378.94575
 exit=1

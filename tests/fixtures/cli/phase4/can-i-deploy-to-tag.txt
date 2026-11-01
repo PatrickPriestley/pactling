@@ -6,7 +6,7 @@ Consumer | 1.0.0     | Provider | 1         | true     | 1
 
 VERIFICATION RESULTS
 --------------------
-1. http://127.0.0.1:56839/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4w/verification-results/200 (success)
+1. http://127.0.0.1:57212/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4w/verification-results/200 (success)
 
 [32mAll required verification results are published and successful[0m
 exit=0

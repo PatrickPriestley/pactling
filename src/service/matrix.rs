@@ -19,6 +19,17 @@ pub struct Selector {
     pub main_branch: bool,
 }
 
+impl Selector {
+    /// Only the pacticipant name was given: "all versions" in Ruby's resolver.
+    pub fn is_name_only(&self) -> bool {
+        self.version.is_none()
+            && !self.latest
+            && self.tag.is_none()
+            && self.branch.is_none()
+            && !self.main_branch
+    }
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct MatrixQuery {
     pub selectors: Vec<Selector>,
@@ -155,6 +166,7 @@ pub struct Matrix {
     pub failed: usize,
     pub unknown: usize,
     pub ignored: usize,
+    pub has_ignores: bool,
 }
 
 /// How the other side of an integration is chosen.
@@ -164,7 +176,13 @@ enum Target {
     Latest {
         tag: Option<String>,
     },
-    Pinned(Version),
+    /// The versions the second selector resolved to, each with its reason wording.
+    /// A single pinned version is the one-element case.
+    Versions(Vec<(Version, String)>),
+    Missing {
+        description: String,
+        notice: String,
+    },
     /// Every version that has a verification (or none).
     Any,
 }
@@ -173,35 +191,126 @@ fn errors(msg: String) -> Error {
     Error::Validation(json!([msg]))
 }
 
+/// Resolve every directed integration between selected participants. A participant can
+/// be a consumer, a provider, or both; query ordering does not assign those roles.
 pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
-    if q.selectors.is_empty() {
-        return Err(errors("Please provide 1 or more version selectors.".into()));
+    let mut notices = vec![];
+    for (name, version) in &q.ignore {
+        if db.find_pacticipant(name).await?.is_none() {
+            notices.push(Notice {
+                kind: "warning",
+                text: format!(
+                    "WARN: Cannot ignore any version of {name} (no such pacticipant exists)"
+                ),
+            });
+        } else if let Some(number) = version
+            && db.find_version(name, number).await?.is_none()
+        {
+            notices.push(Notice {
+                kind: "warning",
+                text: format!(
+                    "WARN: Cannot ignore version {number} of {name} (no such version exists)"
+                ),
+            });
+        }
     }
-    let mut pacticipants = vec![];
+    // Verified: Ruby reports every specified selector whose version does not exist, in
+    // selector order, whether or not an integration pairs it with another selector.
     for s in &q.selectors {
-        let p = db
-            .find_pacticipant(&s.pacticipant)
-            .await?
-            .ok_or_else(|| errors(format!("Pacticipant {} not found", s.pacticipant)))?;
-        pacticipants.push(p);
+        if s.is_name_only() {
+            continue;
+        }
+        let Some(p) = db.find_pacticipant(&s.pacticipant).await? else {
+            continue; // matrix_pair answers 400 for an unknown pacticipant
+        };
+        if resolve_selector(db, &p, s).await?.0.is_empty() {
+            notices.push(Notice {
+                kind: "error",
+                text: missing_selector_notice(&p, s),
+            });
+        }
     }
-    let environment = match &q.environment {
-        Some(name) => Some(
-            db.find_environment_by_name(name)
-                .await?
-                .ok_or_else(|| errors(format!("Environment with name '{name}' does not exist")))?,
-        ),
-        None => None,
-    };
-    let subject_selector = &q.selectors[0];
-    let subject = &pacticipants[0];
+    let mut rows = vec![];
+    if q.selectors.len() < 2 {
+        let result = matrix_pair(db, q).await?;
+        notices.extend(result.notices);
+        rows.extend(result.rows);
+    } else {
+        for (i, consumer) in q.selectors.iter().enumerate() {
+            for (j, provider) in q.selectors.iter().enumerate() {
+                if i == j {
+                    continue;
+                }
+                let pair = MatrixQuery {
+                    selectors: vec![consumer.clone(), provider.clone()],
+                    ..q.clone()
+                };
+                let result = matrix_pair(db, &pair).await?;
+                notices.extend(result.notices);
+                rows.extend(result.rows);
+            }
+        }
+    }
+    // Verified in Ruby's DeploymentStatusSummary#reasons: warnings (ignore warnings in
+    // request order, then the environment and version-number warnings) precede errors,
+    // and within each kind the request order is kept.
+    if q.selectors.iter().any(|s| !s.is_name_only())
+        && q.selectors.iter().all(|s| s.version.is_none())
+    {
+        notices.push(Notice { kind: "warning", text: "WARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.".into() });
+    }
+    let (warnings, errors): (Vec<Notice>, Vec<Notice>) =
+        notices.into_iter().partition(|n| n.kind == "warning");
     let mut notices: Vec<Notice> = vec![];
+    for n in warnings.into_iter().chain(errors) {
+        if !notices.iter().any(|seen| seen.text == n.text) {
+            notices.push(n);
+        }
+    }
+    // Overlapping selectors can select the same evidence more than once.
+    let mut seen = std::collections::HashSet::new();
+    rows.retain(|r| {
+        seen.insert((
+            r.pact.id,
+            r.provider.version.as_ref().map(|v| v.id),
+            r.provider.description.clone(),
+        ))
+    });
+    for row in &mut rows {
+        row.ignored |= is_ignored(
+            q,
+            &row.consumer.pacticipant.name,
+            row.consumer.version.as_ref(),
+        ) || is_ignored(
+            q,
+            &row.provider.pacticipant.name,
+            row.provider.version.as_ref(),
+        );
+    }
+    let mut result = summarize(rows, notices);
+    // The Ruby document includes ignored=0 when an ignore was requested.
+    result.has_ignores = !q.ignore.is_empty();
+    Ok(result)
+}
 
-    // The subject versions and how to describe them.
-    let (subject_versions, subject_description): (
-        Vec<Version>,
-        Box<dyn Fn(&Version) -> String + Send + Sync>,
-    ) = if let Some(number) = &subject_selector.version {
+fn is_ignored(q: &MatrixQuery, name: &str, version: Option<&Version>) -> bool {
+    q.ignore.iter().any(|(p, v)| {
+        p == name
+            && v.as_ref()
+                .is_none_or(|number| version.is_some_and(|actual| &actual.number == number))
+    })
+}
+
+type VersionDescription = Box<dyn Fn(&Version) -> String + Send + Sync>;
+
+async fn resolve_selector(
+    db: &Db,
+    subject: &Pacticipant,
+    subject_selector: &Selector,
+) -> Result<(Vec<Version>, VersionDescription)> {
+    let resolved: (Vec<Version>, VersionDescription) = if let Some(number) =
+        &subject_selector.version
+    {
         let v = db.find_version(&subject.name, number).await?;
         let name = subject.name.clone();
         (
@@ -209,7 +318,6 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             Box::new(move |v: &Version| format!("version {} of {}", v.number, name)),
         )
     } else if subject_selector.latest {
-        notices.push(Notice { kind: "warning", text: "WARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.".into() });
         let name = subject.name.clone();
         if subject_selector.main_branch {
             let branch = subject.main_branch.clone();
@@ -253,6 +361,36 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                 Box::new(move |v: &Version| format!("the latest version of {name} ({})", v.number)),
             )
         }
+    } else if subject_selector.main_branch || subject_selector.branch.is_some() {
+        // Verified: a branch selector without `latest` means every version of the branch.
+        let name = subject.name.clone();
+        let branch = match &subject_selector.branch {
+            Some(b) => Some(b.clone()),
+            None => subject.main_branch.clone(),
+        };
+        let versions = match &branch {
+            Some(b) => db.versions_in_branch(subject.id, b).await?,
+            None => vec![],
+        };
+        let b = branch.unwrap_or_default();
+        let prefix = if versions.len() > 1 {
+            "one of the versions"
+        } else {
+            "the version"
+        };
+        (
+            versions,
+            Box::new(move |v: &Version| {
+                format!("{prefix} of {name} from branch {b} ({})", v.number)
+            }),
+        )
+    } else if let Some(t) = subject_selector.tag.clone() {
+        // Verified: a tag selector without `latest` means every version with the tag.
+        let name = subject.name.clone();
+        (
+            db.versions_with_tag(subject.id, &t).await?,
+            Box::new(move |v: &Version| format!("a version of {name} with tag {t} ({})", v.number)),
+        )
     } else {
         let name = subject.name.clone();
         (
@@ -260,16 +398,86 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             Box::new(move |_: &Version| format!("any version of {name}")),
         )
     };
+    Ok(resolved)
+}
+
+/// Ruby's `ResolvedSelector#version_does_not_exist_description`, in its order of checks.
+fn missing_selector_notice(subject: &Pacticipant, selector: &Selector) -> String {
+    if let Some(tag) = &selector.tag {
+        format!("No version with tag {tag} exists for {}", subject.name)
+    } else if let Some(branch) = &selector.branch {
+        format!("No version of {} from branch {branch} exists", subject.name)
+    } else if selector.main_branch {
+        format!("No version of {} from the main branch exists", subject.name)
+    } else if let Some(number) = &selector.version {
+        format!(
+            "No pacts or verifications have been published for version {number} of {}",
+            subject.name
+        )
+    } else {
+        format!(
+            "No pacts or verifications have been published for {}",
+            subject.name
+        )
+    }
+}
+
+struct SelectedRows {
+    rows: Vec<Row>,
+    notices: Vec<Notice>,
+}
+
+async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
+    if q.selectors.is_empty() {
+        return Err(errors("Please provide 1 or more version selectors.".into()));
+    }
+    let mut pacticipants = vec![];
+    for s in &q.selectors {
+        let p = db
+            .find_pacticipant(&s.pacticipant)
+            .await?
+            .ok_or_else(|| errors(format!("Pacticipant {} not found", s.pacticipant)))?;
+        pacticipants.push(p);
+    }
+    let environment = match &q.environment {
+        Some(name) => Some(
+            db.find_environment_by_name(name)
+                .await?
+                .ok_or_else(|| errors(format!("Environment with name '{name}' does not exist")))?,
+        ),
+        None => None,
+    };
+    let subject_selector = &q.selectors[0];
+    let subject = &pacticipants[0];
+    let mut notices: Vec<Notice> = vec![];
+
+    let (subject_versions, subject_description) =
+        resolve_selector(db, subject, subject_selector).await?;
 
     // How the other side is chosen.
     let target = if q.selectors.len() > 1 {
         let other = &pacticipants[1];
-        match &q.selectors[1].version {
-            Some(number) => match db.find_version(&other.name, number).await? {
-                Some(v) => Target::Pinned(v),
-                None => Target::Any,
-            },
-            None => Target::Any,
+        let selector = &q.selectors[1];
+        if selector.is_name_only() {
+            Target::Any
+        } else {
+            let (versions, describe) = resolve_selector(db, other, selector).await?;
+            if versions.is_empty() {
+                Target::Missing {
+                    description: format!("a requested version of {}", other.name),
+                    notice: missing_selector_notice(other, selector),
+                }
+            } else {
+                Target::Versions(
+                    versions
+                        .into_iter()
+                        .map(|v| {
+                            let d = describe(&v);
+                            (v, d)
+                        })
+                        .collect(),
+                )
+            }
         }
     } else if let Some(e) = &environment {
         Target::Environment(e.clone())
@@ -280,29 +488,21 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
     };
     // Verified: one selector without an environment gets the environment warning first;
     // the integration route (two unpinned selectors) gets none.
-    if q.selectors.len() == 1 && environment.is_none() {
+    if q.selectors.len() == 1 && environment.is_none() && q.tag.is_none() {
         notices.insert(0, Notice { kind: "warning", text: "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable.".into() });
     }
 
     let mut rows: Vec<Row> = vec![];
     if subject_versions.is_empty() {
-        let description = match &subject_selector.version {
-            Some(n) => format!("version {n} of {}", subject.name),
-            None => format!("the latest version of {}", subject.name),
-        };
-        notices.push(Notice {
-            kind: "error",
-            text: format!("No pacts or verifications have been published for {description}"),
-        });
-        return Ok(Matrix {
-            rows,
-            deployable: Some(false),
-            notices,
-            success: 0,
-            failed: 0,
-            unknown: 0,
-            ignored: 0,
-        });
+        // An unconstrained provider may have publications but no provider versions
+        // yet. Its opposite direction supplies the unknown row, not a missing pin.
+        if q.selectors.len() == 1 || !subject_selector.is_name_only() {
+            notices.push(Notice {
+                kind: "error",
+                text: missing_selector_notice(subject, subject_selector),
+            });
+        }
+        return Ok(SelectedRows { rows, notices });
     }
     for sv in &subject_versions {
         let sdesc = subject_description(sv);
@@ -315,10 +515,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                 .find_pacticipant(&pact.provider_name)
                 .await?
                 .expect("exists");
-            let ignored = q
-                .ignore
-                .iter()
-                .any(|(p, v)| p == &provider.name && v.as_ref().is_none_or(|_| true));
+            let ignored = is_ignored(q, &provider.name, None);
             match &target {
                 Target::Environment(e) => {
                     let ids = db.version_ids_in_environment(provider.id, e.id).await?;
@@ -331,11 +528,28 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                             ignored,
                         });
                     }
-                    for id in ids {
-                        let pv = db.find_version_by_id(id).await?.expect("exists");
+                    let version_description = if ids.len() > 1 {
+                        "one of the versions"
+                    } else {
+                        "the version"
+                    };
+                    // Verified: only the versions in the environment that verified the pact
+                    // are rows; when none did, a single blank row names the newest one.
+                    let mut selected = vec![];
+                    for id in &ids {
+                        let pv = db.find_version_by_id(*id).await?.expect("exists");
                         let verification = db
                             .latest_verification_by_provider_version(pact.pact_version_id, pv.id)
                             .await?;
+                        if verification.is_some() {
+                            selected.push((pv, verification));
+                        }
+                    }
+                    if selected.is_empty() && !ids.is_empty() {
+                        let pv = db.find_version_by_id(ids[0]).await?.expect("exists");
+                        selected.push((pv, None));
+                    }
+                    for (pv, verification) in selected {
                         rows.push(Row {
                             consumer: Side {
                                 pacticipant: subject.clone(),
@@ -346,7 +560,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                                 pacticipant: provider.clone(),
                                 version: verification.as_ref().map(|_| pv.clone()),
                                 description: format!(
-                                    "the version of {} currently in {} ({})",
+                                    "{version_description} of {} currently in {} ({})",
                                     provider.name, e.name, pv.number
                                 ),
                             },
@@ -363,7 +577,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                     };
                     match pv {
                         Some(pv) => {
-                            let verification = db.latest_verification_by_provider_version(pact.pact_version_id, pv.id).await?;
+                                let verification = db.latest_verification_by_provider_version(pact.pact_version_id, pv.id).await?;
                             let description = match tag {
                                 Some(t) => format!("the latest version of {} with tag {t} ({})", provider.name, pv.number),
                                 None => format!("the latest version of {} ({})", provider.name, pv.number),
@@ -388,10 +602,14 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                         }),
                     }
                 }
-                Target::Pinned(pv) => {
-                    let verification = db
-                        .latest_verification_by_provider_version(pact.pact_version_id, pv.id)
-                        .await?;
+                Target::Missing {
+                    description,
+                    notice,
+                } => {
+                    notices.push(Notice {
+                        kind: "error",
+                        text: notice.clone(),
+                    });
                     rows.push(Row {
                         consumer: Side {
                             pacticipant: subject.clone(),
@@ -400,13 +618,52 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                         },
                         provider: Side {
                             pacticipant: provider.clone(),
-                            version: Some(pv.clone()),
-                            description: format!("version {} of {}", pv.number, provider.name),
+                            version: None,
+                            description: description.clone(),
                         },
                         pact: pact.clone(),
-                        verification,
+                        verification: None,
                         ignored,
                     });
+                }
+                Target::Versions(versions) => {
+                    // Verified: every selected version with a verification is a row; when
+                    // none has one, a single blank row describes the newest selected version.
+                    let mut verified = vec![];
+                    for (pv, description) in versions {
+                        if let Some(vf) = db
+                            .latest_verification_by_provider_version(pact.pact_version_id, pv.id)
+                            .await?
+                        {
+                            verified.push((pv, description, vf));
+                        }
+                    }
+                    let blank = (versions.first().expect("non-empty").clone(), None);
+                    let selected = if verified.is_empty() {
+                        vec![blank]
+                    } else {
+                        verified
+                            .into_iter()
+                            .map(|(pv, d, vf)| ((pv.clone(), d.clone()), Some(vf)))
+                            .collect()
+                    };
+                    for ((pv, description), verification) in selected {
+                        rows.push(Row {
+                            consumer: Side {
+                                pacticipant: subject.clone(),
+                                version: Some(sv.clone()),
+                                description: sdesc.clone(),
+                            },
+                            provider: Side {
+                                pacticipant: provider.clone(),
+                                version: verification.as_ref().map(|_| pv.clone()),
+                                description,
+                            },
+                            pact: pact.clone(),
+                            verification,
+                            ignored,
+                        });
+                    }
                 }
                 Target::Any => {
                     let verifications = db
@@ -429,6 +686,19 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                             ignored,
                         });
                     }
+                    // Verified: Ruby describes every row with the provider's one resolved
+                    // selector: "any version of P" when the query names the provider, else
+                    // the inferred selector, which is its latest version.
+                    let any_description = if q.selectors.len() > 1 {
+                        format!("any version of {}", provider.name)
+                    } else {
+                        match db.latest_version(provider.id).await? {
+                            Some(latest) => {
+                                format!("version {} of {}", latest.number, provider.name)
+                            }
+                            None => format!("any version of {}", provider.name),
+                        }
+                    };
                     for vf in verifications {
                         let pv = db
                             .find_version_by_id(vf.provider_version_id)
@@ -443,7 +713,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                             provider: Side {
                                 pacticipant: provider.clone(),
                                 version: Some(pv.clone()),
-                                description: format!("version {} of {}", pv.number, provider.name),
+                                description: any_description.clone(),
                             },
                             pact: pact.clone(),
                             verification: Some(vf),
@@ -457,7 +727,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
         if q.selectors.len() == 1 {
             for (consumer_id, consumer_name) in db.consumers_of_provider(subject.id).await? {
                 let consumer = db.find_pacticipant(&consumer_name).await?.expect("exists");
-                let ignored = q.ignore.iter().any(|(p, _)| p == &consumer_name);
+                let ignored = is_ignored(q, &consumer_name, None);
                 let consumer_versions: Vec<(Version, String)> = match &target {
                     Target::Environment(e) => {
                         let mut out = vec![];
@@ -494,7 +764,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
                             })
                             .collect()
                     }
-                    Target::Pinned(_) => vec![],
+                    Target::Versions(_) | Target::Missing { .. } => vec![],
                     Target::Any => {
                         // Every consumer version with a verification by this provider version.
                         let mut out = vec![];
@@ -546,34 +816,42 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             }
         }
     }
+    Ok(SelectedRows { rows, notices })
+}
+
+fn summarize(mut rows: Vec<Row>, mut notices: Vec<Notice>) -> Matrix {
+    let missing_version = notices.iter().any(|n| n.kind == "error");
     rows.sort_by(|a, b| {
-        a.consumer
-            .pacticipant
-            .name
-            .cmp(&b.consumer.pacticipant.name)
-            .then(
-                a.provider
-                    .pacticipant
-                    .name
-                    .cmp(&b.provider.pacticipant.name),
-            )
-            .then(
-                b.consumer
-                    .version
-                    .as_ref()
-                    .map(|v| v.id)
-                    .cmp(&a.consumer.version.as_ref().map(|v| v.id)),
-            )
-            .then(
-                b.provider
-                    .version
-                    .as_ref()
-                    .map(|v| v.id)
-                    .cmp(&a.provider.version.as_ref().map(|v| v.id)),
-            )
+        a.ignored.cmp(&b.ignored).then_with(|| {
+            a.consumer
+                .pacticipant
+                .name
+                .cmp(&b.consumer.pacticipant.name)
+                .then(
+                    a.provider
+                        .pacticipant
+                        .name
+                        .cmp(&b.provider.pacticipant.name),
+                )
+                .then(
+                    b.consumer
+                        .version
+                        .as_ref()
+                        .map(|v| v.id)
+                        .cmp(&a.consumer.version.as_ref().map(|v| v.id)),
+                )
+                .then(
+                    b.provider
+                        .version
+                        .as_ref()
+                        .map(|v| v.id)
+                        .cmp(&a.provider.version.as_ref().map(|v| v.id)),
+                )
+        })
     });
 
     let (mut success, mut failed, mut unknown, mut ignored) = (0, 0, 0, 0);
+    let (mut failures, mut unknowns) = (vec![], vec![]);
     for r in &rows {
         if r.ignored {
             ignored += 1;
@@ -583,7 +861,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             Some(v) if v.success => success += 1,
             Some(_) => {
                 failed += 1;
-                notices.push(Notice {
+                failures.push(Notice {
                     kind: "error",
                     text: format!(
                         "The verification for the pact between {} and {} failed",
@@ -593,7 +871,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             }
             None => {
                 unknown += 1;
-                notices.push(Notice {
+                unknowns.push(Notice {
                     kind: "error",
                     text: format!(
                         "There is no verified pact between {} and {}",
@@ -603,10 +881,19 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             }
         }
     }
-    let deployable = if failed > 0 {
+    // Verified in Ruby's DeploymentStatusSummary: a missing selector version wins
+    // (false, and only its message); then any unknown row makes the verdict null; then
+    // a failure makes it false. Failure messages precede unverified messages.
+    if !missing_version {
+        notices.extend(failures);
+        notices.extend(unknowns);
+    }
+    let deployable = if missing_version {
         Some(false)
     } else if unknown > 0 {
         None
+    } else if failed > 0 {
+        Some(false)
     } else {
         if success > 0 {
             notices.push(Notice {
@@ -621,7 +908,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
         }
         Some(true)
     };
-    Ok(Matrix {
+    Matrix {
         rows,
         deployable,
         notices,
@@ -629,7 +916,8 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
         failed,
         unknown,
         ignored,
-    })
+        has_ignores: false,
+    }
 }
 
 #[cfg(test)]

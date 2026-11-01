@@ -1,2 +1,2 @@
-[32mCreated production environment in the Pact Broker with UUID 3e8d1b77-a308-427f-bb0d-651aafa8516f[0m
+[32mCreated production environment in the Pact Broker with UUID 615e1a8e-c4cf-4377-afd3-1889a2478027[0m
 exit=0

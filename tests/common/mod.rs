@@ -43,9 +43,28 @@ pub fn stable(mut v: serde_json::Value) -> serde_json::Value {
                 m.values_mut().for_each(walk);
             }
             serde_json::Value::Array(a) => a.iter_mut().for_each(walk),
+            // "Version 1.0.0 - 31/10/2026": the link names carry the creation date.
+            serde_json::Value::String(s) if is_dated_name(s) => {
+                s.replace_range(s.len() - 10.., "DD/MM/YYYY");
+            }
             _ => {}
         }
     }
     walk(&mut v);
     v
+}
+
+fn is_dated_name(s: &str) -> bool {
+    let Some((head, date)) = s.rsplit_once(" - ") else {
+        return false;
+    };
+    head.starts_with("Version ")
+        && date.len() == 10
+        && date.char_indices().all(|(i, c)| {
+            if i == 2 || i == 5 {
+                c == '/'
+            } else {
+                c.is_ascii_digit()
+            }
+        })
 }

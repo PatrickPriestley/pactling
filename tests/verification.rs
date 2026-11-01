@@ -820,9 +820,11 @@ async fn each_selector_group_in_the_metadata_names_its_own_consumer_version() {
     .unwrap();
     let pacts = fv["_embedded"]["pacts"].as_array().unwrap();
     assert_eq!(pacts.len(), 1, "same content is one pact to verify");
+    // Ruby's Selector#<=> orders two branch selectors by branch name, not request order
+    // (exact source, pact_broker/pacts/selector.rb#branch_comparison).
     assert_eq!(
         pacts[0]["shortDescription"],
-        "latest from branch main, latest from branch feature"
+        "latest from branch feature, latest from branch main"
     );
     let decoded = decode_metadata(pacts[0]["_links"]["self"]["href"].as_str().unwrap());
     let a: Value = get(&s, "/pacticipants/Consumer/versions/A")
@@ -845,5 +847,198 @@ async fn each_selector_group_in_the_metadata_names_its_own_consumer_version() {
     assert_ne!(
         cvs[0], cvs[1],
         "each group carries its own consumer version id: {decoded}"
+    );
+}
+
+#[tokio::test]
+async fn deployment_selectors_report_only_their_own_environments() {
+    // Review finding: a version deployed to one environment and released in another must
+    // not be reported as deployed to the second or released in the first, and the Ruby
+    // broker encodes only the consumer version in the metadata of these reasons.
+    let s = common::start().await;
+    publish(
+        &s,
+        "Consumer",
+        "1",
+        "main",
+        vec![],
+        &pact("Consumer", |_| {}),
+    )
+    .await;
+    let test: Value = post(
+        &s,
+        "/environments",
+        &json!({"name": "test", "production": false}),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let prod: Value = post(
+        &s,
+        "/environments",
+        &json!({"name": "production", "production": true}),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    post(
+        &s,
+        &format!(
+            "/pacticipants/Consumer/versions/1/deployed-versions/environment/{}",
+            test["uuid"].as_str().unwrap()
+        ),
+        &json!({}),
+    )
+    .await;
+    post(
+        &s,
+        &format!(
+            "/pacticipants/Consumer/versions/1/released-versions/environment/{}",
+            prod["uuid"].as_str().unwrap()
+        ),
+        &json!({}),
+    )
+    .await;
+    for (selectors, short) in [
+        (json!([{"deployed": true}]), "deployed to test"),
+        (json!([{"released": true}]), "released in production"),
+        (
+            json!([{"deployedOrReleased": true}]),
+            "deployed to test, released in production",
+        ),
+    ] {
+        let fv: Value = post(
+            &s,
+            "/pacts/provider/Provider/for-verification",
+            &json!({"consumerVersionSelectors": selectors}),
+        )
+        .await
+        .json()
+        .await
+        .unwrap();
+        let pacts = fv["_embedded"]["pacts"].as_array().unwrap();
+        assert_eq!(pacts.len(), 1, "{selectors}");
+        assert_eq!(pacts[0]["shortDescription"], short, "{selectors}");
+        let metadata = decode_metadata(pacts[0]["_links"]["self"]["href"].as_str().unwrap());
+        let groups = metadata.matches("s%5B%5D%5Bcv%5D=").count();
+        assert_eq!(
+            metadata.matches("s%5B%5D%5B").count(),
+            groups,
+            "only cv keys in {metadata}"
+        );
+    }
+    let fv: Value = s
+        .client
+        .get(format!(
+            "{}/pacts/provider/Provider/for-verification",
+            s.base_url
+        ))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(
+        fv["_embedded"]["pacts"][0]["shortDescription"],
+        "deployed to test, released in production, latest from main branch",
+        "default selectors"
+    );
+
+    // Past deployments and ended support are not reported, and an environment selector
+    // names only its own environment even when the version is in several.
+    let dv: Value = post(
+        &s,
+        &format!(
+            "/pacticipants/Consumer/versions/1/deployed-versions/environment/{}",
+            prod["uuid"].as_str().unwrap()
+        ),
+        &json!({}),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let test_dv: Value = get(
+        &s,
+        &format!(
+            "/environments/{}/deployed-versions/currently-deployed",
+            test["uuid"].as_str().unwrap()
+        ),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let fv: Value = post(
+        &s,
+        "/pacts/provider/Provider/for-verification",
+        &json!({"consumerVersionSelectors": [{"environment": "test"}]}),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(fv["_embedded"]["pacts"][0]["shortDescription"], "in test");
+    let patch = |path: String, body: Value| {
+        let s = &s;
+        async move {
+            s.client
+                .patch(format!("{}{path}", s.base_url))
+                .header("content-type", "application/merge-patch+json")
+                .json(&body)
+                .send()
+                .await
+                .unwrap()
+        }
+    };
+    let r = patch(
+        format!(
+            "/deployed-versions/{}",
+            test_dv["_embedded"]["deployedVersions"][0]["uuid"]
+                .as_str()
+                .unwrap()
+        ),
+        json!({"currentlyDeployed": false}),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::OK);
+    let rv: Value = get(
+        &s,
+        &format!(
+            "/environments/{}/released-versions/currently-supported",
+            prod["uuid"].as_str().unwrap()
+        ),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let r = patch(
+        format!(
+            "/released-versions/{}",
+            rv["_embedded"]["releasedVersions"][0]["uuid"]
+                .as_str()
+                .unwrap()
+        ),
+        json!({"currentlySupported": false}),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::OK);
+    assert_eq!(dv["currentlyDeployed"], true);
+    let fv: Value = post(
+        &s,
+        "/pacts/provider/Provider/for-verification",
+        &json!({"consumerVersionSelectors": [{"deployedOrReleased": true}]}),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(
+        fv["_embedded"]["pacts"][0]["shortDescription"], "deployed to production",
+        "undeployed and unsupported records are not reasons"
     );
 }

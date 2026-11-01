@@ -2,7 +2,11 @@
 
 CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS? | RESULT#
 ---------|-----------|----------|-----------|----------|--------
-Consumer | 2.0.0     | Provider | ???       | ???      |        
+Consumer | 2.0.0     | Provider | 1         | false    | 1      
 
-[31mThere is no verified pact between version 2.0.0 of Consumer and the version of Provider currently in test (1)[0m
+VERIFICATION RESULTS
+--------------------
+1. http://127.0.0.1:57159/pacts/provider/Provider/consumer/Consumer/pact-version/8664f311b5c69dd7c5fffb7d22bf1215bc48da29/metadata/Y3ZuPTIuMC4w/verification-results/205 (failure)
+
+[31mThe verification for the pact between version 2.0.0 of Consumer and the version of Provider currently in test (1) failed[0m
 exit=1

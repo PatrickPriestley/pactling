@@ -1,22 +1,22 @@
 TAP version 13
-# (node:56133) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+# (node:60153) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 # (Use `node --trace-deprecation ...` to show where the warning was created)
-# [08:05:38.733] WARN (56133): pact@13.2.0: no state handler found for state: ""
-# 2026-10-31T12:05:39.057757Z  WARN ThreadId(09) pact_matching::metrics: 
+# [20:41:35.597] WARN (60153): pact@13.2.0: no state handler found for state: ""
+# 2026-11-01T00:41:35.904861Z  WARN ThreadId(09) pact_matching::metrics: 
 # Please note:
 # We are tracking events anonymously to gather important usage statistics like Pact version and operating system. To disable tracking, set the 'PACT_DO_NOT_TRACK' environment variable to 'true'.
-# The pact at http://127.0.0.1:62841/pacts/provider/Provider/consumer/Consumer/pact-version/d676a66f281a400646bb25f2b8b05551f4d4769c is being verified because the pact content belongs to the consumer version matching the following criterion:
+# The pact at http://127.0.0.1:56882/pacts/provider/Provider/consumer/Consumer/pact-version/d676a66f281a400646bb25f2b8b05551f4d4769c is being verified because the pact content belongs to the consumer version matching the following criterion:
 #     * latest version from branch 'zeta' (4.0.0)
 # This pact is in pending state for this version of Provider because a successful verification result for a version of Provider from branch 'feat' has not yet been published. If this verification fails, it will not cause the overall build to fail. Read more at https://docs.pact.io/go/pending
 # Verifying a pact between [1mConsumer[0m and [1mProvider[0m
-#   a request for an order (197ms loading, 379ms verification)
+#   a request for an order (190ms loading, 365ms verification)
 #      Given an order exists
 #     returns a response which
 #       has status code [1m200[0m ([32mOK[0m)
 #       includes headers
 #         "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
-#   a request for a missing order (197ms loading, 369ms verification)
+#   a request for a missing order (190ms loading, 371ms verification)
 #     returns a response which
 #       has status code [1m404[0m ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
@@ -24,7 +24,7 @@ TAP version 13
 # Subtest: provider verifies the pacts the broker selects and publishes results
 ok 1 - provider verifies the pacts the broker selects and publishes results
   ---
-  duration_ms: 1285.5565
+  duration_ms: 1241.3305
   type: 'test'
   ...
 1..1
@@ -35,5 +35,5 @@ ok 1 - provider verifies the pacts the broker selects and publishes results
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1468.630958
+# duration_ms 1411.222959
 exit=0

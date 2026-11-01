@@ -71,9 +71,22 @@ async fn get_json(s: &common::TestServer, path: &str) -> Value {
 /// link metadata, verification numbers and verification dates.
 fn normalise(v: Value) -> Value {
     let text = serde_json::to_string(&v).unwrap();
-    let text = regex::Regex::new(r"/metadata/[A-Za-z0-9_=-]+")
+    // Metadata is decoded and kept, with consumer version ids (database ids) normalised,
+    // so the selector keys the Ruby broker encodes are compared.
+    let text = regex::Regex::new(r"/metadata/([A-Za-z0-9_=-]+)")
         .unwrap()
-        .replace_all(&text, "/metadata/M");
+        .replace_all(&text, |c: &regex::Captures| {
+            use base64::Engine;
+            let raw = c[1].trim_end_matches('=');
+            let decoded = base64::engine::general_purpose::URL_SAFE_NO_PAD
+                .decode(raw)
+                .map(|b| String::from_utf8_lossy(&b).into_owned())
+                .unwrap_or_else(|_| c[1].to_owned());
+            let decoded = regex::Regex::new(r"cv%5D=\d+")
+                .unwrap()
+                .replace_all(&decoded, "cv%5D=N");
+            format!("/metadata/{decoded}")
+        });
     let text = regex::Regex::new(r"verification-results/\d+")
         .unwrap()
         .replace_all(&text, "verification-results/N");
@@ -100,11 +113,23 @@ async fn assert_matches(
 ) -> Value {
     assert_eq!(r.status(), status, "{name}");
     let got: Value = r.json().await.unwrap();
-    assert_eq!(
-        normalise(stable(got.clone())),
-        phase4(name, &s.base_url),
-        "{name}"
-    );
+    let (left, right) = (normalise(stable(got.clone())), phase4(name, &s.base_url));
+    // PACTLING_DUMP_DIR=/some/dir writes both documents of a mismatch for diffing.
+    if left != right
+        && let Ok(dir) = std::env::var("PACTLING_DUMP_DIR")
+    {
+        std::fs::write(
+            format!("{dir}/{name}.got.json"),
+            serde_json::to_string_pretty(&left).unwrap(),
+        )
+        .unwrap();
+        std::fs::write(
+            format!("{dir}/{name}.want.json"),
+            serde_json::to_string_pretty(&right).unwrap(),
+        )
+        .unwrap();
+    }
+    assert_eq!(left, right, "{name}");
     got
 }
 
@@ -298,7 +323,6 @@ async fn environment_documents_match_the_ruby_broker() {
 }
 
 #[tokio::test]
-#[ignore = "Phase 4 in progress: replay does not yet reproduce the capture state; see docs/plans Task 4.4"]
 async fn deployment_documents_match_the_ruby_broker() {
     let s = common::start().await;
     let env = seed(&s).await;
@@ -419,6 +443,20 @@ async fn deployment_documents_match_the_ruby_broker() {
         );
     }
 
+    // The capture published Consumer 2.0.0 on main (the can-i-deploy section) before
+    // recording releases, so 1.0.0 is no longer the branch head from here on.
+    publish(
+        &s,
+        "Consumer",
+        "2.0.0",
+        "main",
+        vec![],
+        &pact("Consumer", |p| {
+            p["interactions"][0]["response"]["body"]["status"] = json!("closed")
+        }),
+    )
+    .await;
+
     // Releases and support ended.
     let r = post(
         &s,
@@ -461,6 +499,13 @@ async fn deployment_documents_match_the_ruby_broker() {
     let rvu = rv["uuid"].as_str().unwrap().to_owned();
     let r = get(&s, &format!("/released-versions/{rvu}")).await;
     assert_matches(&s, r, "GET_released-version.json", StatusCode::OK).await;
+    let r = post(
+        &s,
+        "/pacts/provider/Provider/for-verification",
+        &json!({"consumerVersionSelectors": [{"released": true}]}),
+    )
+    .await;
+    assert_matches(&s, r, "POST_for-verification_released.json", StatusCode::OK).await;
     let r = get(&s, "/pacticipants/Consumer/versions/1.0.0").await;
     assert_matches(
         &s,
@@ -588,7 +633,6 @@ const Q_CONSUMER_1: &str =
     "q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvp&environment=test";
 
 #[tokio::test]
-#[ignore = "Phase 4 in progress: replay does not yet reproduce the capture state; see docs/plans Task 4.4"]
 async fn matrix_documents_match_the_ruby_broker() {
     let s = common::start().await;
     seed_for_matrix(&s).await;
@@ -615,9 +659,13 @@ async fn matrix_documents_match_the_ruby_broker() {
         StatusCode::OK,
     )
     .await;
-    // Provider 2 on main fails everything it verifies (the capture's second verifier run).
+    // Provider 2 on main fails everything it verifies (the capture's second verifier run);
+    // then provider 1 verifies the latest pacts from branch main: Consumer 2.0.0 fails
+    // (its answers fit 1.0.0 only) and Web 1 passes again.
     verify(&s, "2", "main", "Consumer/version/2.0.0", false).await;
     verify(&s, "2", "main", "Web/version/1", false).await;
+    verify(&s, "1", "main", "Consumer/version/2.0.0", false).await;
+    verify(&s, "1", "main", "Web/version/1", true).await;
     let r = get(&s, "/matrix?q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=2.0.0&latestby=cvp&environment=test").await;
     assert_matches(
         &s,

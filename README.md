@@ -15,12 +15,17 @@ Verified against Ruby broker **2.121.2** and `@pact-foundation/pact-cli` **16.1.
 
 ## Status
 
-Phases 1 to 3 of the [implementation plan](docs/plans/2026-10-30-pact-broker-implementation.md):
+Phases 1 to 4 of the [implementation plan](docs/plans/2026-10-30-pact-broker-implementation.md):
 HAL index, basic auth, pacticipants, versions, branches, tags, publishing (both
 `pb:publish-contracts` and the legacy `PUT`), every pact retrieval document,
-pacts-for-verification with consumer version selectors and pending, and verification
-results. A pact-js 13 consumer test, `pact-broker publish` and a pact-js 13 provider
-verification run against the binary in CI. Environments, can-i-deploy and webhooks follow. See the [design](docs/plans/2026-10-30-pact-broker-design.md).
+pacts-for-verification with consumer version selectors and pending, verification
+results, environments, deployments and releases, the matrix and can-i-deploy. A pact-js 13
+consumer test, the `pact-broker` CLI (publish, environments, deployments, can-i-deploy)
+and a pact-js 13 provider verification run against the binary in `e2e/`. Every matrix
+verdict, notice and reason string is replayed from Ruby broker 2.121.2 captures
+(`tests/fixtures/ruby-broker/2.121.2/phase4/`, 73 can-i-deploy cases in
+`matrix-regressions.json`). Webhooks follow. See the
+[design](docs/plans/2026-10-30-pact-broker-design.md).
 
 Known differences from the Ruby broker, all deliberate: an empty `contracts` array is a 400
 rather than a 500; the 409 for changed content omits the Ruby broker's diff notice; bad-JSON

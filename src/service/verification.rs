@@ -179,9 +179,13 @@ pub async fn pacts_for_verification(
     provider: &Pacticipant,
     req: &ForVerificationRequest,
 ) -> Result<Vec<VerifiablePact>> {
+    // Verified in Ruby's PactsForVerificationRepository#default_selectors: with no
+    // selectors, the latest main-branch (or overall latest) version of every consumer plus
+    // the versions currently deployed or released; the capture lists the deployed reasons
+    // first.
     let default_main_branch = req.selectors.is_empty();
     let selectors: Vec<Selector> = if default_main_branch {
-        vec![Selector::MainBranch]
+        vec![Selector::Deployed, Selector::Released, Selector::MainBranch]
     } else {
         req.selectors.clone()
     };
@@ -346,12 +350,36 @@ pub async fn pacts_for_verification(
                         if p.provider_id != provider.id {
                             continue;
                         }
-                        for e in db.environments_of_version(id).await? {
+                        // Verified (review finding): a deployed selector reports only the
+                        // environments the version is deployed to, a released selector only
+                        // those it is released in; Ruby encodes just the consumer version in
+                        // the metadata of these reasons, and `e` for an environment selector.
+                        let mut found: Vec<(i64, bool)> = vec![]; // (environment id, released)
+                        if deployed {
+                            for d in db.deployments_of_version(id).await? {
+                                if d.currently_deployed {
+                                    found.push((d.environment_id, false));
+                                }
+                            }
+                        }
+                        if released {
+                            for r in db.releases_of_version(id).await? {
+                                if r.currently_supported {
+                                    found.push((r.environment_id, true));
+                                }
+                            }
+                        }
+                        for (environment_id, is_release) in found {
                             if let Some(w) = &wanted
-                                && w.id != e.id
+                                && w.id != environment_id
                             {
                                 continue;
                             }
+                            // The environment can be deleted between the two reads; a
+                            // record left behind is then not a reason (review finding).
+                            let Some(e) = db.find_environment_by_id(environment_id).await? else {
+                                continue;
+                            };
                             let r = match selector {
                                 Selector::Environment { .. } => Reason {
                                     short: format!("in {}", e.name),
@@ -362,13 +390,13 @@ pub async fn pacts_for_verification(
                                     metadata: vec![("e", e.name.clone())],
                                     consumer_version_id: p.consumer_version_id,
                                 },
-                                Selector::Released => Reason {
-                                    short: format!("released to {}", e.name),
+                                _ if is_release => Reason {
+                                    short: format!("released in {}", e.name),
                                     bullet: format!(
-                                        "consumer version(s) currently released to {} ({})",
+                                        "consumer version(s) released and supported in {} ({})",
                                         e.name, p.consumer_version_number
                                     ),
-                                    metadata: vec![("e", e.name.clone()), ("r", "true".to_owned())],
+                                    metadata: vec![],
                                     consumer_version_id: p.consumer_version_id,
                                 },
                                 _ => Reason {
@@ -377,7 +405,7 @@ pub async fn pacts_for_verification(
                                         "consumer version(s) currently deployed to {} ({})",
                                         e.name, p.consumer_version_number
                                     ),
-                                    metadata: vec![("e", e.name.clone()), ("d", "true".to_owned())],
+                                    metadata: vec![],
                                     consumer_version_id: p.consumer_version_id,
                                 },
                             };
@@ -410,8 +438,10 @@ pub async fn pacts_for_verification(
             .consumer_name
             .cmp(&b.publication.consumer_name)
     });
-    // Verified on one capture: a branch match is listed before a main-branch match whatever
-    // the selector order. The rest of the ranking is assumed.
+    // Ruby's Selector#<=> (exact source, pact_broker/pacts/selector.rb): overall latest,
+    // then latest-for-branch by branch name, latest-for-tag by tag, all-for-tag, currently
+    // deployed by environment, currently supported by environment, then the rest (a main
+    // branch selector carries no branch name, so it sorts after a deployment).
     for v in &mut out {
         v.reasons.sort_by_key(reason_rank);
     }
@@ -422,13 +452,24 @@ pub async fn pacts_for_verification(
     Ok(out)
 }
 
-fn reason_rank(r: &Reason) -> u8 {
-    if r.short.starts_with("latest from branch ") {
-        0
-    } else if r.short == "latest from main branch" {
-        1
+fn reason_rank(r: &Reason) -> (u8, String) {
+    let short = r.short.as_str();
+    if short == "latest" {
+        (0, String::new())
+    } else if let Some(b) = short.strip_prefix("latest from branch ") {
+        (1, b.to_owned())
+    } else if let Some(t) = short.strip_prefix("latest with tag ") {
+        (2, t.to_owned())
+    } else if let Some(t) = short.strip_prefix("one of ") {
+        (3, t.to_owned())
+    } else if let Some(e) = short.strip_prefix("deployed to ") {
+        (4, e.to_owned())
+    } else if let Some(e) = short.strip_prefix("released in ") {
+        (5, e.to_owned())
+    } else if let Some(e) = short.strip_prefix("in ") {
+        (6, e.to_owned())
     } else {
-        2
+        (7, String::new())
     }
 }
 
