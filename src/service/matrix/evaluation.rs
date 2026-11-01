@@ -1,4 +1,7 @@
 //! Pure matrix reduction: no database, clock, HTTP or external calls.
+use super::provenance::{
+    EvaluationContext, ExcludedEvidence, ExclusionKind, Provenance, RowProvenance, merge_indices,
+};
 use super::{Matrix, MatrixQuery, Notice, Row, Selector};
 use crate::db::{
     environments::Environment,
@@ -41,6 +44,8 @@ pub struct VersionDetails {
 /// Owned input, constructed only by resolution under one read snapshot.
 #[derive(Clone, Debug)]
 pub struct ResolvedMatrix {
+    pub(super) context: EvaluationContext,
+    pub(super) provenance: Provenance,
     pub(super) query: MatrixQuery,
     pub(super) rows: Vec<Row>,
     pub(super) notices: Vec<Notice>,
@@ -50,12 +55,20 @@ pub struct ResolvedMatrix {
 /// One authoritative decision plus everything its compatibility view needs.
 #[derive(Clone, Debug)]
 pub struct DecisionEvaluation {
+    context: EvaluationContext,
+    provenance: Provenance,
     query: MatrixQuery,
     matrix: Matrix,
     versions: HashMap<i64, VersionDetails>,
     row_outcomes: Vec<RowOutcome>,
 }
 impl DecisionEvaluation {
+    pub fn context(&self) -> &EvaluationContext {
+        &self.context
+    }
+    pub fn provenance(&self) -> &Provenance {
+        &self.provenance
+    }
     pub fn query(&self) -> &MatrixQuery {
         &self.query
     }
@@ -76,8 +89,10 @@ impl DecisionEvaluation {
 
 pub fn evaluate(resolved: ResolvedMatrix) -> DecisionEvaluation {
     let ResolvedMatrix {
+        context,
+        mut provenance,
         query: q,
-        mut rows,
+        rows,
         mut notices,
         versions,
     } = resolved;
@@ -97,31 +112,87 @@ pub fn evaluate(resolved: ResolvedMatrix) -> DecisionEvaluation {
             notices.push(n);
         }
     }
-    // Overlapping selectors can select the same evidence more than once.
-    let mut seen = std::collections::HashSet::new();
-    rows.retain(|r| {
-        seen.insert((
-            r.pact.id,
-            r.provider.version.as_ref().map(|v| v.id),
-            r.provider.description.clone(),
-        ))
-    });
-    let mut rows = apply_latestby(rows, q.latestby.as_deref());
+    // Carry origins through exactly the same deduplication and latestby pass as
+    // the compatibility rows. Excluded contributions never become verdict input.
+    let resolver_exclusions = provenance.excluded.len();
+    let mut origins = HashMap::<RowKey, RowProvenance>::new();
+    let mut unique = vec![];
+    for (row, origin) in rows.into_iter().zip(provenance.rows.drain(..)) {
+        match origins.entry(row_key(&row)) {
+            std::collections::hash_map::Entry::Vacant(entry) => {
+                entry.insert(origin);
+                unique.push(row);
+            }
+            std::collections::hash_map::Entry::Occupied(mut entry) => {
+                let retained = entry.get_mut();
+                merge_indices(&mut retained.candidate_indices, &origin.candidate_indices);
+                merge_indices(&mut retained.selector_indices, &origin.selector_indices);
+                provenance.excluded.push(ExcludedEvidence {
+                    kind: ExclusionKind::Duplicate,
+                    row,
+                    candidate_indices: origin.candidate_indices,
+                    selector_indices: origin.selector_indices,
+                    selected_row: None,
+                });
+            }
+        }
+    }
+    let (mut rows, replacements) = apply_latestby_traced(unique, q.latestby.as_deref());
+    for (excluded, _) in &replacements {
+        let origin = &origins[&row_key(excluded)];
+        provenance.excluded.push(ExcludedEvidence {
+            kind: ExclusionKind::Latestby,
+            row: excluded.clone(),
+            candidate_indices: origin.candidate_indices.clone(),
+            selector_indices: origin.selector_indices.clone(),
+            selected_row: None,
+        });
+    }
     for row in &mut rows {
-        row.ignored |= is_ignored(
-            &q,
-            &row.consumer.pacticipant.name,
-            row.consumer.version.as_ref(),
-        ) || is_ignored(
-            &q,
-            &row.provider.pacticipant.name,
-            row.provider.version.as_ref(),
-        );
+        let origin = origins.get_mut(&row_key(row)).expect("resolved origin");
+        origin.ignore_indices = q
+            .ignore
+            .iter()
+            .enumerate()
+            .filter_map(|(i, (participant, version))| {
+                let matches = |side: &super::Side| {
+                    participant == &side.pacticipant.name
+                        && version.as_ref().is_none_or(|number| {
+                            side.version
+                                .as_ref()
+                                .is_some_and(|actual| &actual.number == number)
+                        })
+                };
+                (matches(&row.consumer) || matches(&row.provider)).then_some(i)
+            })
+            .collect();
+        row.ignored |= !origin.ignore_indices.is_empty();
     }
     let (mut result, row_outcomes) = summarize(rows, notices);
     // The Ruby document includes ignored=0 when an ignore was requested.
     result.has_ignores = !q.ignore.is_empty();
+    provenance.rows = result
+        .rows
+        .iter()
+        .map(|row| origins[&row_key(row)].clone())
+        .collect();
+    for excluded in provenance.excluded.iter_mut().skip(resolver_exclusions) {
+        let mut representative = row_key(&excluded.row);
+        // Replacement edges point forward in the one selection pass. Following each
+        // once also handles a representative displaced more than once in its group.
+        for (loser, winner) in &replacements {
+            if row_key(loser) == representative {
+                representative = row_key(winner);
+            }
+        }
+        excluded.selected_row = result
+            .rows
+            .iter()
+            .position(|row| row_key(row) == representative);
+    }
     DecisionEvaluation {
+        context,
+        provenance,
         query: q,
         matrix: result,
         versions,
@@ -130,18 +201,36 @@ pub fn evaluate(resolved: ResolvedMatrix) -> DecisionEvaluation {
 }
 
 /// Ruby Matrix::Repository#apply_latestby runs after selection and before ignores.
-pub(super) fn apply_latestby(mut rows: Vec<Row>, latestby: Option<&str>) -> Vec<Row> {
+#[cfg(test)]
+pub(super) fn apply_latestby(rows: Vec<Row>, latestby: Option<&str>) -> Vec<Row> {
+    apply_latestby_traced(rows, latestby).0
+}
+
+type RowKey = (i64, Option<i64>, String);
+fn row_key(row: &Row) -> RowKey {
+    (
+        row.pact.id,
+        row.provider.version.as_ref().map(|v| v.id),
+        row.provider.description.clone(),
+    )
+}
+
+fn apply_latestby_traced(
+    mut rows: Vec<Row>,
+    latestby: Option<&str>,
+) -> (Vec<Row>, Vec<(Row, Row)>) {
     let (by_consumer_version, by_provider_version) = match latestby {
         Some("cvpv") => (true, true),
         Some("cvp") => (true, false),
         Some("cp") => (false, false),
-        _ => return rows,
+        _ => return (rows, vec![]),
     };
     // Reproduce Ruby's query order before grouping: it determines the first null
     // row and, for equal provider orders, the last row in the stable sort.
     rows.sort_by(|a, b| matrix_query_order(b).cmp(&matrix_query_order(a)));
     let mut groups = std::collections::HashMap::new();
     let mut selected: Vec<Row> = vec![];
+    let mut replacements = vec![];
     for row in rows {
         let key = (
             row.consumer.pacticipant.id,
@@ -166,12 +255,15 @@ pub(super) fn apply_latestby(mut rows: Vec<Row>, latestby: Option<&str>) -> Vec<
                     && row.provider.version.as_ref().map(|v| v.id)
                         >= previous.provider.version.as_ref().map(|v| v.id)
                 {
+                    replacements.push((previous.clone(), row.clone()));
                     *previous = row;
+                } else {
+                    replacements.push((row, previous.clone()));
                 }
             }
         }
     }
-    selected
+    (selected, replacements)
 }
 
 fn matrix_query_order(row: &Row) -> (&str, i64, Option<i64>) {
@@ -191,14 +283,6 @@ fn matrix_query_order(row: &Row) -> (&str, i64, Option<i64>) {
         row.pact.id,
         row.verification.as_ref().map(|v| v.id),
     )
-}
-
-pub(super) fn is_ignored(q: &MatrixQuery, name: &str, version: Option<&Version>) -> bool {
-    q.ignore.iter().any(|(p, v)| {
-        p == name
-            && v.as_ref()
-                .is_none_or(|number| version.is_some_and(|actual| &actual.number == number))
-    })
 }
 
 fn summarize(mut rows: Vec<Row>, mut notices: Vec<Notice>) -> (Matrix, Vec<RowOutcome>) {
@@ -325,6 +409,8 @@ mod tests {
     #[test]
     fn missing_selector_is_a_typed_cause_not_a_notice_kind_or_text() {
         let input = |cause, kind| ResolvedMatrix {
+            context: EvaluationContext::default(),
+            provenance: Provenance::default(),
             query: MatrixQuery::default(),
             rows: vec![],
             notices: vec![Notice {
