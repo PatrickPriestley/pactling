@@ -1,0 +1,8 @@
+{
+  "equal": true,
+  "excludedPaths": [
+    "/evaluation/id",
+    "/evaluation/startedAt",
+    "/evaluation/evaluatedAt"
+  ]
+}
