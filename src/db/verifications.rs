@@ -102,6 +102,27 @@ impl Db {
         Ok(n > 0)
     }
 
+    /// The latest verification of a pact content by a provider version on the given branch
+    /// (verified: `latest_main_branch_verification` on the Ruby broker's publications).
+    pub async fn latest_verification_from_branch(
+        &self,
+        pact_version_id: i64,
+        provider_id: i64,
+        branch: &str,
+    ) -> sqlx::Result<Option<Verification>> {
+        sqlx::query_as(verification_query!(
+            "JOIN branch_versions bv ON bv.version_id = pv.id
+             JOIN branches b ON b.id = bv.branch_id
+             WHERE vf.pact_version_id = ? AND pv.pacticipant_id = ? AND b.name = ?
+             ORDER BY vf.id DESC LIMIT 1"
+        ))
+        .bind(pact_version_id)
+        .bind(provider_id)
+        .bind(branch)
+        .fetch_optional(&self.pool)
+        .await
+    }
+
     pub async fn find_verification_by_id(&self, id: i64) -> sqlx::Result<Option<Verification>> {
         sqlx::query_as(verification_query!("WHERE vf.id = ?"))
             .bind(id)

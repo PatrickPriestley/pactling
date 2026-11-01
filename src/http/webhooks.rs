@@ -259,6 +259,9 @@ async fn scoped_collection(
         }
         Method::POST => {
             let mut json = parse_body(body)?;
+            if !json.is_object() {
+                json = json!({});
+            }
             // Verified: the scoped collections take the scope from the path.
             if let Some(c) = &consumer {
                 json["consumer"] = json!({ "name": c.name });

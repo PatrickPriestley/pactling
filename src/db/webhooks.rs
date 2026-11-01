@@ -341,13 +341,14 @@ impl Db {
         Ok(self.attach_executions(t.into_iter().collect()).await?.pop())
     }
 
-    /// Newest first (verified: the Ruby broker lists triggered webhooks by descending id).
+    /// Every triggered webhook recorded against the publication, whatever its event
+    /// (verified: `find_triggered_webhooks_for_pact` filters by pact only), newest first.
     pub async fn triggered_webhooks_for_pact_publication(
         &self,
         pact_publication_id: i64,
     ) -> sqlx::Result<Vec<TriggeredWebhook>> {
         let rows = sqlx::query_as(triggered_query!(
-            "WHERE t.pact_publication_id = ? AND t.verification_id IS NULL ORDER BY t.id DESC"
+            "WHERE t.pact_publication_id = ? ORDER BY t.id DESC"
         ))
         .bind(pact_publication_id)
         .fetch_all(&self.pool)
@@ -419,6 +420,33 @@ impl Db {
         .bind(now())
         .fetch_one(&self.pool)
         .await
+    }
+
+    /// Records an attempt and the triggered webhook's new status atomically.
+    pub async fn finish_execution(
+        &self,
+        triggered_webhook_id: i64,
+        success: bool,
+        logs: &str,
+        status: &str,
+        next_attempt_at: Option<&str>,
+    ) -> sqlx::Result<()> {
+        let mut tx = self.pool.begin().await?;
+        sqlx::query("INSERT INTO webhook_executions (triggered_webhook_id, success, logs, created_at) VALUES (?, ?, ?, ?)")
+            .bind(triggered_webhook_id)
+            .bind(success)
+            .bind(logs)
+            .bind(now())
+            .execute(&mut *tx)
+            .await?;
+        sqlx::query("UPDATE triggered_webhooks SET status = ?, next_attempt_at = ?, updated_at = ? WHERE id = ?")
+            .bind(status)
+            .bind(next_attempt_at)
+            .bind(now())
+            .bind(triggered_webhook_id)
+            .execute(&mut *tx)
+            .await?;
+        tx.commit().await
     }
 
     pub async fn set_triggered_webhook_status(

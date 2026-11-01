@@ -455,15 +455,18 @@ pub async fn execute(
                 .iter()
                 .map(|(k, v)| (k.as_str().to_owned(), v.to_str().unwrap_or("").to_owned()))
                 .collect();
-            let body = r.text().await.unwrap_or_default();
-            (
-                Some(ResponseInfo {
-                    status,
-                    headers,
-                    body,
-                }),
-                None,
-            )
+            // A body that cannot be read (cut short, stalled) is an error, not a success.
+            match r.text().await {
+                Ok(body) => (
+                    Some(ResponseInfo {
+                        status,
+                        headers,
+                        body,
+                    }),
+                    None,
+                ),
+                Err(e) => (None, Some(e.to_string())),
+            }
         }
         Err(e) => (None, Some(e.to_string())),
     };

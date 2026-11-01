@@ -883,6 +883,17 @@ async fn triggered_webhooks_match_the_ruby_broker() {
     // and provider 3 fails both.
     replay_cli(&s, "publish-same-3.0.1", "POST").await;
     receiver.wait_for(14, 10).await;
+    assert_matches(
+        &s,
+        get(
+            &s,
+            "/pacts/provider/Provider/consumer/Consumer/version/3.0.1/triggered-webhooks",
+        )
+        .await,
+        "GET_triggered_webhooks_3.0.1.json",
+        StatusCode::OK,
+    )
+    .await;
     // Provider 2's answers fit the original pact, so the changed Consumer pact fails
     // while Web's still passes (as in the capture).
     verify_pact(&s, "2", "Consumer/version/3.0.1", false).await;
@@ -1325,4 +1336,174 @@ async fn a_webhook_deleted_before_delivery_fails_its_triggered_webhook() {
     assert!(t.get("name").is_none());
     assert!(receiver.requests().is_empty());
     std::fs::remove_dir_all(&dir).ok();
+}
+
+/// A raw receiver that answers 200 with a body shorter than its Content-Length and
+/// closes, so the body cannot be read.
+async fn truncating_receiver() -> String {
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(async move {
+        loop {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            tokio::spawn(async move {
+                use tokio::io::{AsyncReadExt, AsyncWriteExt};
+                let mut buf = vec![0u8; 65536];
+                let _ = socket.read(&mut buf).await;
+                let _ = socket.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 100\r\nContent-Type: text/plain\r\n\r\nshort").await;
+                let _ = socket.shutdown().await;
+            });
+        }
+    });
+    format!("http://{addr}")
+}
+
+#[tokio::test]
+async fn a_response_whose_body_cannot_be_read_is_a_failed_delivery() {
+    // Review finding: a 200 status with a body that stalls or is cut short is an error,
+    // not a success, so the delivery is retried.
+    let s = common::start_with(http_config()).await;
+    let bad = truncating_receiver().await;
+    publish(&s, "Consumer", "1", vec![], &pact("Consumer", |_| {})).await;
+    let r = post(
+        &s,
+        "/webhooks/execute",
+        &json!({"request":{"method":"POST","url":format!("{bad}/hook")}}),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::OK);
+    let doc: Value = r.json().await.unwrap();
+    assert_eq!(doc["success"], false, "{doc}");
+    assert!(
+        doc["logs"]
+            .as_str()
+            .unwrap()
+            .contains("ERROR: Error executing webhook"),
+        "{}",
+        doc["logs"]
+    );
+}
+
+#[tokio::test]
+async fn a_non_object_body_on_a_scoped_collection_is_a_validation_error() {
+    // Review finding: `[]` or `"text"` used to panic when the path scope was injected.
+    let s = common::start_with(http_config()).await;
+    publish(&s, "Consumer", "1", vec![], &pact("Consumer", |_| {})).await;
+    for body in [json!([]), json!("text"), json!(42)] {
+        let r = post(&s, "/webhooks/provider/Provider/consumer/Consumer", &body).await;
+        assert_eq!(r.status(), StatusCode::BAD_REQUEST, "{body}");
+        let err: Value = r.json().await.unwrap();
+        assert_eq!(err["errors"]["request"][0], "is missing", "{body}");
+    }
+}
+
+#[tokio::test]
+async fn the_legacy_put_detects_unchanged_content_like_publish_contracts() {
+    // Review finding: PUT of identical content as a new version is contract_published
+    // only, as /contracts/publish already knows.
+    let s = common::start_with(trigger_config()).await;
+    let receiver = common::receiver().await;
+    let r = post(
+        &s,
+        "/webhooks",
+        &json!({"request":{"method":"POST","url":format!("{}/changed", receiver.base_url)}}),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::CREATED);
+    for version in ["1", "2"] {
+        let r = s
+            .client
+            .put(format!(
+                "{}/pacts/provider/Provider/consumer/Consumer/version/{version}",
+                s.base_url
+            ))
+            .header("content-type", "application/json")
+            .json(&pact("Consumer", |_| {}))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(r.status(), StatusCode::CREATED);
+    }
+    // Putting version 1 again with the same content is not a change either.
+    let r = s
+        .client
+        .put(format!(
+            "{}/pacts/provider/Provider/consumer/Consumer/version/1",
+            s.base_url
+        ))
+        .header("content-type", "application/json")
+        .json(&pact("Consumer", |_| {}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), StatusCode::OK);
+    receiver.wait_for(1, 5).await;
+    tokio::time::sleep(std::time::Duration::from_millis(1500)).await;
+    assert_eq!(
+        receiver.requests().len(),
+        1,
+        "only the first publication changed the content"
+    );
+    let second: Value = get(
+        &s,
+        "/pacts/provider/Provider/consumer/Consumer/version/2/triggered-webhooks",
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(
+        second["_embedded"]["triggeredWebhooks"]
+            .as_array()
+            .unwrap()
+            .len(),
+        0
+    );
+}
+
+#[tokio::test]
+async fn publish_events_report_the_main_branch_verification() {
+    // Review finding (verified in EventListener#contract_published): the verification a
+    // publish webhook describes is the latest from the provider's main branch, not the
+    // latest overall.
+    let s = common::start_with(trigger_config()).await;
+    let receiver = common::receiver().await;
+    publish(&s, "Consumer", "1", vec![], &pact("Consumer", |_| {})).await;
+    verify_pact(&s, "1", "Consumer/version/1", true).await;
+    // Provider 2 on a feature branch fails the same content.
+    let r = s
+        .client
+        .put(format!(
+            "{}/pacticipants/Provider/branches/feature/versions/2",
+            s.base_url
+        ))
+        .header("content-type", "application/json")
+        .body("{}")
+        .send()
+        .await
+        .unwrap();
+    assert!(r.status().is_success());
+    let doc: Value = get(&s, "/pacts/provider/Provider/consumer/Consumer/version/1")
+        .await
+        .json()
+        .await
+        .unwrap();
+    let href = doc["_links"]["pb:publish-verification-results"]["href"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let r = s
+        .client
+        .post(href)
+        .header("content-type", "application/json")
+        .json(&json!({"providerApplicationVersion": "2", "success": false}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), StatusCode::CREATED);
+    let r = post(&s, "/webhooks", &json!({"events":[{"name":"contract_published"}],"request":{"method":"POST","url":format!("{}/published", receiver.base_url),"body":{"providerVersion":"${pactbroker.providerVersionNumber}","github":"${pactbroker.githubVerificationStatus}"}}})).await;
+    assert_eq!(r.status(), StatusCode::CREATED);
+    publish(&s, "Consumer", "2", vec![], &pact("Consumer", |_| {})).await;
+    let got = receiver.wait_for(1, 5).await;
+    assert_eq!(got[0].body, r#"{"providerVersion":"1","github":"success"}"#);
 }

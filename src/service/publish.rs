@@ -408,30 +408,12 @@ pub async fn publish_contracts(db: &Db, req: &PublishRequest) -> Result<PublishO
     for tag in &req.tags {
         versions::put_tag(db, &pacticipant.name, &version.number, tag).await?;
     }
-    let tag_names: Vec<String> = db
-        .tags_for_version(version.id)
-        .await?
-        .into_iter()
-        .map(|t| t.name)
-        .collect();
     let mut contracts = vec![];
     for c in &req.contracts {
         let provider = find_or_create_pacticipant(db, &c.provider).await?;
         let (publication, created) =
             store_pact(db, &pacticipant, &version, &provider, &c.content).await?;
-        let (mut events, reasons) = if created {
-            detect_events(db, &publication, &tag_names).await?
-        } else {
-            (vec!["contract_published"], vec![])
-        };
-        // Verified: the event is listed after contract_published and before
-        // contract_content_changed whenever a provider version still has to verify it.
-        if !crate::service::webhook_trigger::required_verifications(db, &publication)
-            .await?
-            .is_empty()
-        {
-            events.insert(1, "contract_requiring_verification_published");
-        }
+        let (events, reasons) = events_for_publication(db, &publication, created).await?;
         contracts.push(PublishedContract {
             publication,
             created,
@@ -450,6 +432,35 @@ pub async fn publish_contracts(db: &Db, req: &PublishRequest) -> Result<PublishO
         version_created,
         contracts,
     })
+}
+
+/// The events a publication raises, in the Ruby broker's order: contract_published,
+/// contract_requiring_verification_published when a provider version still has to verify
+/// the content, contract_content_changed when the content is new (verified). Shared by
+/// `/contracts/publish` and the legacy `PUT`.
+pub async fn events_for_publication(
+    db: &Db,
+    publication: &PactPublication,
+    created: bool,
+) -> Result<(Vec<&'static str>, Vec<String>)> {
+    let tags: Vec<String> = db
+        .tags_for_version(publication.consumer_version_id)
+        .await?
+        .into_iter()
+        .map(|t| t.name)
+        .collect();
+    let (mut events, reasons) = if created {
+        detect_events(db, publication, &tags).await?
+    } else {
+        (vec!["contract_published"], vec![])
+    };
+    if !crate::service::webhook_trigger::required_verifications(db, publication)
+        .await?
+        .is_empty()
+    {
+        events.insert(1, "contract_requiring_verification_published");
+    }
+    Ok((events, reasons))
 }
 
 /// The Ruby broker compares the new content with the previous pact per consumer version

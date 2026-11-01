@@ -153,6 +153,17 @@ pub async fn trigger_publish_events(
         .await?
         .last()
         .map(|b| b.branch_name.clone());
+    // Verified (`EventListener#contract_published` / `#contract_content_changed`): those
+    // two events describe the latest verification from the provider's main branch, fixed
+    // when the webhook is triggered; the requiring-verification event carries none.
+    let provider = db.find_pacticipant(&pact.provider_name).await?;
+    let main_branch_verification = match provider.as_ref().and_then(|p| p.main_branch.clone()) {
+        Some(branch) => {
+            db.latest_verification_from_branch(pact.pact_version_id, pact.provider_id, &branch)
+                .await?
+        }
+        None => None,
+    };
     let mut index = 0u64;
     let mut out = vec![];
     for event in events {
@@ -190,7 +201,18 @@ pub async fn trigger_publish_events(
             };
         out.extend(
             create_triggered(
-                db, config, &webhooks, pact, None, event, &contexts, &mut index,
+                db,
+                config,
+                &webhooks,
+                pact,
+                if *event == "contract_requiring_verification_published" {
+                    None
+                } else {
+                    main_branch_verification.as_ref()
+                },
+                event,
+                &contexts,
+                &mut index,
             )
             .await?,
         );
@@ -298,20 +320,21 @@ pub async fn deliver(db: &Db, config: &Config, t: &TriggeredWebhook) -> Result<(
         }),
     };
     let result = delivery::execute(config, Some(&webhook.uuid), &built, &context, &messages).await;
-    db.record_execution(t.id, result.success, &result.logs)
-        .await?;
-    if result.success {
-        db.set_triggered_webhook_status(t.id, "success", None)
-            .await?;
+    let (status, next) = if result.success {
+        ("success", None)
     } else if attempts < schedule.len() {
-        let due =
-            rfc3339(chrono::Utc::now() + chrono::Duration::seconds(schedule[attempts] as i64));
-        db.set_triggered_webhook_status(t.id, "retrying", Some(&due))
-            .await?;
+        (
+            "retrying",
+            Some(rfc3339(
+                chrono::Utc::now() + chrono::Duration::seconds(schedule[attempts] as i64),
+            )),
+        )
     } else {
-        db.set_triggered_webhook_status(t.id, "failure", None)
-            .await?;
-    }
+        ("failure", None)
+    };
+    // One transaction, so a crash cannot leave a recorded attempt with a stale status.
+    db.finish_execution(t.id, result.success, &result.logs, status, next.as_deref())
+        .await?;
     Ok(())
 }
 
