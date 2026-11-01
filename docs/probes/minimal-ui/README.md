@@ -51,8 +51,9 @@ allow only local paths or HTTP(S). The accepted broker authentication/query cont
 precedence over generic security-skill defaults. No production API behavior changes;
 only the existing explanation validator's visibility widens to `pub(crate)`.
 
-Independent review of record: **blocked, not completed**. The requested
-`agent-review code origin/main..HEAD --reviewer cursor` exited 1: “You've hit your usage
-limit.” A minimal `cursor-agent -p --trust --mode plan` probe failed identically. No end
-marker was produced, so neither attempt counts as a review. No branch was pushed.
-Claude was not used (owner reported exhausted credits); Gemma is not the review of record.
+Independent review of record: **completed**, `opencode opencode-go/kimi-k3.1-pro` (OpenCode Go,
+Kimi/Moonshot), using the owner's review-fallback tool and `origin/main..HEAD`. The reply
+ended with `<<AGENT-REVIEW-END>>` and reported no actionable findings. The reviewer inspected
+source and recorded probe evidence; it did not rerun commands under its read-only constraint.
+The earlier Cursor attempt and minimal probe both failed with a usage-limit error and did
+not count as reviews. Claude was not used; no local model or Gemma review was used.
