@@ -71,9 +71,22 @@ async fn get_json(s: &common::TestServer, path: &str) -> Value {
 /// link metadata, verification numbers and verification dates.
 fn normalise(v: Value) -> Value {
     let text = serde_json::to_string(&v).unwrap();
-    let text = regex::Regex::new(r"/metadata/[A-Za-z0-9_=-]+")
+    // Metadata is decoded and kept, with consumer version ids (database ids) normalised,
+    // so the selector keys the Ruby broker encodes are compared.
+    let text = regex::Regex::new(r"/metadata/([A-Za-z0-9_=-]+)")
         .unwrap()
-        .replace_all(&text, "/metadata/M");
+        .replace_all(&text, |c: &regex::Captures| {
+            use base64::Engine;
+            let raw = c[1].trim_end_matches('=');
+            let decoded = base64::engine::general_purpose::URL_SAFE_NO_PAD
+                .decode(raw)
+                .map(|b| String::from_utf8_lossy(&b).into_owned())
+                .unwrap_or_else(|_| c[1].to_owned());
+            let decoded = regex::Regex::new(r"cv%5D=\d+")
+                .unwrap()
+                .replace_all(&decoded, "cv%5D=N");
+            format!("/metadata/{decoded}")
+        });
     let text = regex::Regex::new(r"verification-results/\d+")
         .unwrap()
         .replace_all(&text, "verification-results/N");
@@ -486,6 +499,13 @@ async fn deployment_documents_match_the_ruby_broker() {
     let rvu = rv["uuid"].as_str().unwrap().to_owned();
     let r = get(&s, &format!("/released-versions/{rvu}")).await;
     assert_matches(&s, r, "GET_released-version.json", StatusCode::OK).await;
+    let r = post(
+        &s,
+        "/pacts/provider/Provider/for-verification",
+        &json!({"consumerVersionSelectors": [{"released": true}]}),
+    )
+    .await;
+    assert_matches(&s, r, "POST_for-verification_released.json", StatusCode::OK).await;
     let r = get(&s, "/pacticipants/Consumer/versions/1.0.0").await;
     assert_matches(
         &s,
