@@ -2,9 +2,9 @@
     "_embedded": {
         "deployedVersions": [
             {
-                "uuid": "b4edd63a-ab98-483b-8278-fa4a74d6b1be",
+                "uuid": "fdf055d6-c6a5-4dba-a720-755a61a7b399",
                 "currentlyDeployed": true,
-                "createdAt": "2026-11-01T00:41:54+00:00",
+                "createdAt": "2026-11-01T01:52:20+00:00",
                 "_embedded": {
                     "pacticipant": {
                         "name": "Consumer",
@@ -27,7 +27,7 @@
                 },
                 "_links": {
                     "self": {
-                        "href": "http://localhost:9292/deployed-versions/b4edd63a-ab98-483b-8278-fa4a74d6b1be"
+                        "href": "http://localhost:9292/deployed-versions/fdf055d6-c6a5-4dba-a720-755a61a7b399"
                     }
                 }
             }
@@ -35,7 +35,7 @@
     },
     "_links": {
         "self": {
-            "href": "http://localhost:9292/environments/9cbb31ef-dde1-450e-b88e-aea7356e136b/deployed-versions/currently-deployed?pacticipant=Consumer",
+            "href": "http://localhost:9292/environments/6f756006-14c3-4cd4-abbb-da68d7cfe64f/deployed-versions/currently-deployed?pacticipant=Consumer",
             "title": "Currently deployed versions for Test env"
         }
     }

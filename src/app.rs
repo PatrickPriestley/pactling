@@ -17,6 +17,7 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
     let db = Db::connect(&config.database_url).await?;
     db.migrate().await?;
     let creds = Credentials::from_config(&config)?;
+    crate::service::webhook_trigger::spawn_delivery_loop(db.clone(), config.clone());
     let state = AppState { db, config };
     Ok(Router::new()
         .route("/", any(http::index::index))

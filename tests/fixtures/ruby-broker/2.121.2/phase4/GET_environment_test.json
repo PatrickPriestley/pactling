@@ -1,5 +1,5 @@
 {
-    "uuid": "9cbb31ef-dde1-450e-b88e-aea7356e136b",
+    "uuid": "6f756006-14c3-4cd4-abbb-da68d7cfe64f",
     "name": "test",
     "displayName": "Test env",
     "production": false,
@@ -8,21 +8,21 @@
             "name": "QA"
         }
     ],
-    "updatedAt": "2026-11-01T00:41:52+00:00",
-    "createdAt": "2026-11-01T00:41:47+00:00",
+    "updatedAt": "2026-11-01T01:52:19+00:00",
+    "createdAt": "2026-11-01T01:52:14+00:00",
     "_links": {
         "self": {
             "title": "Environment",
             "name": "test",
-            "href": "http://localhost:9292/environments/9cbb31ef-dde1-450e-b88e-aea7356e136b"
+            "href": "http://localhost:9292/environments/6f756006-14c3-4cd4-abbb-da68d7cfe64f"
         },
         "pb:currently-deployed-deployed-versions": {
             "title": "Versions currently deployed to Test env environment",
-            "href": "http://localhost:9292/environments/9cbb31ef-dde1-450e-b88e-aea7356e136b/deployed-versions/currently-deployed"
+            "href": "http://localhost:9292/environments/6f756006-14c3-4cd4-abbb-da68d7cfe64f/deployed-versions/currently-deployed"
         },
         "pb:currently-supported-released-versions": {
             "title": "Versions released and supported in Test env environment",
-            "href": "http://localhost:9292/environments/9cbb31ef-dde1-450e-b88e-aea7356e136b/released-versions/currently-supported"
+            "href": "http://localhost:9292/environments/6f756006-14c3-4cd4-abbb-da68d7cfe64f/released-versions/currently-supported"
         },
         "pb:environments": {
             "title": "Environments",

@@ -419,11 +419,19 @@ pub async fn publish_contracts(db: &Db, req: &PublishRequest) -> Result<PublishO
         let provider = find_or_create_pacticipant(db, &c.provider).await?;
         let (publication, created) =
             store_pact(db, &pacticipant, &version, &provider, &c.content).await?;
-        let (events, reasons) = if created {
+        let (mut events, reasons) = if created {
             detect_events(db, &publication, &tag_names).await?
         } else {
             (vec!["contract_published"], vec![])
         };
+        // Verified: the event is listed after contract_published and before
+        // contract_content_changed whenever a provider version still has to verify it.
+        if !crate::service::webhook_trigger::required_verifications(db, &publication)
+            .await?
+            .is_empty()
+        {
+            events.insert(1, "contract_requiring_verification_published");
+        }
         contracts.push(PublishedContract {
             publication,
             created,

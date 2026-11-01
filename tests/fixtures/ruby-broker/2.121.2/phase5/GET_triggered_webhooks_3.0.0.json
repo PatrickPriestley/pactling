@@ -3,25 +3,25 @@
         "triggeredWebhooks": [
             {
                 "name": "POST host.docker.internal",
-                "status": "not_run",
-                "attemptsMade": 0,
-                "attemptsRemaining": 7,
+                "status": "success",
+                "attemptsMade": 1,
+                "attemptsRemaining": 0,
                 "triggerType": "resource_creation",
                 "eventName": "contract_content_changed",
-                "triggeredAt": "2026-11-01T01:28:06+00:00",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
                 "_links": {
                     "pb:logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/8a1322a5-96c6-428d-866f-dc41692372b6/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/dbe45c64-6aa9-4a64-84a1-ad457c97ed34/logs",
                         "title": "Webhook execution logs",
                         "name": "POST host.docker.internal"
                     },
                     "logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/8a1322a5-96c6-428d-866f-dc41692372b6/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/dbe45c64-6aa9-4a64-84a1-ad457c97ed34/logs",
                         "title": "DEPRECATED - Use pb:logs",
                         "name": "POST host.docker.internal"
                     },
                     "pb:webhook": {
-                        "href": "http://localhost:9292/webhooks/3aNRx3KYrAP6LE7xufgBng",
+                        "href": "http://localhost:9292/webhooks/UYJpOaXO_0lRMdRp4nAKrg",
                         "title": "Webhook",
                         "name": "POST host.docker.internal"
                     }
@@ -34,20 +34,20 @@
                 "attemptsRemaining": 0,
                 "triggerType": "resource_creation",
                 "eventName": "contract_content_changed",
-                "triggeredAt": "2026-11-01T01:28:06+00:00",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
                 "_links": {
                     "pb:logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/ffe53369-022a-4830-ad8d-2acae805c62f/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/088e98da-2563-4b63-afd8-c0d3c7dff716/logs",
                         "title": "Webhook execution logs",
                         "name": "POST host.docker.internal"
                     },
                     "logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/ffe53369-022a-4830-ad8d-2acae805c62f/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/088e98da-2563-4b63-afd8-c0d3c7dff716/logs",
                         "title": "DEPRECATED - Use pb:logs",
                         "name": "POST host.docker.internal"
                     },
                     "pb:webhook": {
-                        "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A",
+                        "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg",
                         "title": "Webhook",
                         "name": "POST host.docker.internal"
                     }
@@ -60,20 +60,20 @@
                 "attemptsRemaining": 0,
                 "triggerType": "resource_creation",
                 "eventName": "contract_content_changed",
-                "triggeredAt": "2026-11-01T01:28:06+00:00",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
                 "_links": {
                     "pb:logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/8ee4b218-dec7-4f8d-bf55-0483fe31e2d3/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/41e303ab-7f6c-4121-8cab-4d0374619079/logs",
                         "title": "Webhook execution logs",
                         "name": "POST host.docker.internal"
                     },
                     "logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/8ee4b218-dec7-4f8d-bf55-0483fe31e2d3/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/41e303ab-7f6c-4121-8cab-4d0374619079/logs",
                         "title": "DEPRECATED - Use pb:logs",
                         "name": "POST host.docker.internal"
                     },
                     "pb:webhook": {
-                        "href": "http://localhost:9292/webhooks/I8JQEE2UTN-34yA4Z69DiQ",
+                        "href": "http://localhost:9292/webhooks/m_pKUiCrFHhhaeYtoC6rRA",
                         "title": "Webhook",
                         "name": "POST host.docker.internal"
                     }
@@ -86,20 +86,20 @@
                 "attemptsRemaining": 0,
                 "triggerType": "resource_creation",
                 "eventName": "contract_requiring_verification_published",
-                "triggeredAt": "2026-11-01T01:28:06+00:00",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
                 "_links": {
                     "pb:logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/48bf46b7-d2e3-467f-a43b-b85f56dac2dc/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/798e6f0f-6a84-4131-9727-5acd61d545f4/logs",
                         "title": "Webhook execution logs",
                         "name": "POST host.docker.internal"
                     },
                     "logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/48bf46b7-d2e3-467f-a43b-b85f56dac2dc/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/798e6f0f-6a84-4131-9727-5acd61d545f4/logs",
                         "title": "DEPRECATED - Use pb:logs",
                         "name": "POST host.docker.internal"
                     },
                     "pb:webhook": {
-                        "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A",
+                        "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg",
                         "title": "Webhook",
                         "name": "POST host.docker.internal"
                     }
@@ -112,20 +112,20 @@
                 "attemptsRemaining": 0,
                 "triggerType": "resource_creation",
                 "eventName": "contract_requiring_verification_published",
-                "triggeredAt": "2026-11-01T01:28:06+00:00",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
                 "_links": {
                     "pb:logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/e3097c39-1a16-4748-8b6d-0126f531786a/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/fa106815-3dbc-4b0b-8a09-7b8699cf694f/logs",
                         "title": "Webhook execution logs",
                         "name": "POST host.docker.internal"
                     },
                     "logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/e3097c39-1a16-4748-8b6d-0126f531786a/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/fa106815-3dbc-4b0b-8a09-7b8699cf694f/logs",
                         "title": "DEPRECATED - Use pb:logs",
                         "name": "POST host.docker.internal"
                     },
                     "pb:webhook": {
-                        "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A",
+                        "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg",
                         "title": "Webhook",
                         "name": "POST host.docker.internal"
                     }
@@ -138,15 +138,15 @@
                 "attemptsRemaining": 0,
                 "triggerType": "resource_creation",
                 "eventName": "contract_published",
-                "triggeredAt": "2026-11-01T01:28:06+00:00",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
                 "_links": {
                     "pb:logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/5be603be-7a86-43e4-901a-e2c878d3b48d/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/458dec8c-1c49-49e8-8298-474a193346c3/logs",
                         "title": "Webhook execution logs",
                         "name": "POST host.docker.internal"
                     },
                     "logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/5be603be-7a86-43e4-901a-e2c878d3b48d/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/458dec8c-1c49-49e8-8298-474a193346c3/logs",
                         "title": "DEPRECATED - Use pb:logs",
                         "name": "POST host.docker.internal"
                     },
@@ -164,20 +164,20 @@
                 "attemptsRemaining": 0,
                 "triggerType": "resource_creation",
                 "eventName": "contract_published",
-                "triggeredAt": "2026-11-01T01:28:06+00:00",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
                 "_links": {
                     "pb:logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/62ef8e5a-0156-4cfd-ab53-42247c648245/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/2499dbd7-7284-44ee-b393-d2c8f7c842c3/logs",
                         "title": "Webhook execution logs",
                         "name": "POST host.docker.internal"
                     },
                     "logs": {
-                        "href": "http://localhost:9292/triggered-webhooks/62ef8e5a-0156-4cfd-ab53-42247c648245/logs",
+                        "href": "http://localhost:9292/triggered-webhooks/2499dbd7-7284-44ee-b393-d2c8f7c842c3/logs",
                         "title": "DEPRECATED - Use pb:logs",
                         "name": "POST host.docker.internal"
                     },
                     "pb:webhook": {
-                        "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A",
+                        "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg",
                         "title": "Webhook",
                         "name": "POST host.docker.internal"
                     }

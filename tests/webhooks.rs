@@ -72,18 +72,27 @@ async fn post(s: &common::TestServer, path: &str, body: &Value) -> reqwest::Resp
 /// receiver host and verification numbers differ between brokers.
 fn normalise(v: Value) -> Value {
     let text = serde_json::to_string(&v).unwrap();
-    let text = regex::Regex::new(r"webhooks/[A-Za-z0-9_-]{22}")
+    let text = regex::Regex::new(r"(^|[^-])webhooks/[A-Za-z0-9_-]{22}([^A-Za-z0-9_-]|$)")
         .unwrap()
-        .replace_all(&text, "webhooks/UUID");
+        .replace_all(&text, "${1}webhooks/UUID${2}");
     let text = regex::Regex::new(r#""uuid":"[A-Za-z0-9_-]{22}""#)
         .unwrap()
         .replace_all(&text, r#""uuid":"UUID""#);
     let text = regex::Regex::new(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         .unwrap()
         .replace_all(&text, "UUID");
+    // A webhook named by its uuid in a notice.
+    let text = regex::Regex::new(r"Webhook [A-Za-z0-9_-]{22} triggered")
+        .unwrap()
+        .replace_all(&text, "Webhook UUID triggered");
+    // The test receivers live on 127.0.0.1; the capture's lived on host.docker.internal.
+    let text = text.replace("POST 127.0.0.1", "POST host.docker.internal");
     let text = regex::Regex::new(r"\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\]")
         .unwrap()
         .replace_all(&text, "[T]");
+    let text = regex::Regex::new(r"verification[- ]results?[/ ]\d+")
+        .unwrap()
+        .replace_all(&text, "verification-results/N");
     let text = regex::Regex::new(r#""(triggeredAt|createdAt)":"[^"]*""#)
         .unwrap()
         .replace_all(&text, r#""$1":"T""#);
@@ -165,7 +174,22 @@ async fn replay_cli(s: &common::TestServer, file: &str, method: &str) -> Value {
             .into_owned();
         normalise(stable(serde_json::from_str(&text).unwrap()))
     };
-    assert_eq!(strip(&got), strip(&e.response), "{file}");
+    let (left, right) = (strip(&got), strip(&e.response));
+    if left != right
+        && let Ok(dir) = std::env::var("PACTLING_DUMP_DIR")
+    {
+        std::fs::write(
+            format!("{dir}/{file}.got.json"),
+            serde_json::to_string_pretty(&left).unwrap(),
+        )
+        .unwrap();
+        std::fs::write(
+            format!("{dir}/{file}.want.json"),
+            serde_json::to_string_pretty(&right).unwrap(),
+        )
+        .unwrap();
+    }
+    assert_eq!(left, right, "{file}");
     got
 }
 
@@ -503,6 +527,11 @@ fn normalise_execution(v: Value, receiver_base: &str) -> Value {
         .unwrap()
         .replace_all(&text, "UA")
         .into_owned();
+    // The broker's own address inside log text (the capture's came through the CLI proxy).
+    let text = regex::Regex::new(r"http://(127\.0\.0\.1|localhost):\d+")
+        .unwrap()
+        .replace_all(&text, "http://HOST")
+        .into_owned();
     let text = regex::Regex::new(r#"user-agent: [^\\]*"#)
         .unwrap()
         .replace_all(&text, "user-agent: UA");
@@ -696,4 +725,604 @@ async fn test_execution_matches_the_ruby_broker() {
         failed[0].body, "null",
         "no body is sent as the string null, as Net::HTTP does"
     );
+}
+
+fn trigger_config() -> Config {
+    let mut c = http_config();
+    c.webhook_initial_delay = 0;
+    c.webhook_delay_step = 0;
+    c
+}
+
+/// Replaces the capture's receiver address in a recorded CLI body with the test receiver's.
+fn with_receiver(v: &Value, receiver: &common::Receiver) -> Value {
+    serde_json::from_str(
+        &serde_json::to_string(v)
+            .unwrap()
+            .replace("http://host.docker.internal:18100", &receiver.base_url),
+    )
+    .unwrap()
+}
+
+async fn verify_pact(
+    s: &common::TestServer,
+    provider_version: &str,
+    consumer_path: &str,
+    success: bool,
+) {
+    let r = s
+        .client
+        .put(format!(
+            "{}/pacticipants/Provider/branches/main/versions/{provider_version}",
+            s.base_url
+        ))
+        .header("content-type", "application/json")
+        .body("{}")
+        .send()
+        .await
+        .unwrap();
+    assert!(r.status().is_success());
+    let doc: Value = get(
+        s,
+        &format!("/pacts/provider/Provider/consumer/{consumer_path}"),
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let href = doc["_links"]["pb:publish-verification-results"]["href"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let r = s
+        .client
+        .post(href)
+        .header("content-type", "application/json")
+        .json(&json!({"providerApplicationVersion": provider_version, "success": success}))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), StatusCode::CREATED);
+}
+
+#[tokio::test]
+async fn triggered_webhooks_match_the_ruby_broker() {
+    let s = common::start_with(trigger_config()).await;
+    let receiver = common::receiver().await;
+    let failing_receiver = common::receiver_answering(500).await;
+    seed(&s).await;
+    for (file, method) in [
+        ("create-webhook-consumer-provider", "POST"),
+        ("create-webhook-provider-all-events", "POST"),
+        ("create-or-update-webhook-create", "PUT"),
+        ("create-or-update-webhook-update", "PUT"),
+    ] {
+        let e = cli_exchange(file, method);
+        let r = request(
+            &s,
+            e.method.parse().unwrap(),
+            &e.path,
+            Some(&with_receiver(&e.body, &receiver)),
+        )
+        .await;
+        assert_eq!(r.status().as_u16(), e.status, "{file}");
+    }
+    let r = post(&s, "/webhooks", &json!({"request":{"method":"POST","url":format!("{}/hook/global", receiver.base_url),"username":"hookuser","password":"hookpass","headers":{"X-Token":"abc","Accept":"application/json"},"body":{"template":"${pactbroker.consumerVersionNumber}"}}})).await;
+    assert_eq!(r.status(), StatusCode::CREATED);
+    assert_matches(
+        &s,
+        get(
+            &s,
+            "/pacts/provider/Provider/consumer/Consumer/webhooks/status",
+        )
+        .await,
+        "GET_pact_webhooks_status_before.json",
+        StatusCode::OK,
+    )
+    .await;
+
+    // Publishing changed content fires contract_published, the two required
+    // verifications and contract_content_changed; the notices name every trigger.
+    replay_cli(&s, "publish-changed-3.0.0", "POST").await;
+    let got = receiver.wait_for(7, 10).await;
+    assert_eq!(got.len(), 7, "seven deliveries for 3.0.0");
+    for (i, r) in got.iter().enumerate() {
+        assert_received_like(r, &captured_request(4 + i), &s);
+    }
+    assert_matches(
+        &s,
+        get(
+            &s,
+            "/pacts/provider/Provider/consumer/Consumer/webhooks/status",
+        )
+        .await,
+        "GET_pact_webhooks_status_after_publish.json",
+        StatusCode::OK,
+    )
+    .await;
+    let triggered = assert_matches(
+        &s,
+        get(
+            &s,
+            "/pacts/provider/Provider/consumer/Consumer/version/3.0.0/triggered-webhooks",
+        )
+        .await,
+        "GET_triggered_webhooks_3.0.0.json",
+        StatusCode::OK,
+    )
+    .await;
+    for (i, t) in triggered["_embedded"]["triggeredWebhooks"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .enumerate()
+    {
+        let href = t["_links"]["pb:logs"]["href"]
+            .as_str()
+            .unwrap()
+            .replace(&s.base_url, "");
+        let r = get(&s, &href).await;
+        assert_execution_matches(
+            &s,
+            &receiver.base_url,
+            r,
+            &format!("GET_triggered_webhook_logs_3.0.0_{i}.json"),
+            StatusCode::OK,
+        )
+        .await;
+    }
+    assert_matches(
+        &s,
+        get(&s, "/triggered-webhooks/nope/logs").await,
+        "GET_triggered_webhook_logs_unknown.json",
+        StatusCode::NOT_FOUND,
+    )
+    .await;
+
+    // The same content again as 3.0.1, then provider 2 verifies it and Web 1 (success)
+    // and provider 3 fails both.
+    replay_cli(&s, "publish-same-3.0.1", "POST").await;
+    receiver.wait_for(14, 10).await;
+    // Provider 2's answers fit the original pact, so the changed Consumer pact fails
+    // while Web's still passes (as in the capture).
+    verify_pact(&s, "2", "Consumer/version/3.0.1", false).await;
+    verify_pact(&s, "2", "Web/version/1", true).await;
+    receiver.wait_for(18, 10).await;
+    let latest: Value = get(
+        &s,
+        "/pacts/provider/Provider/consumer/Consumer/version/3.0.1/verification-results/latest",
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let href = latest["_links"]["self"]["href"]
+        .as_str()
+        .unwrap()
+        .replace(&s.base_url, "");
+    assert_matches(
+        &s,
+        get(&s, &format!("{href}/triggered-webhooks")).await,
+        "GET_verification_triggered_webhooks_success.json",
+        StatusCode::OK,
+    )
+    .await;
+    verify_pact(&s, "3", "Consumer/version/3.0.1", false).await;
+    verify_pact(&s, "3", "Web/version/1", false).await;
+    receiver.wait_for(22, 10).await;
+    let latest: Value = get(
+        &s,
+        "/pacts/provider/Provider/consumer/Consumer/version/3.0.1/verification-results/latest",
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let href = latest["_links"]["self"]["href"]
+        .as_str()
+        .unwrap()
+        .replace(&s.base_url, "");
+    assert_matches(
+        &s,
+        get(&s, &format!("{href}/triggered-webhooks")).await,
+        "GET_verification_triggered_webhooks_failure.json",
+        StatusCode::OK,
+    )
+    .await;
+    assert_matches(
+        &s,
+        get(
+            &s,
+            "/pacts/provider/Provider/consumer/Consumer/webhooks/status",
+        )
+        .await,
+        "GET_pact_webhooks_status_after_verification.json",
+        StatusCode::OK,
+    )
+    .await;
+
+    // A receiver answering 500 leaves the triggered webhook retrying.
+    let r = post(&s, "/webhooks", &json!({"consumer":{"name":"Consumer"},"provider":{"name":"Provider"},"events":[{"name":"contract_published"}],"request":{"method":"POST","url":format!("{}/hook", failing_receiver.base_url)}})).await;
+    let bad = assert_execution_matches(
+        &s,
+        &failing_receiver.base_url,
+        r,
+        "POST_webhooks_failing.json",
+        StatusCode::CREATED,
+    )
+    .await;
+    replay_cli(&s, "publish-same-3.0.2", "POST").await;
+    // The capture was taken after the first retry (10 s later on the Ruby schedule).
+    failing_receiver.wait_for(2, 15).await;
+    receiver.wait_for(25, 10).await;
+    let triggered = assert_matches(
+        &s,
+        get(
+            &s,
+            "/pacts/provider/Provider/consumer/Consumer/version/3.0.2/triggered-webhooks",
+        )
+        .await,
+        "GET_triggered_webhooks_3.0.2.json",
+        StatusCode::OK,
+    )
+    .await;
+    let retrying = triggered["_embedded"]["triggeredWebhooks"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|t| t["status"] == "retrying")
+        .unwrap();
+    let href = retrying["_links"]["pb:logs"]["href"]
+        .as_str()
+        .unwrap()
+        .replace(&s.base_url, "");
+    assert_execution_matches(
+        &s,
+        &failing_receiver.base_url,
+        get(&s, &href).await,
+        "GET_triggered_webhook_logs_failing.json",
+        StatusCode::OK,
+    )
+    .await;
+    assert_matches(
+        &s,
+        get(
+            &s,
+            "/pacts/provider/Provider/consumer/Consumer/webhooks/status",
+        )
+        .await,
+        "GET_pact_webhooks_status_retrying.json",
+        StatusCode::OK,
+    )
+    .await;
+
+    // A pact with no webhook at all gets the next steps; one whose webhooks listen to
+    // other events is told so (the capture's Other/OtherP probes).
+    replay_cli(&s, "publish-no-webhooks", "POST").await;
+    let r = post(&s, "/webhooks", &json!({"provider":{"name":"OtherP"},"events":[{"name":"provider_verification_published"}],"request":{"method":"POST","url":format!("{}/hook/otherp", receiver.base_url)}})).await;
+    assert_execution_matches(
+        &s,
+        &receiver.base_url,
+        r,
+        "POST_webhooks_verification_only.json",
+        StatusCode::CREATED,
+    )
+    .await;
+    replay_cli(&s, "publish-no-webhook-for-event", "POST").await;
+
+    // Deleting the webhook keeps its triggered webhooks, nameless.
+    let r = request(
+        &s,
+        reqwest::Method::DELETE,
+        &format!("/webhooks/{}", bad["uuid"].as_str().unwrap()),
+        None,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::NO_CONTENT);
+    assert_matches(
+        &s,
+        get(&s, "/webhooks").await,
+        "GET_webhooks_after_delete.json",
+        StatusCode::OK,
+    )
+    .await;
+    assert_matches(
+        &s,
+        get(
+            &s,
+            "/pacts/provider/Provider/consumer/Consumer/version/3.0.2/triggered-webhooks",
+        )
+        .await,
+        "GET_triggered_webhooks_3.0.2_after_delete.json",
+        StatusCode::OK,
+    )
+    .await;
+    // Verified in the source (`latest_triggered_webhooks` excludes a null webhook): the
+    // deleted webhook's retrying entry leaves the status summary.
+    let status: Value = get(
+        &s,
+        "/pacts/provider/Provider/consumer/Consumer/webhooks/status",
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    assert!(
+        status["summary"].get("retrying").is_none(),
+        "{}",
+        status["summary"]
+    );
+}
+
+#[tokio::test]
+async fn queued_deliveries_survive_a_restart() {
+    // A broker scheduled the deliveries far ahead and went away; a new process with its
+    // own connection to the same database delivers them when they fall due.
+    let dir = std::env::temp_dir().join(format!("pactling-webhooks-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let mut config = http_config();
+    config.database_url = format!("sqlite://{}/queue.db?mode=rwc", dir.display());
+    config.webhook_initial_delay = 3600;
+    let s = common::start_with(config.clone()).await;
+    let receiver = common::receiver().await;
+    publish(&s, "Consumer", "1", vec![], &pact("Consumer", |_| {})).await;
+    let r = post(&s, "/webhooks", &json!({"request":{"method":"POST","url":format!("{}/hook", receiver.base_url),"body":{"v":"${pactbroker.consumerVersionNumber}"}}})).await;
+    assert_eq!(r.status(), StatusCode::CREATED);
+    publish(
+        &s,
+        "Consumer",
+        "2",
+        vec![],
+        &pact("Consumer", |p| {
+            p["interactions"][0]["response"]["status"] = json!(201)
+        }),
+    )
+    .await;
+    let before: Value = get(
+        &s,
+        "/pacts/provider/Provider/consumer/Consumer/version/2/triggered-webhooks",
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(
+        before["_embedded"]["triggeredWebhooks"][0]["status"],
+        "not_run"
+    );
+    assert!(receiver.requests().is_empty());
+
+    let db = pactling::db::Db::connect(&config.database_url)
+        .await
+        .unwrap();
+    let delivered = pactling::service::webhook_trigger::deliver_due_at(
+        &db,
+        &config,
+        chrono::Utc::now() + chrono::Duration::hours(2),
+    )
+    .await
+    .unwrap();
+    assert_eq!(delivered, 1);
+    let got = receiver.wait_for(1, 5).await;
+    assert_eq!(got[0].body, r#"{"v":"2"}"#);
+    let after: Value = get(
+        &s,
+        "/pacts/provider/Provider/consumer/Consumer/version/2/triggered-webhooks",
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(
+        after["_embedded"]["triggeredWebhooks"][0]["status"],
+        "success"
+    );
+    assert_eq!(
+        after["_embedded"]["triggeredWebhooks"][0]["attemptsMade"],
+        1
+    );
+    std::fs::remove_dir_all(&dir).ok();
+}
+
+#[tokio::test]
+async fn a_starred_password_or_header_keeps_the_stored_value_on_update() {
+    let s = common::start_with(http_config()).await;
+    let receiver = common::receiver().await;
+    publish(&s, "Consumer", "1", vec![], &pact("Consumer", |_| {})).await;
+    let body = |password: &str, token: &str| json!({"request":{"method":"POST","url":format!("{}/hook", receiver.base_url),"username":"hookuser","password":password,"headers":{"X-Token":token}}});
+    let r = request(
+        &s,
+        reqwest::Method::PUT,
+        "/webhooks/pactling-test-webhook-01",
+        Some(&body("hookpass", "abc")),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::CREATED);
+    let doc: Value = r.json().await.unwrap();
+    assert_eq!(doc["request"]["password"], "**********");
+    assert_eq!(doc["request"]["headers"]["x-token"], "**********");
+    // The CLI round-trips what it was shown.
+    let r = request(
+        &s,
+        reqwest::Method::PUT,
+        "/webhooks/pactling-test-webhook-01",
+        Some(&body("**********", "**********")),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::OK);
+    post(&s, "/webhooks/pactling-test-webhook-01/execute", &json!({})).await;
+    let got = receiver.wait_for(1, 5).await;
+    let header = |name: &str| {
+        got[0]
+            .headers
+            .iter()
+            .find(|(k, _)| k == name)
+            .map(|(_, v)| v.clone())
+    };
+    assert_eq!(header("x-token").as_deref(), Some("abc"));
+    assert_eq!(
+        header("authorization").as_deref(),
+        Some("Basic aG9va3VzZXI6aG9va3Bhc3M=")
+    );
+    // A new value replaces the stored one.
+    let r = request(
+        &s,
+        reqwest::Method::PUT,
+        "/webhooks/pactling-test-webhook-01",
+        Some(&body("newpass", "xyz")),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::OK);
+    post(&s, "/webhooks/pactling-test-webhook-01/execute", &json!({})).await;
+    let got = receiver.wait_for(2, 5).await;
+    assert_eq!(
+        got[1]
+            .headers
+            .iter()
+            .find(|(k, _)| k == "x-token")
+            .map(|(_, v)| v.as_str()),
+        Some("xyz")
+    );
+}
+
+#[tokio::test]
+async fn a_host_whitelist_shows_the_response_in_results_and_logs() {
+    let receiver = common::receiver().await;
+    let mut config = http_config();
+    config.webhook_host_whitelist = vec!["127.0.0.1".into()];
+    let s = common::start_with(config).await;
+    publish(&s, "Consumer", "1", vec![], &pact("Consumer", |_| {})).await;
+    let r = post(
+        &s,
+        "/webhooks/execute",
+        &json!({"request":{"method":"POST","url":format!("{}/hook", receiver.base_url)}}),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::OK);
+    let doc: Value = r.json().await.unwrap();
+    assert_eq!(doc["response"]["status"], 200);
+    assert_eq!(doc["response"]["body"], json!({"received": true}));
+    assert!(doc.get("message").is_none(), "{doc}");
+    assert!(
+        doc["logs"].as_str().unwrap().contains("HTTP/1.1 200 OK"),
+        "{}",
+        doc["logs"]
+    );
+    let r = post(
+        &s,
+        "/webhooks/execute",
+        &json!({"request":{"method":"POST","url":"http://example.com/hook"}}),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::BAD_REQUEST);
+    let err: Value = r.json().await.unwrap();
+    assert_eq!(
+        err["errors"]["request.url"][0],
+        "host must be in the whitelist \"127.0.0.1\". See /doc/webhooks#whitelist for more information."
+    );
+}
+
+#[tokio::test]
+async fn only_enabled_webhooks_in_scope_fire() {
+    let s = common::start_with(trigger_config()).await;
+    let receiver = common::receiver().await;
+    publish(&s, "Consumer", "1", vec![], &pact("Consumer", |_| {})).await;
+    publish(&s, "Web", "1", vec![], &pact("Web", |_| {})).await;
+    // Scoped to Consumer, disabled, and scoped to another provider: none may fire for Web.
+    for body in [
+        json!({"consumer":{"name":"Consumer"},"request":{"method":"POST","url":format!("{}/consumer-only", receiver.base_url)}}),
+        json!({"enabled":false,"request":{"method":"POST","url":format!("{}/disabled", receiver.base_url)}}),
+        json!({"provider":{"name":"Consumer"},"request":{"method":"POST","url":format!("{}/other-provider", receiver.base_url)}}),
+        json!({"request":{"method":"POST","url":format!("{}/global", receiver.base_url)}}),
+    ] {
+        assert_eq!(
+            post(&s, "/webhooks", &body).await.status(),
+            StatusCode::CREATED
+        );
+    }
+    publish(
+        &s,
+        "Web",
+        "2",
+        vec![],
+        &pact("Web", |p| {
+            p["interactions"][0]["response"]["status"] = json!(201)
+        }),
+    )
+    .await;
+    let got = receiver.wait_for(1, 5).await;
+    tokio::time::sleep(std::time::Duration::from_millis(1500)).await;
+    let paths: Vec<&str> = receiver
+        .requests()
+        .iter()
+        .map(|r| r.path.as_str())
+        .collect::<Vec<_>>()
+        .into_iter()
+        .map(|p| p.to_owned())
+        .collect::<Vec<_>>()
+        .leak()
+        .iter()
+        .map(|p| p.as_str())
+        .collect();
+    assert_eq!(paths, ["/global"], "{got:?}");
+    let status: Value = get(&s, "/pacts/provider/Provider/consumer/Web/webhooks/status")
+        .await
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(status["summary"], json!({"successful": 1, "failed": 0}));
+}
+
+#[tokio::test]
+async fn a_webhook_deleted_before_delivery_fails_its_triggered_webhook() {
+    // Verified in the source (`Job#handle_webhook_deleted`): no attempt is made, the
+    // triggered webhook is marked failed and keeps no name.
+    let dir = std::env::temp_dir().join(format!("pactling-webhooks-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let mut config = http_config();
+    config.database_url = format!("sqlite://{}/queue.db?mode=rwc", dir.display());
+    config.webhook_initial_delay = 3600;
+    let s = common::start_with(config.clone()).await;
+    let receiver = common::receiver().await;
+    let r = post(
+        &s,
+        "/webhooks",
+        &json!({"request":{"method":"POST","url":format!("{}/hook", receiver.base_url)}}),
+    )
+    .await;
+    let w: Value = r.json().await.unwrap();
+    publish(&s, "Consumer", "1", vec![], &pact("Consumer", |_| {})).await;
+    let r = request(
+        &s,
+        reqwest::Method::DELETE,
+        &format!("/webhooks/{}", w["uuid"].as_str().unwrap()),
+        None,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::NO_CONTENT);
+    let db = pactling::db::Db::connect(&config.database_url)
+        .await
+        .unwrap();
+    pactling::service::webhook_trigger::deliver_due_at(
+        &db,
+        &config,
+        chrono::Utc::now() + chrono::Duration::hours(2),
+    )
+    .await
+    .unwrap();
+    let doc: Value = get(
+        &s,
+        "/pacts/provider/Provider/consumer/Consumer/version/1/triggered-webhooks",
+    )
+    .await
+    .json()
+    .await
+    .unwrap();
+    let t = &doc["_embedded"]["triggeredWebhooks"][0];
+    assert_eq!(t["status"], "failure");
+    assert_eq!(t["attemptsMade"], 0);
+    assert_eq!(t["attemptsRemaining"], 0);
+    assert!(t.get("name").is_none());
+    assert!(receiver.requests().is_empty());
+    std::fs::remove_dir_all(&dir).ok();
 }

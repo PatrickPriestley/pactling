@@ -1,5 +1,5 @@
 {
-    "uuid": "I8JQEE2UTN-34yA4Z69DiQ",
+    "uuid": "m_pKUiCrFHhhaeYtoC6rRA",
     "description": "Trigger Provider build",
     "consumer": {
         "name": "Consumer"
@@ -43,15 +43,15 @@
             "name": "contract_content_changed"
         }
     ],
-    "createdAt": "2026-11-01T01:27:59+00:00",
+    "createdAt": "2026-11-01T01:53:05+00:00",
     "_links": {
         "self": {
             "title": "Trigger Provider build",
-            "href": "http://localhost:9292/webhooks/I8JQEE2UTN-34yA4Z69DiQ"
+            "href": "http://localhost:9292/webhooks/m_pKUiCrFHhhaeYtoC6rRA"
         },
         "pb:execute": {
             "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
-            "href": "http://localhost:9292/webhooks/I8JQEE2UTN-34yA4Z69DiQ/execute"
+            "href": "http://localhost:9292/webhooks/m_pKUiCrFHhhaeYtoC6rRA/execute"
         },
         "pb:consumer": {
             "title": "Consumer",

@@ -108,3 +108,39 @@ impl Config {
         }
     }
 }
+
+impl Config {
+    /// The host whitelist without the empty entry an unset or blank environment variable
+    /// produces; empty means any host (and hidden response details), as on the Ruby broker.
+    pub fn webhook_hosts(&self) -> Vec<&str> {
+        self.webhook_host_whitelist
+            .iter()
+            .map(String::as_str)
+            .filter(|h| !h.trim().is_empty())
+            .collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_blank_host_whitelist_means_any_host() {
+        let c = Config::try_parse_from(["pactling"]).unwrap();
+        assert!(c.webhook_hosts().is_empty());
+        let c = Config::try_parse_from(["pactling", "--webhook-host-whitelist", ""]).unwrap();
+        assert!(
+            c.webhook_hosts().is_empty(),
+            "{:?}",
+            c.webhook_host_whitelist
+        );
+        let c = Config::try_parse_from([
+            "pactling",
+            "--webhook-host-whitelist",
+            "ci.example.com /.*\\.internal/",
+        ])
+        .unwrap();
+        assert_eq!(c.webhook_hosts(), ["ci.example.com", "/.*\\.internal/"]);
+    }
+}

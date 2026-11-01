@@ -236,16 +236,15 @@ fn url_error(url: &str, config: &Config) -> Option<String> {
             config.webhook_scheme_whitelist.join(", ")
         ));
     }
-    if !config.webhook_host_whitelist.is_empty()
-        && !host_allowed(
-            parsed.host_str().unwrap_or_default(),
-            &config.webhook_host_whitelist,
-        )
-    {
+    let hosts: Vec<String> = config
+        .webhook_hosts()
+        .iter()
+        .map(|h| h.to_string())
+        .collect();
+    if !hosts.is_empty() && !host_allowed(parsed.host_str().unwrap_or_default(), &hosts) {
         return Some(format!(
             "host must be in the whitelist {}. See /doc/webhooks#whitelist for more information.",
-            config
-                .webhook_host_whitelist
+            hosts
                 .iter()
                 .map(|h| format!("{h:?}"))
                 .collect::<Vec<_>>()

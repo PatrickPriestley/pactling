@@ -2,7 +2,7 @@
     "_embedded": {
         "pacts": [
             {
-                "shortDescription": "{\"environment_name\":\"test\",\"environment\":\"#<PactBroker::Deployments::Environment:0x0000ffff9a0d3348>\",\"consumer_version\":\"Version: number=1.0.0, pacticipant=1\"}",
+                "shortDescription": "{\"environment_name\":\"test\",\"environment\":\"#<PactBroker::Deployments::Environment:0x0000ffff6cf3dfd8>\",\"consumer_version\":\"Version: number=1.0.0, pacticipant=1\"}",
                 "verificationProperties": {
                     "pending": false,
                     "notices": [
@@ -24,7 +24,7 @@
                 }
             },
             {
-                "shortDescription": "{\"environment_name\":\"test\",\"environment\":\"#<PactBroker::Deployments::Environment:0x0000ffff9a0ff5b0>\",\"target\":\"blue\",\"consumer_version\":\"Version: number=1, pacticipant=3\"}",
+                "shortDescription": "{\"environment_name\":\"test\",\"environment\":\"#<PactBroker::Deployments::Environment:0x0000ffff6cf3a658>\",\"target\":\"blue\",\"consumer_version\":\"Version: number=1, pacticipant=3\"}",
                 "verificationProperties": {
                     "pending": false,
                     "notices": [

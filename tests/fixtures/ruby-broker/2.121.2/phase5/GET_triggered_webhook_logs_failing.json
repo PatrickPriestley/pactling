@@ -5,22 +5,27 @@
     "executions": [
         {
             "success": false,
-            "logs": "[2026-11-01T01:29:30Z] DEBUG: Webhook context {\"base_url\":\"http://127.0.0.1:53044\",\"consumer_version_branch\":\"main\",\"build_url\":null,\"consumer_version_tags\":[],\"event_name\":\"contract_published\"}\n[2026-11-01T01:29:30Z] INFO: HTTP/1.1 POST http://host.docker.internal:18101/hook\n[2026-11-01T01:29:30Z] INFO: accept: */*\n[2026-11-01T01:29:30Z] INFO: user-agent: Pact Broker v2.121.2\n[2026-11-01T01:29:30Z] INFO: host: host.docker.internal:18101\n[2026-11-01T01:29:30Z] INFO: content-length: 4\n[2026-11-01T01:29:30Z] INFO: content-type: application/x-www-form-urlencoded\n[2026-11-01T01:29:30Z] INFO: null\n[2026-11-01T01:29:30Z] INFO: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See http://127.0.0.1:53044/doc/webhooks#whitelist for more information.\n[2026-11-01T01:29:30Z] INFO: Retrying webhook in 10 seconds\n",
-            "createdAt": "2026-11-01T01:29:30+00:00"
+            "logs": "[2026-11-01T01:55:37Z] DEBUG: Webhook context {\"base_url\":\"http://127.0.0.1:59339\",\"consumer_version_branch\":\"main\",\"build_url\":null,\"consumer_version_tags\":[],\"event_name\":\"contract_published\"}\n[2026-11-01T01:55:37Z] INFO: HTTP/1.1 POST http://host.docker.internal:18101/hook\n[2026-11-01T01:55:37Z] INFO: accept: */*\n[2026-11-01T01:55:37Z] INFO: user-agent: Pact Broker v2.121.2\n[2026-11-01T01:55:37Z] INFO: host: host.docker.internal:18101\n[2026-11-01T01:55:37Z] INFO: content-length: 4\n[2026-11-01T01:55:37Z] INFO: content-type: application/x-www-form-urlencoded\n[2026-11-01T01:55:37Z] INFO: null\n[2026-11-01T01:55:37Z] INFO: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See http://127.0.0.1:59339/doc/webhooks#whitelist for more information.\n[2026-11-01T01:55:37Z] INFO: Retrying webhook in 10 seconds\n",
+            "createdAt": "2026-11-01T01:55:37+00:00"
+        },
+        {
+            "success": false,
+            "logs": "[2026-11-01T01:55:47Z] DEBUG: Webhook context {\"base_url\":\"http://127.0.0.1:59339\",\"consumer_version_branch\":\"main\",\"build_url\":null,\"consumer_version_tags\":[],\"event_name\":\"contract_published\"}\n[2026-11-01T01:55:47Z] INFO: HTTP/1.1 POST http://host.docker.internal:18101/hook\n[2026-11-01T01:55:47Z] INFO: accept: */*\n[2026-11-01T01:55:47Z] INFO: user-agent: Pact Broker v2.121.2\n[2026-11-01T01:55:47Z] INFO: host: host.docker.internal:18101\n[2026-11-01T01:55:47Z] INFO: content-length: 4\n[2026-11-01T01:55:47Z] INFO: content-type: application/x-www-form-urlencoded\n[2026-11-01T01:55:47Z] INFO: null\n[2026-11-01T01:55:47Z] INFO: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See http://127.0.0.1:59339/doc/webhooks#whitelist for more information.\n[2026-11-01T01:55:47Z] INFO: Retrying webhook in 60 seconds\n",
+            "createdAt": "2026-11-01T01:55:47+00:00"
         }
     ],
     "_embedded": {
         "triggeredWebhook": {
-            "uuid": "8e887ad9-ec03-4a24-977e-049af41bb72b"
+            "uuid": "14302a57-46b3-482e-a2f4-73de6078a687"
         }
     },
     "_links": {
         "self": {
             "title": "Triggered webhook logs",
-            "href": "http://localhost:9292/triggered-webhooks/8e887ad9-ec03-4a24-977e-049af41bb72b/logs"
+            "href": "http://localhost:9292/triggered-webhooks/14302a57-46b3-482e-a2f4-73de6078a687/logs"
         },
         "pb:webhook": {
-            "href": "http://localhost:9292/webhooks/DkrjfFBviyzi7BJuq_qHIw",
+            "href": "http://localhost:9292/webhooks/G_-Yh66f7zPXVOjW3TxuKA",
             "title": "Webhook"
         }
     }

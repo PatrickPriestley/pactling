@@ -9,12 +9,16 @@ use axum::{
 use serde_json::{Value, json};
 
 use crate::app::AppState;
+use crate::db::webhooks::TriggeredWebhook;
 use crate::error::{Error, Result};
 use crate::http::hal::{Hal, Links, encode};
 use crate::http::method;
 use crate::http::pacts::pact_href;
 use crate::http::versions::{pacticipant_href, version_href, version_stub};
+use crate::http::webhooks::triggered_webhook_logs_href;
 use crate::service::publish::{self as service, PublishOutcome, PublishRequest};
+use crate::service::webhook_trigger as trigger;
+use crate::service::webhooks;
 
 const ALLOWED: &str = "POST, OPTIONS";
 
@@ -30,7 +34,34 @@ pub async fn publish(
                 .map_err(|e| Error::BadRequest(format!("JSON::ParserError - {e}")))?;
             let req = PublishRequest::parse(&json)?;
             match service::publish_contracts(&state.db, &req).await {
-                Ok(outcome) => Ok(Hal(document(&l, &req, &outcome)).into_response()),
+                Ok(outcome) => {
+                    let mut triggered = vec![];
+                    for c in &outcome.contracts {
+                        let fired = trigger::trigger_publish_events(
+                            &state.db,
+                            &state.config,
+                            &l.href(""),
+                            &c.publication,
+                            &c.events,
+                            req.build_url.as_deref(),
+                        )
+                        .await?;
+                        let configured =
+                            trigger::any_webhook_for(&state.db, &c.publication).await?;
+                        let verified = state
+                            .db
+                            .any_verifications_for_integration(
+                                c.publication.consumer_id,
+                                c.publication.provider_id,
+                            )
+                            .await?;
+                        triggered.push((fired, configured, verified));
+                    }
+                    Ok(
+                        Hal(document(&state, &l, &req, &outcome, &triggered).await?)
+                            .into_response(),
+                    )
+                }
                 Err(Error::Conflict(msg)) => Ok((
                     StatusCode::CONFLICT,
                     Hal(json!({
@@ -47,7 +78,15 @@ pub async fn publish(
     }
 }
 
-fn document(l: &Links, req: &PublishRequest, o: &PublishOutcome) -> Value {
+/// `triggered`: per contract, the webhooks fired and whether any webhook is configured
+/// for the pact when none fired (verified wording in the Phase 5 capture).
+async fn document(
+    state: &AppState,
+    l: &Links,
+    req: &PublishRequest,
+    o: &PublishOutcome,
+    triggered: &[(Vec<TriggeredWebhook>, bool, bool)],
+) -> Result<Value> {
     let p = &o.pacticipant.name;
     let v = &o.version.number;
     let mut notices: Vec<(&str, String)> = vec![];
@@ -72,7 +111,8 @@ fn document(l: &Links, req: &PublishRequest, o: &PublishOutcome) -> Value {
     if req.branch.is_none() {
         notices.push(("prompt", "  Next steps:\n    Configure the version branch to be the value of your repository branch.".into()));
     }
-    for c in &o.contracts {
+    for (i, c) in o.contracts.iter().enumerate() {
+        let (fired, configured, verified) = &triggered[i];
         let provider = &c.publication.provider_name;
         let consumer = &c.publication.consumer_name;
         if c.created {
@@ -92,13 +132,64 @@ fn document(l: &Links, req: &PublishRequest, o: &PublishOutcome) -> Value {
         } else {
             format!(" ({})", c.reasons.join(", "))
         };
+        // Verified: when the content changed only contract_content_changed carries the
+        // explanation; when it did not, every event carries it.
+        let changed = c.events.contains(&"contract_content_changed");
+        let described: Vec<String> = c
+            .events
+            .iter()
+            .map(|e| {
+                if !changed || *e == "contract_content_changed" {
+                    format!("{e}{reasons}")
+                } else {
+                    e.to_string()
+                }
+            })
+            .collect();
         notices.push((
             "debug",
-            format!("  Events detected: {}{reasons}", c.events.join(", ")),
+            format!("  Events detected: {}", described.join(", ")),
         ));
-        notices.push(("prompt", "  Next steps:".into()));
-        notices.push(("prompt", format!("    * Add Pact verification tests to the {provider} build. See https://docs.pact.io/go/provider_verification")));
-        notices.push(("prompt", format!("    * Configure separate {provider} pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks")));
+        if !fired.is_empty() {
+            for t in fired {
+                let w = match t.webhook_id {
+                    Some(id) => state.db.find_webhook_by_id(id).await?,
+                    None => None,
+                };
+                let name = w
+                    .as_ref()
+                    .map(webhooks::notice_name)
+                    .unwrap_or_else(|| t.webhook_uuid.clone());
+                notices.push((
+                    "debug",
+                    format!(
+                        "  Webhook {name} triggered for event {}.\n    View logs at {}",
+                        t.event_name,
+                        triggered_webhook_logs_href(l, &t.uuid)
+                    ),
+                ));
+            }
+        } else if *configured {
+            notices.push((
+                "debug",
+                "  No enabled webhooks found for the detected events".into(),
+            ));
+        }
+        // Verified (`next_steps_notices`): the verification step until the integration has
+        // a verification, the webhook step until a webhook covers the pact.
+        let mut next_steps = vec![];
+        if !*verified {
+            next_steps.push(format!("    * Add Pact verification tests to the {provider} build. See https://docs.pact.io/go/provider_verification"));
+        }
+        if !*configured {
+            next_steps.push(format!("    * Configure separate {provider} pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks"));
+        }
+        if !next_steps.is_empty() {
+            notices.push(("prompt", "  Next steps:".into()));
+            for step in next_steps {
+                notices.push(("prompt", step));
+            }
+        }
     }
     let logs: Vec<Value> = notices
         .iter()
@@ -124,7 +215,7 @@ fn document(l: &Links, req: &PublishRequest, o: &PublishOutcome) -> Value {
             })
         })
         .collect();
-    json!({
+    Ok(json!({
         "logs": logs,
         "notices": notices,
         "_embedded": {
@@ -137,5 +228,5 @@ fn document(l: &Links, req: &PublishRequest, o: &PublishOutcome) -> Value {
             "pb:pacticipant-version-tags": tags,
             "pb:contracts": contracts
         }
-    })
+    }))
 }

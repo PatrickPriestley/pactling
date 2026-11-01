@@ -82,6 +82,33 @@ impl Db {
             .await
     }
 
+    /// Whether any pact between the consumer and provider has ever been verified
+    /// (verified: the Ruby broker's `any_verifications?` drives the publish next steps).
+    pub async fn any_verifications_for_integration(
+        &self,
+        consumer_id: i64,
+        provider_id: i64,
+    ) -> sqlx::Result<bool> {
+        let n: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM verifications vf
+             JOIN pact_publications pp ON pp.pact_version_id = vf.pact_version_id
+             JOIN versions v ON v.id = pp.consumer_version_id
+             WHERE v.pacticipant_id = ? AND pp.provider_id = ?",
+        )
+        .bind(consumer_id)
+        .bind(provider_id)
+        .fetch_one(&self.pool)
+        .await?;
+        Ok(n > 0)
+    }
+
+    pub async fn find_verification_by_id(&self, id: i64) -> sqlx::Result<Option<Verification>> {
+        sqlx::query_as(verification_query!("WHERE vf.id = ?"))
+            .bind(id)
+            .fetch_optional(&self.pool)
+            .await
+    }
+
     pub async fn find_verification_by_number(
         &self,
         number: i64,

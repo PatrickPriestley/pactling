@@ -1,0 +1,9 @@
+Created Other version 1 with branch main
+[32mPact successfully published for Other version 1 and provider OtherP.[0m
+  View the published pact at [35mhttp://127.0.0.1:59420/pacts/provider/OtherP/consumer/Other/version/1[0m
+  Events detected: contract_published, contract_content_changed (first time untagged pact published)
+  Webhook UYJpOaXO_0lRMdRp4nAKrg triggered for event contract_content_changed.
+    View logs at [35mhttp://127.0.0.1:59420/triggered-webhooks/b96e6aac-42cd-475f-a46a-f87dc3706908/logs[0m
+[33m  Next steps:[0m
+[33m    * Add Pact verification tests to the OtherP build. See [35mhttps://docs.pact.io/go/provider_verification[0m[0m
+exit=0

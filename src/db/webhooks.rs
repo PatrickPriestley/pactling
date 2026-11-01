@@ -341,12 +341,13 @@ impl Db {
         Ok(self.attach_executions(t.into_iter().collect()).await?.pop())
     }
 
+    /// Newest first (verified: the Ruby broker lists triggered webhooks by descending id).
     pub async fn triggered_webhooks_for_pact_publication(
         &self,
         pact_publication_id: i64,
     ) -> sqlx::Result<Vec<TriggeredWebhook>> {
         let rows = sqlx::query_as(triggered_query!(
-            "WHERE t.pact_publication_id = ? AND t.verification_id IS NULL ORDER BY t.id"
+            "WHERE t.pact_publication_id = ? AND t.verification_id IS NULL ORDER BY t.id DESC"
         ))
         .bind(pact_publication_id)
         .fetch_all(&self.pool)
@@ -359,7 +360,7 @@ impl Db {
         verification_id: i64,
     ) -> sqlx::Result<Vec<TriggeredWebhook>> {
         let rows = sqlx::query_as(triggered_query!(
-            "WHERE t.verification_id = ? ORDER BY t.id"
+            "WHERE t.verification_id = ? ORDER BY t.id DESC"
         ))
         .bind(verification_id)
         .fetch_all(&self.pool)

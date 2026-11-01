@@ -347,6 +347,14 @@ async fn publish(
         None => None,
     };
     let v = service::publish_result(&state.db, &pact, &req, consumer_version_id).await?;
+    crate::service::webhook_trigger::trigger_verification_events(
+        &state.db,
+        &state.config,
+        &l.href(""),
+        &pact,
+        &v,
+    )
+    .await?;
     let doc = verification_document(l, &v, &pact, state).await?;
     let mut res = (StatusCode::CREATED, Hal(doc)).into_response();
     let location = format!(

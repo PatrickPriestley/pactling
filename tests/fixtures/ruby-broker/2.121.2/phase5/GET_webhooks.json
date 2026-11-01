@@ -12,12 +12,12 @@
             {
                 "title": "A webhook for the pact between Consumer and Provider",
                 "name": "Trigger Provider build",
-                "href": "http://localhost:9292/webhooks/I8JQEE2UTN-34yA4Z69DiQ"
+                "href": "http://localhost:9292/webhooks/m_pKUiCrFHhhaeYtoC6rRA"
             },
             {
                 "title": "A webhook for all pacts with provider Provider",
                 "name": "POST host.docker.internal",
-                "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A"
+                "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg"
             },
             {
                 "title": "A webhook for the pact between Consumer and Provider",
@@ -27,7 +27,7 @@
             {
                 "title": "A webhook for all pacts",
                 "name": "POST host.docker.internal",
-                "href": "http://localhost:9292/webhooks/3aNRx3KYrAP6LE7xufgBng"
+                "href": "http://localhost:9292/webhooks/UYJpOaXO_0lRMdRp4nAKrg"
             }
         ],
         "curies": [

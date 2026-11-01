@@ -319,7 +319,7 @@ fn execution_document(
     webhook_uuid: Option<&str>,
     try_again: &str,
 ) -> Value {
-    let show_response = !state.config.webhook_host_whitelist.is_empty();
+    let show_response = !state.config.webhook_hosts().is_empty();
     let parse = |body: &str| -> Option<Value> {
         match serde_json::from_str::<Value>(body) {
             Ok(Value::Null) => None,

@@ -415,7 +415,7 @@ pub async fn execute(
         .and_then(Value::as_str)
         .unwrap_or_default()
         .to_owned();
-    let show_response = !config.webhook_host_whitelist.is_empty();
+    let show_response = !config.webhook_hosts().is_empty();
     let mut logs = String::new();
     let mut line = |level: &str, text: &str| {
         logs.push_str(&format!("{} {level}: {text}\n", log_time()));
