@@ -1,5 +1,7 @@
 //! Client-side deployment explanations. Server configuration remains independent.
 use clap::{ArgGroup, Parser};
+mod error;
+mod text;
 
 #[derive(Parser)]
 #[command(name="pactling explain", disable_version_flag=true,
@@ -119,43 +121,7 @@ fn decision_code(document: &serde_json::Value) -> Result<i32, String> {
 }
 
 fn render_text(document: &serde_json::Value) -> String {
-    let mut out = format!(
-        "Decision: {}\n",
-        document["decision"].as_str().unwrap_or("unknown")
-    );
-    out.push_str("Reasons:\n");
-    for reason in document["reasons"].as_array().into_iter().flatten() {
-        if reason["role"] == "decisive" {
-            out.push_str(&format!(
-                "- [{}] {}\n",
-                reason["code"].as_str().unwrap_or("unknown"),
-                reason["message"].as_str().unwrap_or("")
-            ));
-        }
-    }
-    out.push_str("Next actions:\n");
-    for action in document["nextActions"].as_array().into_iter().flatten() {
-        out.push_str(&format!(
-            "- {}: {}\n",
-            action["type"].as_str().unwrap_or("unknown"),
-            action["message"].as_str().unwrap_or("")
-        ));
-        out.push_str(&format!(
-            "  Target: {}\n",
-            serde_json::to_string_pretty(&action["target"]).expect("JSON value serializes")
-        ));
-        for reference in action["evidenceRefs"].as_array().into_iter().flatten() {
-            if let Some(pointer) = reference.as_str()
-                && let Some(evidence) = document.pointer(pointer)
-            {
-                out.push_str(&format!(
-                    "  Evidence {pointer}: {}\n",
-                    serde_json::to_string_pretty(evidence).expect("JSON value serializes")
-                ));
-            }
-        }
-    }
-    out
+    text::render(document)
 }
 
 fn endpoint(args: &Explain) -> Result<reqwest::Url, String> {
@@ -212,7 +178,11 @@ async fn request(args: Explain) -> Result<i32, String> {
                 .write_all(&bytes)
                 .map_err(|e| e.to_string())?;
         }
-        return Err(format!("broker returned HTTP {status}"));
+        return Err(if args.output == "json" {
+            format!("broker returned HTTP {status}")
+        } else {
+            error::describe(status, &bytes)
+        });
     }
     let document: serde_json::Value =
         serde_json::from_slice(&bytes).map_err(|_| "broker returned invalid JSON")?;
@@ -289,9 +259,7 @@ mod tests {
             let text = render_text(&doc);
             assert!(text.contains(name));
             for reason in doc["reasons"].as_array().unwrap() {
-                if reason["role"] == "decisive" {
-                    assert!(text.contains(reason["message"].as_str().unwrap()));
-                }
+                assert!(text.contains(reason["code"].as_str().unwrap()));
             }
             for action in doc["nextActions"].as_array().unwrap() {
                 assert!(text.contains(action["type"].as_str().unwrap()));
@@ -360,7 +328,7 @@ mod tests {
         }
     }
     #[test]
-    fn text_includes_unknown_codes_but_only_decisive_reasons() {
+    fn text_includes_unknown_codes_and_all_reason_roles() {
         let mut doc: serde_json::Value = serde_json::from_str(include_str!(
             "../tests/fixtures/pactling/explanations/unknown.json"
         ))
@@ -370,7 +338,7 @@ mod tests {
         doc["nextActions"][0]["type"] = serde_json::json!("FUTURE_ACTION");
         let text = render_text(&doc);
         assert!(text.contains("FUTURE_ACTION"));
-        assert!(!text.contains("supporting-only-message"));
-        assert!(!text.contains("advisory-only-message"));
+        assert!(text.contains("[SUPPORTING]"));
+        assert!(text.contains("[ADVISORY]"));
     }
 }
