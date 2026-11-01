@@ -294,16 +294,19 @@ pub async fn webhook(
         Method::PUT => {
             let json = parse_body(&body)?;
             let req = WebhookRequest::parse(&json, Some(&uuid), &state.config)?;
-            match state.db.find_webhook_by_uuid(&uuid).await? {
-                Some(existing) => {
-                    let w = service::update(&state.db, &existing, &req).await?;
-                    Ok(Hal(webhook_document(&l, &w)).into_response())
-                }
-                None => {
-                    let w = service::create(&state.db, Some(&uuid), &req).await?;
-                    Ok((StatusCode::CREATED, Hal(webhook_document(&l, &w))).into_response())
-                }
-            }
+            // The lookup deciding between create and update is part of the transaction,
+            // so two upserts of one uuid serialise instead of both creating.
+            let tx = state.db.begin().await?;
+            let existing = tx.find_webhook_by_uuid(&uuid).await?;
+            let (status, w) = match existing {
+                Some(existing) => (StatusCode::OK, service::update(&tx, &existing, &req).await?),
+                None => (
+                    StatusCode::CREATED,
+                    service::create(&tx, Some(&uuid), &req).await?,
+                ),
+            };
+            tx.commit().await?;
+            Ok((status, Hal(webhook_document(&l, &w))).into_response())
         }
         Method::DELETE => {
             service::delete(&state.db, &uuid).await?;

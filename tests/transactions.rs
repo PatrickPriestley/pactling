@@ -164,3 +164,70 @@ async fn a_dropped_transaction_writes_nothing() {
         "committed"
     );
 }
+
+#[tokio::test]
+async fn file_databases_run_in_wal_mode() {
+    // Review finding: assert the journal mode rather than trusting the connect options.
+    let dir = std::env::temp_dir().join(format!("pactling-tx-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let db = pactling::db::Db::connect(&format!("sqlite://{}/broker.db?mode=rwc", dir.display()))
+        .await
+        .unwrap();
+    let mode: String = sqlx::query_scalar("PRAGMA journal_mode")
+        .fetch_one(db.pool())
+        .await
+        .unwrap();
+    assert_eq!(mode, "wal");
+    std::fs::remove_dir_all(&dir).ok();
+}
+
+#[tokio::test]
+async fn concurrent_upserts_of_a_new_webhook_both_succeed() {
+    // Review finding: the lookup deciding between create and update must be inside the
+    // transaction, or two PUTs for a missing uuid both try to create.
+    let mut config = pactling::config::Config::in_memory();
+    config.webhook_scheme_whitelist = vec!["http".into()];
+    let s = common::start_with(config).await;
+    for i in 0..10 {
+        let put = |description: &'static str| {
+            let client = s.client.clone();
+            let url = format!("{}/webhooks/pactling-upsert-race-{i:02}", s.base_url);
+            async move {
+                client.put(url).header("content-type", "application/json").json(&json!({"description": description, "request": {"method": "POST", "url": "http://example.com/hook"}})).send().await.unwrap().status()
+            }
+        };
+        let (a, b) = tokio::join!(put("first"), put("second"));
+        let statuses = [a, b];
+        assert!(
+            statuses.contains(&StatusCode::CREATED) && statuses.contains(&StatusCode::OK),
+            "round {i}: one creates and the other updates, got {statuses:?}"
+        );
+    }
+}
+
+#[tokio::test]
+async fn committing_while_a_shared_handle_is_alive_is_an_error() {
+    // Review finding: the owner must not report success while an inner handle could still
+    // roll the transaction back.
+    let db = pactling::db::Db::connect("sqlite::memory:").await.unwrap();
+    db.migrate().await.unwrap();
+    let tx = db.begin().await.unwrap();
+    let inner = tx.begin().await.unwrap();
+    pactling::service::versions::put(&inner, "Shared", "1", None)
+        .await
+        .unwrap();
+    assert!(
+        inner.commit().await.is_ok(),
+        "an inner handle's commit is a no-op"
+    );
+    let inner2 = tx.begin().await.unwrap();
+    let err = tx.commit().await;
+    assert!(
+        err.is_err(),
+        "the owner cannot commit while a handle is alive"
+    );
+    drop(inner2);
+    // The transaction was consumed by the failed commit attempt only if it succeeded; here
+    // it rolled back, so nothing was written.
+    assert!(db.find_pacticipant("Shared").await.unwrap().is_none());
+}

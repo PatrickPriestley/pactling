@@ -44,3 +44,13 @@ concurrent requests cannot leave incompatible rows.
 2. `Conn` + `Db::begin/commit` in `src/db/mod.rs`; pool references become `&self.conn`.
 3. Transaction boundaries in the handlers and services listed above.
 4. Document the ordering and retry semantics in `AGENTS.md`.
+
+## Independent review (Codex) and disposition
+
+All three findings verified and fixed test-first: a file database now asserts
+`PRAGMA journal_mode = wal`; the webhook upsert looks its uuid up inside the transaction, so
+two concurrent PUTs of a new uuid create once and update once instead of the second
+failing on the unique constraint; `commit()` is owned by the handle that opened the
+transaction, a handle handed to an inner operation cannot commit, and the owner refuses to
+commit while such a handle is alive instead of reporting success before a later drop
+rolls everything back.

@@ -136,6 +136,9 @@ impl<'c> Executor<'c> for &'c Conn {
 pub struct Db {
     pool: SqlitePool,
     conn: Conn,
+    /// True for the handle that opened the transaction; a handle handed to an inner
+    /// operation cannot commit, and the owner refuses to while such a handle is alive.
+    owner: bool,
 }
 
 impl Db {
@@ -160,6 +163,7 @@ impl Db {
         Ok(Self {
             conn: Conn::Pool(pool.clone()),
             pool,
+            owner: false,
         })
     }
 
@@ -175,25 +179,34 @@ impl Db {
     /// `Db` that already is one, this returns a clone sharing the transaction.
     pub async fn begin(&self) -> sqlx::Result<Db> {
         match &self.conn {
-            Conn::Tx(_) => Ok(self.clone()),
+            Conn::Tx(_) => Ok(Db {
+                owner: false,
+                ..self.clone()
+            }),
             Conn::Pool(pool) => {
                 let tx = pool.begin_with("BEGIN IMMEDIATE").await?;
                 Ok(Db {
                     pool: self.pool.clone(),
                     conn: Conn::Tx(Arc::new(tokio::sync::Mutex::new(tx))),
+                    owner: true,
                 })
             }
         }
     }
 
-    /// Commits when this is the last handle on the transaction; a clone handed to an
-    /// inner operation leaves the commit to the outer one.
+    /// Commits the transaction this handle opened. On a handle handed to an inner
+    /// operation it does nothing; on the owner it is an error while such a handle is
+    /// still alive, since that handle's drop would roll back what was just reported
+    /// committed (review finding).
     pub async fn commit(self) -> sqlx::Result<()> {
         match self.conn {
             Conn::Pool(_) => Ok(()),
+            Conn::Tx(_) if !self.owner => Ok(()),
             Conn::Tx(tx) => match Arc::try_unwrap(tx) {
                 Ok(mutex) => mutex.into_inner().commit().await,
-                Err(_) => Ok(()),
+                Err(_) => Err(sqlx::Error::Protocol(
+                    "cannot commit: the transaction is still shared with an inner operation".into(),
+                )),
             },
         }
     }
