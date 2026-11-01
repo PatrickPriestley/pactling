@@ -851,3 +851,188 @@ fn ui_matrix_canonical_selector_order_is_preserved() {
     assert_eq!(q.selectors[0].pacticipant, "P");
     assert_eq!(q.selectors[1].pacticipant, "C");
 }
+
+async fn explanation_seed(s: &TestServer) {
+    matrix_seed(s).await;
+    let env: serde_json::Value = s
+        .client
+        .post(format!("{}/environments", s.base_url))
+        .json(&json!({"name":"test","production":false}))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    let r = s
+        .client
+        .post(format!(
+            "{}/pacticipants/Payments/versions/1/deployed-versions/environment/{}",
+            s.base_url,
+            env["uuid"].as_str().unwrap()
+        ))
+        .json(&json!({}))
+        .send()
+        .await
+        .unwrap();
+    assert!(r.status().is_success());
+    for (name, version, tag) in [("Payments", "1", "prod"), ("Checkout", "1", "release")] {
+        assert!(
+            s.client
+                .put(format!(
+                    "{}/pacticipants/{name}/versions/{version}/tags/{tag}",
+                    s.base_url
+                ))
+                .json(&json!({}))
+                .send()
+                .await
+                .unwrap()
+                .status()
+                .is_success()
+        );
+    }
+}
+async fn explanation_html(s: &TestServer, query: &str) -> (u16, String) {
+    let r = s
+        .client
+        .get(format!("{}/ui/deployment-explanation?{query}", s.base_url))
+        .send()
+        .await
+        .unwrap();
+    (r.status().as_u16(), r.text().await.unwrap())
+}
+#[tokio::test]
+async fn ui_explanation_matches_shared_evaluation() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    for (version, decision) in [("1", "allowed"), ("2", "blocked"), ("3", "unknown")] {
+        let q = format!("pacticipant=Checkout&version={version}&environment=test");
+        let api: serde_json::Value = s
+            .client
+            .get(format!(
+                "{}/pactling/v1/can-i-deploy/explanation?{q}",
+                s.base_url
+            ))
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+        assert_eq!(api["decision"], decision);
+        let (status, body) = explanation_html(&s, &q).await;
+        assert_eq!(status, 200, "{body}");
+        assert!(
+            body.contains(&format!("data-decision=\"{decision}\"")),
+            "{body}"
+        );
+        for value in [
+            "recorded_only",
+            "not_checked",
+            "Evaluated at",
+            "Checkout",
+            "Payments",
+            "Candidate provenance",
+        ] {
+            assert!(body.contains(value), "{value}: {body}");
+        }
+        for reason in api["reasons"].as_array().unwrap() {
+            assert!(body.contains(reason["code"].as_str().unwrap()));
+        }
+        for action in api["nextActions"].as_array().unwrap() {
+            assert!(body.contains(action["type"].as_str().unwrap()));
+        }
+        assert!(body.contains("data-consumer-version=\""));
+        assert!(body.contains("/pacts/provider/Payments/consumer/Checkout/"));
+        assert!(body.contains(&format!("name=\"selector_value\" value=\"{version}\"")));
+    }
+    let (_, body) = explanation_html(&s, "pacticipant=Checkout&version=3&environment=test").await;
+    assert!(body.contains("data-provider-version=\"\""));
+    assert!(body.contains("data-candidate-version=\"1\""));
+    let (_, body) = explanation_html(&s, "pacticipant=Checkout&environment=test").await;
+    assert!(body.contains("data-decision=\"blocked\""));
+    assert!(body.contains("VERIFICATION_FAILED"));
+    assert!(body.contains("VERIFICATION_MISSING"));
+}
+#[tokio::test]
+async fn ui_explanation_form_modes_and_ignores() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    for (mode, value, decision) in [
+        ("version", "1", "allowed"),
+        ("latest", "", "unknown"),
+        ("main", "", "unknown"),
+        ("branch", "main", "unknown"),
+        ("tag", "release", "allowed"),
+        ("all", "", "blocked"),
+    ] {
+        let q = format!(
+            "ui_form=explanation&pacticipant=Checkout&selector_mode={mode}&selector_value={value}&target_mode=environment&target_value=test&ignore=&ignore="
+        );
+        let (status, body) = explanation_html(&s, &q).await;
+        assert_eq!(status, 200, "{q}: {body}");
+        assert!(
+            body.contains(&format!("data-decision=\"{decision}\"")),
+            "{q}: {body}"
+        );
+        assert!(
+            body.contains(&format!("option value=\"{mode}\" selected")),
+            "{body}"
+        );
+        assert!(body.contains("name=\"target_value\" value=\"test\""));
+    }
+    let q = "ui_form=explanation&pacticipant=Checkout&selector_mode=version&selector_value=1&target_mode=tag&target_value=prod&ignore=Payments%3D1&ignore=Absent";
+    let (status, body) = explanation_html(&s, q).await;
+    assert_eq!(status, 200, "{body}");
+    assert!(body.contains("Payments=1"));
+    assert!(body.contains("Absent"));
+    assert!(body.contains("ignored"));
+    let (status, body) = explanation_html(
+        &s,
+        "q[][pacticipant]=Checkout&q[][mainBranch]=true&environment=test",
+    )
+    .await;
+    assert_eq!(status, 200);
+    assert!(body.contains("data-decision=\"unknown\""));
+}
+#[tokio::test]
+async fn ui_explanation_validates_query() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    let (status, body) = explanation_html(&s, "").await;
+    assert_eq!(status, 200);
+    assert!(body.contains("<form"));
+    assert!(!body.contains("data-decision="));
+    for q in [
+        "pacticipant=Checkout&version=1",
+        "environment=test",
+        "pacticipant=Checkout&version=1&environment=missing",
+        "ui_form=explanation&pacticipant=&selector_mode=version&selector_value=1&target_mode=environment&target_value=test",
+        "ui_form=explanation&pacticipant=Checkout&selector_mode=version&selector_value=&target_mode=environment&target_value=test",
+        "ui_form=explanation&pacticipant=Checkout&selector_mode=nope&target_mode=environment&target_value=test",
+        "ui_form=explanation&pacticipant=Checkout&selector_mode=main&target_mode=nope&target_value=test",
+        "ui_form=explanation&pacticipant=Checkout&selector_mode=main&target_mode=environment&target_value=",
+        "ui_form=explanation&pacticipant=Checkout&selector_mode=main&target_mode=environment&target_value=test&ignore=%3D1",
+    ] {
+        let (status, body) = explanation_html(&s, q).await;
+        assert_eq!(status, 400, "{q}: {body}");
+        assert!(body.contains("<h1>"));
+        assert!(body.contains("<form"));
+    }
+    let(status,body)=explanation_html(&s,"ui_form=explanation&pacticipant=%3Cscript%3E&selector_mode=version&selector_value=&target_mode=environment&target_value=test").await;
+    assert_eq!(status, 400);
+    assert!(body.contains("&lt;script&gt;"));
+    assert!(!body.contains("<script>"));
+    for (method, status) in [
+        (reqwest::Method::OPTIONS, 200),
+        (reqwest::Method::POST, 405),
+    ] {
+        let r = s
+            .client
+            .request(method, format!("{}/ui/deployment-explanation", s.base_url))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(r.status(), status);
+    }
+}
