@@ -259,7 +259,7 @@ async fn real_binary_explains_all_verdicts_and_preserves_endpoint_json_bytes() {
             .iter()
             .filter(|r| r["role"] == "decisive")
         {
-            assert!(text.contains(reason["message"].as_str().unwrap()), "{text}");
+            assert!(text.contains(reason["code"].as_str().unwrap()), "{text}");
         }
         for action in document["nextActions"].as_array().unwrap() {
             assert!(text.contains(action["type"].as_str().unwrap()), "{text}");
@@ -625,5 +625,64 @@ async fn client_does_not_follow_redirects_to_a_success_document() {
         hits.load(Ordering::SeqCst),
         0,
         "redirect must not be followed"
+    );
+}
+
+#[tokio::test]
+async fn unknown_environment_error_explains_the_failure_in_text_mode() {
+    let server = Server::start(false, true).await;
+    server.seed(Some(true)).await;
+    let output = explain(
+        &server.base,
+        &[
+            "--pacticipant",
+            "C",
+            "--version",
+            "1",
+            "--to-environment",
+            "nope",
+        ],
+        &[],
+    )
+    .await;
+    assert_code(&output, 3);
+    let error = String::from_utf8(output.stderr).unwrap();
+    assert!(error.contains("INVALID_QUERY"), "{error}");
+    assert!(
+        error.contains("Environment with name 'nope' does not exist"),
+        "{error}"
+    );
+    assert!(output.stdout.is_empty());
+}
+
+#[tokio::test]
+async fn json_error_diagnostics_stay_unchanged() {
+    let server = Server::start(false, true).await;
+    server.seed(Some(true)).await;
+    let output = explain(
+        &server.base,
+        &[
+            "--pacticipant",
+            "C",
+            "--version",
+            "1",
+            "--to-environment",
+            "nope",
+            "--output",
+            "json",
+        ],
+        &[],
+    )
+    .await;
+    assert_code(&output, 3);
+    assert_eq!(
+        String::from_utf8(output.stderr).unwrap(),
+        "pactling explain: broker returned HTTP 400 Bad Request\n"
+    );
+    let body: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(body["error"]["code"], "INVALID_QUERY");
+    assert_eq!(
+        body["error"]["details"],
+        json!(["Environment with name 'nope' does not exist"])
     );
 }

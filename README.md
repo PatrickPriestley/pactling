@@ -139,8 +139,8 @@ With no credentials configured the broker is open, as the Ruby broker is.
 
 ## Explain a deployment
 
-`pactling explain` queries the explanation API and prints the decision, decisive reasons,
-and suggested actions with their exact targets and evidence links:
+`pactling explain` queries the explanation API and prints the decision and one concise line per reason, including the involved pair,
+suggested action target and a useful evidence link:
 
 ```bash
 PACT_BROKER_BASE_URL=http://localhost:9292 pactling explain \

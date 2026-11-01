@@ -113,9 +113,16 @@ are URL-encoded; a path in the broker base URL is retained. The base URL must be
 without credentials, a query or fragment. Requests have a 30-second timeout and do not
 follow redirects.
 
-Text output includes the decision, every decisive reason with its code and message,
-and each next action with its exact target and referenced evidence, including navigation
-links. Unknown reason and action codes remain printable; they never determine the verdict.
+Text output starts with the decision, followed by one line per reason (including
+supporting and advisory reasons): its code, the involved pair or participant, and linked
+actions with their targets. Contract identifiers and a useful evidence link remain visible
+without dumping Target/Evidence JSON. Unknown codes remain printable and never determine
+the verdict. Selector or ignore errors without a pair name the participant instead.
+
+In text mode, HTTP errors print the status, structured error code and each detail. Field
+validation details include their field names. Unrecognized or malformed error bodies fall
+back to raw text, limited to 1024 Unicode characters with an explicit truncation marker.
+Invalid UTF-8 is displayed lossily. Errors still exit 3.
 JSON mode writes valid decision documents byte-for-byte, without adding a newline or
 rewriting timestamps. HTTP error response bodies are also emitted unchanged in JSON mode,
 with a diagnostic on stderr and exit 3. Transport failures and invalid successful response
