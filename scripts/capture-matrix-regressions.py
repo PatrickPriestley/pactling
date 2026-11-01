@@ -53,9 +53,9 @@ def capture(base, output):
             variables[save_uuid] = result["uuid"]
         return result
 
-    def publish(consumer, provider):
-        body = {"consumer": {"name": consumer}, "provider": {"name": provider}, "interactions": []}
-        result = seed("PUT", f"/pacts/provider/{provider}/consumer/{consumer}/version/1", body)
+    def publish(consumer, provider, number="1", interactions=None):
+        body = {"consumer": {"name": consumer}, "provider": {"name": provider}, "interactions": interactions or []}
+        result = seed("PUT", f"/pacts/provider/{provider}/consumer/{consumer}/version/{number}", body)
         return result["_links"]["pb:publish-verification-results"]["href"].removeprefix(base)
 
     consumer, provider, web = "MatrixConsumer", "MatrixProvider", "MatrixWeb"
@@ -69,7 +69,7 @@ def capture(base, output):
         seed("POST", f"/pacticipants/{provider}/versions/{number}/released-versions/environment/{{environment}}", {})
     seed("POST", f"/pacticipants/{consumer}/versions/1/deployed-versions/environment/{{environment}}", {})
 
-    def matrix(name, selectors, ignore=None, environment=False, latest=False, route=None, tag=None):
+    def matrix(name, selectors, ignore=None, environment=False, latest=False, route=None, tag=None, latestby="cvpv"):
         params = []
         for participant, number in selectors:
             params.append(("q[][pacticipant]", participant))
@@ -78,7 +78,8 @@ def capture(base, output):
                               for key, value in number.items())
             elif number is not None:
                 params.append(("q[][version]", number))
-        params.append(("latestby", "cvpv"))
+        if latestby is not None:
+            params.append(("latestby", latestby))
         if environment:
             params.append(("environment", "matrix-regressions" if environment is True else environment))
         if latest:
@@ -198,6 +199,62 @@ def capture(base, output):
         seed("POST", f"/pacticipants/{tp}/versions/{number}/released-versions/environment/{{partialEnvironment}}", {})
     matrix("environment_with_unverified_release", [(oc, "1")], environment="matrix-partial")
     matrix("environment_with_unverified_release_ignored", [(oc, "1")], (tp, "2"), environment="matrix-partial")
+    # #23: an older failed release and newer successful deployment coexist. Version
+    # numbers deliberately disagree with creation order: 2 was created after 99.
+    lc, lp, lw = "MatrixLatestConsumer", "MatrixLatestProvider", "MatrixLatestWeb"
+    result = publish(lc, lp)
+    seed("POST", result, {"providerApplicationVersion": "99", "success": False})
+    seed("POST", result, {"providerApplicationVersion": "2", "success": True})
+    web_result = publish(lw, lp)
+    seed("POST", web_result, {"providerApplicationVersion": "99", "success": True})
+    seed("POST", web_result, {"providerApplicationVersion": "2", "success": True})
+    seed("POST", "/environments", {"name": "matrix-latestby", "production": False}, "latestEnvironment")
+    seed("POST", f"/pacticipants/{lp}/versions/99/released-versions/environment/{{latestEnvironment}}", {})
+    seed("POST", f"/pacticipants/{lp}/versions/2/deployed-versions/environment/{{latestEnvironment}}", {})
+    for name in [lc, lw]:
+        seed("POST", f"/pacticipants/{name}/versions/1/deployed-versions/environment/{{latestEnvironment}}", {})
+    for mode in ["cvp", "cvpv", "cp", None]:
+        suffix = mode or "none"
+        matrix(f"latestby_{suffix}_consumer_environment", [(lc, "1")], environment="matrix-latestby", latestby=mode)
+        matrix(f"latestby_{suffix}_provider_environment", [(lp, None)], environment="matrix-latestby", latestby=mode)
+        matrix(f"latestby_{suffix}_two_selectors", [(lc, "1"), (lp, None)], latestby=mode)
+        matrix(f"latestby_{suffix}_two_selectors_reverse", [(lp, None), (lc, "1")], latestby=mode)
+    matrix("latestby_cvp_ignore_new_provider", [(lc, "1")], (lp, "2"), environment="matrix-latestby", latestby="cvp")
+    matrix("latestby_cvp_ignore_old_provider", [(lc, "1")], (lp, "99"), environment="matrix-latestby", latestby="cvp")
+    # cp spans consumer versions; equal provider-order ties follow the Ruby query
+    # order rather than choosing the newest consumer version by assumption.
+    lc = "MatrixLatestMultiConsumer"
+    result = publish(lc, lp)
+    seed("POST", result, {"providerApplicationVersion": "99", "success": False})
+    seed("POST", result, {"providerApplicationVersion": "2", "success": True})
+    publish(lc, lp, "2")
+    seed("POST", "/environments", {"name": "matrix-latestby-multiple", "production": False}, "multiEnvironment")
+    seed("POST", f"/pacticipants/{lp}/versions/99/released-versions/environment/{{multiEnvironment}}", {})
+    seed("POST", f"/pacticipants/{lp}/versions/2/deployed-versions/environment/{{multiEnvironment}}", {})
+    seed("POST", f"/pacticipants/{lc}/versions/1/deployed-versions/environment/{{multiEnvironment}}", {})
+    seed("POST", f"/pacticipants/{lc}/versions/2/released-versions/environment/{{multiEnvironment}}", {})
+    for mode in ["cvp", "cvpv", "cp", None]:
+        suffix = mode or "none"
+        matrix(f"latestby_{suffix}_multiple_consumers", [(lc, None)], environment="matrix-latestby-multiple", latestby=mode)
+        matrix(f"latestby_{suffix}_all_two_selectors", [(lc, None), (lp, None)], latestby=mode)
+    # Explicit consumer selectors in opposite orders must not change cp tie-breaking.
+    for mode in ["cvp", "cp"]:
+        matrix(f"latestby_{mode}_split_consumer_selectors", [(lc, "1"), (lp, None), (lc, "2")], latestby=mode)
+        matrix(f"latestby_{mode}_split_consumer_selectors_reverse", [(lc, "2"), (lp, None), (lc, "1")], latestby=mode)
+    split = "MatrixLatestSplitConsumer"
+    for name, success in [("MatrixLatestSplitA", True), ("MatrixLatestSplitB", False)]:
+        verification = publish(split, name)
+        seed("POST", verification, {"providerApplicationVersion": "1", "success": success})
+    matrix("latestby_cp_keeps_distinct_providers", [(split, "1")], latest=True, latestby="cp")
+    # A new, unverified publication sorts before the older verified publications.
+    lc = "MatrixLatestUnknownConsumer"
+    result = publish(lc, lp)
+    seed("POST", result, {"providerApplicationVersion": "99", "success": False})
+    seed("POST", result, {"providerApplicationVersion": "2", "success": True})
+    publish(lc, lp, "3", [{"description": "unverified", "request": {"method": "GET", "path": "/latestby"}, "response": {"status": 200}}])
+    for mode in ["cvp", "cvpv", "cp", None]:
+        matrix(f"latestby_{mode or 'none'}_unverified_first", [(lc, None), (lp, None)], latestby=mode)
+
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps({"brokerVersion": version, "setup": setup, "cases": cases}, indent=2) + "\n")
