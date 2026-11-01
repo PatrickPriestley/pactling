@@ -119,5 +119,5 @@ Reuse those seams; HTML must never calculate an independent verdict.
 The build passes when all four pages work read-only, the explanation uses one shared
 evaluation, and existing API fixtures and real clients are unchanged. This plan/capture PR
 requires `agent-review plan`; red/green and guard mutations belong to the future build,
-not this docs-only change. Accepted 2026-11-01: the maintainer confirmed the additive `/ui/` namespace. Maintainer review should confirm and
-whether the deliberately small first version needs index search/pagination before release.
+not this docs-only change. Accepted 2026-11-01: the maintainer confirmed the additive `/ui/` namespace. Index search or pagination stays out of the first version;
+revisit it before release if the integration list grows large.
