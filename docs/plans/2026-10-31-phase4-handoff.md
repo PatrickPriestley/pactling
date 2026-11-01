@@ -1,5 +1,9 @@
 # Phase 4 handoff: finish environments, matrix and can-i-deploy
 
+> Done 2026-11-01 on `fix/matrix-verdict-correctness` (PR #18): steps 1 to 5 below are
+> complete; the two fidelity tests run, the capture is regenerated with the verifier fix,
+> and `e2e/phase4_can_i_deploy.sh` drives the real CLI. Kept for the record.
+
 Written 2026-10-31 for the agent taking over Phase 4. Read `AGENTS.md` first; its rules
 apply (fixtures are the evidence, probe before asserting, red before green, mutation-check
 guards, independent review before pushing, Conventional Commits with no AI attribution).

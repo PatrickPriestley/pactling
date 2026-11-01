@@ -117,3 +117,21 @@ the first 49 recaptured byte-for-byte). Each case failed before its fix.
 Mutation checks: 15 guard mutations, each killed by a captured case; the last survivor
 (the subject-side missing notice for a tag selector) needed the three-selector case
 `tag_without_latest_missing_first_of_two`, which was captured for it.
+
+## Phase 4 completion (handoff steps 2 to 5)
+
+- Missing-version notices are collected once, in selector order, before the pairwise
+  traversal (second review finding; case `missing_selector_without_integration_keeps_order`).
+- Rows for an unpinned provider carry the provider's one resolved selector description:
+  "any version of P" when the query names P, else "version N of P" for its latest version
+  (`GET_matrix_consumer_only`, `GET_matrix_integration`, `directional_integration`, whose
+  reason is now compared too).
+- Environment selection keeps only the versions in the environment that verified the pact,
+  with one blank row when none did (`environment_with_unverified_release`).
+- Pacts-for-verification without selectors uses Ruby's defaults (main branch or overall
+  latest, plus currently deployed and currently supported), and combined reasons follow
+  `Selector#<=>` (`GET_for-verification_with_deployments`).
+- The capture script's mis-quoted verifier line is fixed and every fixture recaptured; the
+  only material change is the failed verification of Consumer 2.0.0 by Provider 1. The two
+  Phase 4 fidelity tests replay that sequence and run. `e2e/phase4_can_i_deploy.sh` drives
+  the real CLI through environments, deployments, can-i-deploy and a pending failure.
