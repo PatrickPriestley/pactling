@@ -1,0 +1,21 @@
+{
+    "eventName": "contract_content_changed",
+    "consumerName": "Consumer",
+    "providerName": "Provider",
+    "executions": [],
+    "_embedded": {
+        "triggeredWebhook": {
+            "uuid": "8a1322a5-96c6-428d-866f-dc41692372b6"
+        }
+    },
+    "_links": {
+        "self": {
+            "title": "Triggered webhook logs",
+            "href": "http://localhost:9292/triggered-webhooks/8a1322a5-96c6-428d-866f-dc41692372b6/logs"
+        },
+        "pb:webhook": {
+            "href": "http://localhost:9292/webhooks/3aNRx3KYrAP6LE7xufgBng",
+            "title": "Webhook"
+        }
+    }
+}

@@ -1,0 +1,53 @@
+{
+    "uuid": "pactling-capture-webhook-1",
+    "description": "Updated",
+    "consumer": {
+        "name": "Consumer"
+    },
+    "provider": {
+        "name": "Provider"
+    },
+    "enabled": true,
+    "request": {
+        "method": "POST",
+        "url": "http://host.docker.internal:18100/hook/upsert",
+        "body": {
+            "event": "${pactbroker.eventName}"
+        }
+    },
+    "events": [
+        {
+            "name": "contract_published"
+        }
+    ],
+    "updatedAt": "2026-11-01T01:28:03+00:00",
+    "createdAt": "2026-11-01T01:28:02+00:00",
+    "_links": {
+        "self": {
+            "title": "Updated",
+            "href": "http://localhost:9292/webhooks/pactling-capture-webhook-1"
+        },
+        "pb:execute": {
+            "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+            "href": "http://localhost:9292/webhooks/pactling-capture-webhook-1/execute"
+        },
+        "pb:consumer": {
+            "title": "Consumer",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        },
+        "pb:provider": {
+            "title": "Provider",
+            "name": "Provider",
+            "href": "http://localhost:9292/pacticipants/Provider"
+        },
+        "pb:pact-webhooks": {
+            "title": "All webhooks for consumer Consumer and provider Provider",
+            "href": "http://localhost:9292/webhooks/provider/Provider/consumer/Consumer"
+        },
+        "pb:webhooks": {
+            "title": "All webhooks",
+            "href": "http://localhost:9292/webhooks"
+        }
+    }
+}

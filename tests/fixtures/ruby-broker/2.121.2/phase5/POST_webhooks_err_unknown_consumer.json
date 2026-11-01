@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "consumer.name": [
+            "does not match an existing pacticipant"
+        ]
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "request": {
+        "headers": {
+            "accept": "application/json",
+            "user-agent": "Pact Broker v2.121.2",
+            "x-token": "**********",
+            "authorization": "**********",
+            "host": "host.docker.internal:18100",
+            "content-length": "16",
+            "content-type": "application/x-www-form-urlencoded"
+        },
+        "body": {
+            "template": "1"
+        },
+        "url": "/hook/global"
+    },
+    "message": "For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See http://localhost:9292/doc/webhooks#whitelist for more information.",
+    "logs": "[2026-11-01T01:28:05Z] DEBUG: Webhook context {\"base_url\":\"http://localhost:9292\",\"event_name\":\"test\"}\n[2026-11-01T01:28:05Z] INFO: HTTP/1.1 POST http://host.docker.internal:18100/hook/global\n[2026-11-01T01:28:05Z] INFO: accept: application/json\n[2026-11-01T01:28:05Z] INFO: user-agent: Pact Broker v2.121.2\n[2026-11-01T01:28:05Z] INFO: x-token: **********\n[2026-11-01T01:28:05Z] INFO: authorization: **********\n[2026-11-01T01:28:05Z] INFO: host: host.docker.internal:18100\n[2026-11-01T01:28:05Z] INFO: content-length: 16\n[2026-11-01T01:28:05Z] INFO: content-type: application/x-www-form-urlencoded\n[2026-11-01T01:28:05Z] INFO: {\"template\":\"1\"}\n[2026-11-01T01:28:05Z] INFO: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See http://localhost:9292/doc/webhooks#whitelist for more information.\n",
+    "success": true,
+    "_links": {
+        "webhook": {
+            "href": "http://localhost:9292/webhooks/3aNRx3KYrAP6LE7xufgBng"
+        },
+        "try-again": {
+            "title": "Execute the webhook again",
+            "href": "http://localhost:9292/webhooks/3aNRx3KYrAP6LE7xufgBng/execute"
+        }
+    }
+}

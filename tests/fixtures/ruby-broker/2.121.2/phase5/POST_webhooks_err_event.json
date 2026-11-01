@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "events": [
+            "name must be one of: contract_published, contract_content_changed, provider_verification_published, provider_verification_succeeded, provider_verification_failed, contract_requiring_verification_published (at index 0)"
+        ]
+    }
+}

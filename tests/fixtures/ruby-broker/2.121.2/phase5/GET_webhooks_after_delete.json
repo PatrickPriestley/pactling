@@ -1,0 +1,41 @@
+{
+    "_links": {
+        "self": {
+            "title": "Webhooks",
+            "href": "http://localhost:9292/webhooks"
+        },
+        "pb:create": {
+            "title": "POST to create a webhook",
+            "href": "http://localhost:9292/webhooks"
+        },
+        "pb:webhooks": [
+            {
+                "title": "A webhook for the pact between Consumer and Provider",
+                "name": "Trigger Provider build",
+                "href": "http://localhost:9292/webhooks/I8JQEE2UTN-34yA4Z69DiQ"
+            },
+            {
+                "title": "A webhook for all pacts with provider Provider",
+                "name": "POST host.docker.internal",
+                "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A"
+            },
+            {
+                "title": "A webhook for the pact between Consumer and Provider",
+                "name": "Updated",
+                "href": "http://localhost:9292/webhooks/pactling-capture-webhook-1"
+            },
+            {
+                "title": "A webhook for all pacts",
+                "name": "POST host.docker.internal",
+                "href": "http://localhost:9292/webhooks/3aNRx3KYrAP6LE7xufgBng"
+            }
+        ],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/webhooks-{rel}",
+                "templated": true
+            }
+        ]
+    }
+}

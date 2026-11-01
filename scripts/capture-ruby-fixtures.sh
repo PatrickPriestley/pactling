@@ -540,4 +540,138 @@ cap4 GET_released-version_support_ended "${J[@]}" "$B/released-versions/$RV"
 cli4 delete-environment delete-environment --uuid "$PROD_UUID"
 cap4 GET_environments_after_delete "${J[@]}" "$B/environments"
 python3 "$ROOT/scripts/capture-matrix-regressions.py" "$B" "$F4/matrix-regressions.json"
+
+# ---------------------------------------------------------------------------------------
+# Phase 5: webhooks. A fresh broker that may call plain-http receivers on the host; two
+# receivers record what the broker sends (e2e/receiver.js), one answering 200 and one 500.
+# Linux hosts need host.docker.internal mapped (compose extra_hosts) for the broker to reach them.
+# ---------------------------------------------------------------------------------------
+echo "phase 5: resetting the Ruby broker with http webhooks allowed"
+"${COMPOSE[@]}" down -v >/dev/null 2>&1 || true
+export PACT_BROKER_WEBHOOK_SCHEME_WHITELIST=http
+"${COMPOSE[@]}" up -d >/dev/null 2>&1
+for _ in $(seq 1 90); do curl -sf $B/ >/dev/null && break; sleep 1; done
+F5="$F/phase5"; C5="$C/phase5"; mkdir -p "$F5" "$C5"; rm -f "$C5"/receiver*.jsonl
+node "$ROOT/e2e/receiver.js" 18100 "$C5/receiver.jsonl" >/dev/null 2>&1 & RECV_OK=$!
+RECEIVER_STATUS=500 node "$ROOT/e2e/receiver.js" 18101 "$C5/receiver-failing.jsonl" >/dev/null 2>&1 & RECV_BAD=$!
+trap 'kill $RECV_OK $RECV_BAD 2>/dev/null; rm -rf "$TMP"' EXIT
+sleep 0.5
+HOOK="http://host.docker.internal:18100"; HOOK_BAD="http://host.docker.internal:18101"
+cap5() { local n=$1; shift; curl -s -D "$F5/$n.json.headers" "$@" | pretty > "$F5/$n.json"; }
+cli5() { # <name> <cli args...>: runs the CLI through the proxy, keeping stdout and the traffic
+  local n=$1; shift
+  local port; port=$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1])')
+  node "$ROOT/e2e/proxy.js" "$port" $B "$C5/$n.jsonl" & local pid=$!
+  sleep 0.4
+  set +e; "$PB" "$@" --broker-base-url "http://127.0.0.1:$port" > "$C5/$n.txt" 2>&1; echo "exit=$?" >> "$C5/$n.txt"; set -e
+  kill $pid 2>/dev/null || true; wait $pid 2>/dev/null || true
+}
+webhook_uuid() { # <n>: the uuid of the n-th webhook in the list
+  curl -s $B/webhooks | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["_links"]["pb:webhooks"]['"$1"']["href"].rsplit("/",1)[1])'
+}
+# Every template parameter the Ruby broker documents, so the receiver shows its expansion.
+BODY='{"event":"${pactbroker.eventName}","consumer":"${pactbroker.consumerName}","provider":"${pactbroker.providerName}","consumerVersion":"${pactbroker.consumerVersionNumber}","consumerBranch":"${pactbroker.consumerVersionBranch}","consumerTags":"${pactbroker.consumerVersionTags}","providerVersion":"${pactbroker.providerVersionNumber}","providerBranch":"${pactbroker.providerVersionBranch}","providerTags":"${pactbroker.providerVersionTags}","providerVersionDescriptions":"${pactbroker.providerVersionDescriptions}","pactUrl":"${pactbroker.pactUrl}","verificationResultUrl":"${pactbroker.verificationResultUrl}","github":"${pactbroker.githubVerificationStatus}","bitbucket":"${pactbroker.bitbucketVerificationStatus}","azure":"${pactbroker.azureDevOpsVerificationStatus}","gitlab":"${pactbroker.gitlabVerificationStatus}","buildUrl":"${pactbroker.buildUrl}","consumerLabels":"${pactbroker.consumerLabels}","providerLabels":"${pactbroker.providerLabels}","deployedProvider":"${pactbroker.currentlyDeployedProviderVersionNumber}"}'
+
+echo "phase 5: seed (pacts, one verification, a deployment, a second provider version on main)"
+mkdir -p "$TMP/p1" "$TMP/p3" "$TMP/web"; cp "$PACT" "$TMP/p1/"; cp "$TMP/web-provider.json" "$TMP/web/"
+python3 - "$PACT" "$TMP/p3/consumer-provider.json" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+d["interactions"][0]["response"]["body"]["status"] = "shipped"
+json.dump(d, open(sys.argv[2], "w"), indent=2)
+PY
+"$PB" publish "$TMP/p1" --consumer-app-version 1.0.0 --branch main --tag dev --broker-base-url $B >/dev/null
+"$PB" publish "$TMP/web" --consumer-app-version 1 --branch main --broker-base-url $B >/dev/null
+BROKER=$B PROVIDER_VERSION=1 PROVIDER_BRANCH=main node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
+"$PB" create-environment --name test --no-production --broker-base-url $B >/dev/null
+"$PB" record-deployment --pacticipant Provider --version 1 --environment test --broker-base-url $B >/dev/null
+"$PB" create-or-update-version --pacticipant Provider --version 2 --branch main --broker-base-url $B >/dev/null
+
+echo "phase 5: webhook CRUD"
+cli5 create-webhook-consumer-provider create-webhook "$HOOK/hook/\${pactbroker.consumerName}" -X POST -H "Content-Type: application/json" -H "Authorization: Bearer hook-secret" -d "$BODY" --consumer Consumer --provider Provider --description "Trigger Provider build" --contract-content-changed
+cli5 create-webhook-provider-all-events create-webhook "$HOOK/hook/all" -X POST -H "Content-Type: application/json" -d "$BODY" --provider Provider --contract-published --contract-content-changed --provider-verification-published --provider-verification-succeeded --provider-verification-failed --contract-requiring-verification-published
+cli5 create-webhook-bad-method create-webhook "$HOOK/hook/get" -X GET --contract-content-changed
+cli5 create-webhook-https create-webhook "https://example.com/hook" -X POST --contract-content-changed
+cli5 create-webhook-unknown-consumer create-webhook "$HOOK/hook/x" -X POST --consumer Nope --contract-content-changed
+cli5 create-or-update-webhook-create create-or-update-webhook "$HOOK/hook/upsert" --uuid pactling-capture-webhook-1 -X POST -d '{"event":"${pactbroker.eventName}"}' --consumer Consumer --provider Provider --contract-published
+cli5 create-or-update-webhook-update create-or-update-webhook "$HOOK/hook/upsert" --uuid pactling-capture-webhook-1 -X POST -d '{"event":"${pactbroker.eventName}"}' --consumer Consumer --provider Provider --contract-published --description "Updated"
+cap5 POST_webhooks_global "${J[@]}" -X POST -d '{"request":{"method":"POST","url":"'"$HOOK"'/hook/global","username":"hookuser","password":"hookpass","headers":{"X-Token":"abc","Accept":"application/json"},"body":{"template":"${pactbroker.consumerVersionNumber}"}}}' $B/webhooks
+cap5 POST_webhooks_err_empty "${J[@]}" -X POST -d '{}' $B/webhooks
+cap5 POST_webhooks_err_request_empty "${J[@]}" -X POST -d '{"request":{}}' $B/webhooks
+cap5 POST_webhooks_err_method "${J[@]}" -X POST -d '{"request":{"method":"GET","url":"'"$HOOK"'/hook"}}' $B/webhooks
+cap5 POST_webhooks_err_scheme "${J[@]}" -X POST -d '{"request":{"method":"POST","url":"https://example.com/hook"}}' $B/webhooks
+cap5 POST_webhooks_err_url "${J[@]}" -X POST -d '{"request":{"method":"POST","url":"nope"}}' $B/webhooks
+cap5 POST_webhooks_err_templated_host "${J[@]}" -X POST -d '{"request":{"method":"POST","url":"http://${pactbroker.consumerName}.example.com/hook"}}' $B/webhooks
+cap5 POST_webhooks_err_event "${J[@]}" -X POST -d '{"request":{"method":"POST","url":"'"$HOOK"'/hook"},"events":[{"name":"bogus"}]}' $B/webhooks
+cap5 POST_webhooks_err_events_empty "${J[@]}" -X POST -d '{"request":{"method":"POST","url":"'"$HOOK"'/hook"},"events":[]}' $B/webhooks
+cap5 POST_webhooks_err_unknown_consumer "${J[@]}" -X POST -d '{"consumer":{"name":"Nope"},"request":{"method":"POST","url":"'"$HOOK"'/hook"}}' $B/webhooks
+cap5 POST_webhooks_err_name_and_label "${J[@]}" -X POST -d '{"consumer":{"name":"Consumer","label":"x"},"request":{"method":"POST","url":"'"$HOOK"'/hook"}}' $B/webhooks
+cap5 POST_webhooks_err_bad_json "${J[@]}" -X POST -d '{nope' $B/webhooks
+cap5 PUT_webhooks_err_uuid "${J[@]}" -X PUT -d '{"request":{"method":"POST","url":"'"$HOOK"'/hook"}}' $B/webhooks/short
+W_CP=$(webhook_uuid 0); W_ALL=$(webhook_uuid 1); W_UP=pactling-capture-webhook-1; W_GLOBAL=$(python3 -c 'import json; print(json.load(open("'"$F5"'/POST_webhooks_global.json"))["uuid"])')
+cap5 GET_webhooks "${J[@]}" $B/webhooks
+cap5 GET_webhook_consumer_provider "${J[@]}" "$B/webhooks/$W_CP"
+cap5 GET_webhook_provider_all_events "${J[@]}" "$B/webhooks/$W_ALL"
+cap5 GET_webhook_global "${J[@]}" "$B/webhooks/$W_GLOBAL"
+cap5 GET_webhook_upsert "${J[@]}" "$B/webhooks/$W_UP"
+cap5 GET_webhooks_provider_Provider_consumer_Consumer "${J[@]}" $B/webhooks/provider/Provider/consumer/Consumer
+cap5 GET_webhooks_provider_Provider "${J[@]}" $B/webhooks/provider/Provider
+cap5 GET_webhooks_consumer_Consumer "${J[@]}" $B/webhooks/consumer/Consumer
+cap5 GET_webhooks_consumer_Nope "${J[@]}" $B/webhooks/consumer/Nope
+cap5 GET_pact_webhooks "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/webhooks
+cap5 GET_pact_webhooks_status_before "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/webhooks/status
+cap5 GET_pact_webhooks_status_Web "${J[@]}" $B/pacts/provider/Provider/consumer/Web/webhooks/status
+cap5 GET_triggered_webhooks_1.0.0_before "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/version/1.0.0/triggered-webhooks
+cap5 OPTIONS_webhooks -X OPTIONS $B/webhooks
+cap5 OPTIONS_webhook -X OPTIONS "$B/webhooks/$W_CP"
+cap5 OPTIONS_webhook_execute -X OPTIONS "$B/webhooks/$W_CP/execute"
+
+echo "phase 5: test execution"
+cli5 test-webhook test-webhook --uuid "$W_CP"
+cap5 POST_webhook_execute "${J[@]}" -X POST "$B/webhooks/$W_CP/execute"
+cap5 POST_webhook_execute_global "${J[@]}" -X POST "$B/webhooks/$W_GLOBAL/execute"
+cap5 POST_webhooks_execute_unsaved "${J[@]}" -X POST -d '{"consumer":{"name":"Consumer"},"provider":{"name":"Provider"},"request":{"method":"POST","url":"'"$HOOK"'/hook/unsaved","body":"'"$(printf '%s' "$BODY" | sed 's/"/\\"/g')"'"}}' $B/webhooks/execute
+cap5 POST_webhooks_execute_unknown "${J[@]}" -X POST $B/webhooks/nope/execute
+cap5 POST_webhook_execute_failing "${J[@]}" -X POST -d '{"request":{"method":"POST","url":"'"$HOOK_BAD"'/hook"}}' $B/webhooks/execute
+
+echo "phase 5: events on publish and verification"
+cli5 publish-changed-3.0.0 publish "$TMP/p3" --consumer-app-version 3.0.0 --branch main --tag dev
+sleep 35
+cap5 GET_pact_webhooks_status_after_publish "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/webhooks/status
+cap5 GET_triggered_webhooks_3.0.0 "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/version/3.0.0/triggered-webhooks
+i=0; for u in $(python3 -c 'import json; d=json.load(open("'"$F5"'/GET_triggered_webhooks_3.0.0.json")); print(" ".join(t["_links"]["pb:logs"]["href"].split("/")[-2] for t in d["_embedded"]["triggeredWebhooks"]))'); do
+  cap5 "GET_triggered_webhook_logs_3.0.0_$i" "${J[@]}" "$B/triggered-webhooks/$u/logs"; i=$((i+1)); done
+cap5 GET_triggered_webhook_logs_unknown "${J[@]}" "$B/triggered-webhooks/nope/logs"
+cli5 publish-same-3.0.1 publish "$TMP/p3" --consumer-app-version 3.0.1 --branch main
+sleep 30
+cap5 GET_triggered_webhooks_3.0.1 "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/version/3.0.1/triggered-webhooks
+BROKER=$B PROVIDER_VERSION=2 PROVIDER_BRANCH=main SELECTORS='[{"branch":"main"}]' node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
+sleep 30
+VR=$(curl -s "$B/pacts/provider/Provider/consumer/Consumer/latest/verification-results/latest" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["_links"]["self"]["href"])')
+cap5 GET_verification_triggered_webhooks_success "${J[@]}" "$VR/triggered-webhooks"
+BROKER=$B PROVIDER_VERSION=3 PROVIDER_BRANCH=main FAIL=true SELECTORS='[{"branch":"main"}]' node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
+sleep 30
+VR=$(curl -s "$B/pacts/provider/Provider/consumer/Consumer/latest/verification-results/latest" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["_links"]["self"]["href"])')
+cap5 GET_verification_triggered_webhooks_failure "${J[@]}" "$VR/triggered-webhooks"
+cap5 GET_pact_webhooks_status_after_verification "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/webhooks/status
+
+echo "phase 5: a failing receiver is retried"
+cap5 POST_webhooks_failing "${J[@]}" -X POST -d '{"consumer":{"name":"Consumer"},"provider":{"name":"Provider"},"events":[{"name":"contract_published"}],"request":{"method":"POST","url":"'"$HOOK_BAD"'/hook"}}' $B/webhooks
+W_BAD=$(python3 -c 'import json; print(json.load(open("'"$F5"'/POST_webhooks_failing.json"))["uuid"])')
+cli5 publish-same-3.0.2 publish "$TMP/p3" --consumer-app-version 3.0.2 --branch main
+sleep 30
+cap5 GET_triggered_webhooks_3.0.2 "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/version/3.0.2/triggered-webhooks
+u=$(python3 -c 'import json; d=json.load(open("'"$F5"'/GET_triggered_webhooks_3.0.2.json")); print([t["_links"]["pb:logs"]["href"].split("/")[-2] for t in d["_embedded"]["triggeredWebhooks"] if t["status"]!="success"][0])')
+cap5 GET_triggered_webhook_logs_failing "${J[@]}" "$B/triggered-webhooks/$u/logs"
+cap5 GET_pact_webhooks_status_retrying "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/webhooks/status
+
+echo "phase 5: delete"
+cap5 DELETE_webhook -X DELETE "$B/webhooks/$W_BAD"
+cap5 GET_webhook_after_delete "${J[@]}" "$B/webhooks/$W_BAD"
+cap5 DELETE_webhook_unknown -X DELETE "$B/webhooks/nope"
+cap5 GET_webhooks_after_delete "${J[@]}" $B/webhooks
+cap5 GET_triggered_webhooks_3.0.2_after_delete "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/version/3.0.2/triggered-webhooks
+kill $RECV_OK $RECV_BAD 2>/dev/null || true; trap 'rm -rf "$TMP"' EXIT
+unset PACT_BROKER_WEBHOOK_SCHEME_WHITELIST
+
 echo "done: $(find "$F" "$C" -type f | wc -l | tr -d ' ') files"

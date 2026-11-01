@@ -1,0 +1,77 @@
+{
+    "uuid": "FzHI9sXqW7ZXMrAPjRG06A",
+    "description": "POST host.docker.internal",
+    "provider": {
+        "name": "Provider"
+    },
+    "enabled": true,
+    "request": {
+        "method": "POST",
+        "url": "http://host.docker.internal:18100/hook/all",
+        "headers": {
+            "content-type": "application/json"
+        },
+        "body": {
+            "event": "${pactbroker.eventName}",
+            "consumer": "${pactbroker.consumerName}",
+            "provider": "${pactbroker.providerName}",
+            "consumerVersion": "${pactbroker.consumerVersionNumber}",
+            "consumerBranch": "${pactbroker.consumerVersionBranch}",
+            "consumerTags": "${pactbroker.consumerVersionTags}",
+            "providerVersion": "${pactbroker.providerVersionNumber}",
+            "providerBranch": "${pactbroker.providerVersionBranch}",
+            "providerTags": "${pactbroker.providerVersionTags}",
+            "providerVersionDescriptions": "${pactbroker.providerVersionDescriptions}",
+            "pactUrl": "${pactbroker.pactUrl}",
+            "verificationResultUrl": "${pactbroker.verificationResultUrl}",
+            "github": "${pactbroker.githubVerificationStatus}",
+            "bitbucket": "${pactbroker.bitbucketVerificationStatus}",
+            "azure": "${pactbroker.azureDevOpsVerificationStatus}",
+            "gitlab": "${pactbroker.gitlabVerificationStatus}",
+            "buildUrl": "${pactbroker.buildUrl}",
+            "consumerLabels": "${pactbroker.consumerLabels}",
+            "providerLabels": "${pactbroker.providerLabels}",
+            "deployedProvider": "${pactbroker.currentlyDeployedProviderVersionNumber}"
+        }
+    },
+    "events": [
+        {
+            "name": "contract_content_changed"
+        },
+        {
+            "name": "contract_published"
+        },
+        {
+            "name": "provider_verification_published"
+        },
+        {
+            "name": "provider_verification_succeeded"
+        },
+        {
+            "name": "provider_verification_failed"
+        },
+        {
+            "name": "contract_requiring_verification_published"
+        }
+    ],
+    "createdAt": "2026-11-01T01:27:59+00:00",
+    "_links": {
+        "self": {
+            "title": "POST host.docker.internal",
+            "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A"
+        },
+        "pb:execute": {
+            "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+            "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A/execute"
+        },
+        "pb:provider": {
+            "title": "Provider",
+            "name": "Provider",
+            "href": "http://localhost:9292/pacticipants/Provider"
+        },
+        "pb:webhooks": {
+            "title": "All webhooks",
+            "href": "http://localhost:9292/webhooks"
+        }
+    }
+}

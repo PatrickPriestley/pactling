@@ -1,0 +1,26 @@
+{
+    "_links": {
+        "self": {
+            "title": "Webhooks",
+            "href": "http://localhost:9292/webhooks/provider/Provider"
+        },
+        "pb:create": {
+            "title": "POST to create a webhook",
+            "href": "http://localhost:9292/webhooks/provider/Provider"
+        },
+        "pb:webhooks": [
+            {
+                "title": "A webhook for all pacts with provider Provider",
+                "name": "POST host.docker.internal",
+                "href": "http://localhost:9292/webhooks/FzHI9sXqW7ZXMrAPjRG06A"
+            }
+        ],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/webhooks-{rel}",
+                "templated": true
+            }
+        ]
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "events": [
+            "size cannot be less than 1"
+        ]
+    }
+}

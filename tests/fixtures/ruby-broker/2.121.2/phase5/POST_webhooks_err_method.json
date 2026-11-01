@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "request.method": [
+            "must be POST. See /doc/webhooks#whitelist for more information."
+        ]
+    }
+}
