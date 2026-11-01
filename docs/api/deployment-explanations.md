@@ -68,3 +68,66 @@ Evidence is read through a deferred read-only transaction. On file databases und
 The URL fixes major version 1; `schemaVersion: "1.0"` identifies this contract. Clients must ignore additional object members. Reason and action codes are **open enums**: tolerate unknown nonempty strings, retain/display their message and evidence where possible, and read the explicit decision rather than infer a verdict from known codes. Unknown actions remain non-executing suggestions. Adding a code or optional field is a minor change. The schema intentionally permits unknown codes and action target objects.
 
 Existing code meanings, decision mapping, role semantics, nullability and request interpretation remain stable within v1. Incompatible structural or semantic changes require a new major URL version. Messages are human text and may improve; they are not machine contracts. The schema covers decision and validation-error envelopes separately. Authentication and generic 404/405 responses retain their existing contracts; no extension schema is imposed on Ruby-compatible resources.
+
+
+## Command-line client
+
+The same binary provides `pactling explain`. It performs one GET of this explanation
+endpoint and uses the response's decision; it does not resolve selectors separately or
+compute another verdict. Calling `pactling` without a subcommand still starts the server.
+
+```text
+pactling explain --pacticipant NAME
+  (--version V | --latest [TAG] | --branch B | --main-branch)
+  (--to-environment ENV | --to TAG)
+  [--ignore NAME[=VERSION]]...
+  [--broker-base-url URL]
+  [--broker-username U --broker-password P | --broker-token T]
+  [--output text|json]
+```
+
+| Option | Meaning |
+| --- | --- |
+| `--pacticipant NAME` | One application to check. |
+| `--version V` | An exact application version. |
+| `--latest [TAG]` | Latest version, optionally within the tag. |
+| `--branch B` / `--main-branch` | Latest version on the named/configured main branch. |
+| `--to-environment ENV` | Check counterparts deployed or released in that environment. |
+| `--to TAG` | Check latest counterpart versions with that tag. |
+| `--ignore NAME[=VERSION]` | Repeat for whole participants or exact versions; existing Ruby null-version semantics still apply. |
+| `--broker-base-url URL` | Required unless `PACT_BROKER_BASE_URL` is set. |
+| `--broker-username U` / `--broker-password P` | Basic authentication; both are required together. Defaults from `PACT_BROKER_USERNAME` / `PACT_BROKER_PASSWORD`. |
+| `--broker-token T` | Bearer authentication, mutually exclusive with basic credentials. Defaults from `PACT_BROKER_TOKEN`. |
+| `--output text\|json` | Human-readable text by default, or the endpoint's JSON document unchanged. |
+
+Explicit options override their corresponding environment values. Server authentication
+settings such as `PACT_BROKER_BASIC_AUTH_USERNAME` configure the server; the client uses
+the separate `PACT_BROKER_USERNAME` variables above. `pactling explain --help` describes
+the command without starting the server.
+
+Query construction is checked against recorded requests from `pact-broker` CLI 1.77.0.
+It sends ordered `q[]` selector fields with `latestby=cvp`; branch and main-branch
+selectors include `latest=true`. `--to` sends counterpart `latest=true&tag=...`.
+`--ignore P=2` corresponds to that CLI's `--ignore P --version 2`. Names and versions
+are URL-encoded; a path in the broker base URL is retained. The base URL must be HTTP(S)
+without credentials, a query or fragment. Requests have a 30-second timeout and do not
+follow redirects.
+
+Text output includes the decision, every decisive reason with its code and message,
+and each next action with its exact target and referenced evidence, including navigation
+links. Unknown reason and action codes remain printable; they never determine the verdict.
+JSON mode writes valid decision documents byte-for-byte, without adding a newline or
+rewriting timestamps. HTTP error response bodies are also emitted unchanged in JSON mode,
+with a diagnostic on stderr and exit 3. Transport failures and invalid successful response
+documents are reported on stderr. No action is executed automatically.
+
+| Exit code | Meaning |
+| --- | --- |
+| `0` | Allowed (also help). |
+| `1` | Blocked. |
+| `2` | Unknown. |
+| `3` | Usage or request error: invalid/conflicting options, HTTP 400/auth/server errors, unreachable broker, unsupported or malformed response, or inconsistent decision fields. |
+
+Unlike the Ruby CLI, which exits 1 for both blocked and unknown, this client distinguishes
+them. Always inspect the exit status; an unknown decision never exits 0. The command does
+not implement dry-run success overrides, retries, an age budget or deployment policy.

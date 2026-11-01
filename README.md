@@ -36,8 +36,9 @@ rather than `Pact Broker v2.121.2`; the webhook host whitelist takes host names 
 (pactling has no labels); `/pacts/provider/{p}/consumer/{c}/latest/verification-results/latest`
 is not served (use the `version/{v}` form).
 
-The read-only extension `GET /pactling/v1/can-i-deploy/explanation` accepts the existing
-can-i-deploy query and explains its same verdict with evidence and suggested next actions.
+The read-only extension `GET /pactling/v1/can-i-deploy/explanation` accepts matrix
+selectors plus a target environment or tag and explains the shared verdict with evidence
+and suggested next actions.
 See the [deployment explanation API](docs/api/deployment-explanations.md) for its versioned
 schema, open reason/action codes and snapshot limits. Existing Ruby-compatible routes and
 documents are unchanged.
@@ -135,6 +136,35 @@ Configuration reuses the Ruby broker's variable names where one exists:
 | `PACTLING_WEBHOOK_INITIAL_DELAY` / `PACTLING_WEBHOOK_DELAY_STEP` | Initial and per-delivery delay in seconds (defaults 5 / 3) |
 
 With no credentials configured the broker is open, as the Ruby broker is.
+
+## Explain a deployment
+
+`pactling explain` queries the explanation API and prints the decision, decisive reasons,
+and suggested actions with their exact targets and evidence links:
+
+```bash
+PACT_BROKER_BASE_URL=http://localhost:9292 pactling explain \
+  --pacticipant Consumer --version 1.0.0 --to-environment production
+
+pactling explain --pacticipant Consumer --main-branch --to-environment test \
+  --broker-base-url http://localhost:9292 --output json
+```
+
+Choose one selector: `--version V`, `--latest [TAG]`, `--branch B` or `--main-branch`.
+Choose one target: `--to-environment ENV` or `--to TAG`. Repeat `--ignore NAME[=VERSION]`
+to exclude specific participants or versions using the broker's existing semantics.
+`--output text` is the default; `--output json` preserves the endpoint document bytes.
+
+Exit codes are **0 allowed, 1 blocked, 2 unknown, 3 usage/request error**. Check the exit
+code even in JSON mode; unknown never means success. Client configuration uses
+`PACT_BROKER_BASE_URL`, `PACT_BROKER_USERNAME`/`PACT_BROKER_PASSWORD`, or
+`PACT_BROKER_TOKEN`, with matching `--broker-*` options. Basic and bearer credentials
+are mutually exclusive. See the [CLI contract](docs/api/deployment-explanations.md#command-line-client)
+for options, errors and output details.
+
+Running `pactling` without a subcommand remains the server, with all existing server
+flags and environment variables. `pactling --help` and `pactling --version` keep their
+server behavior; use `pactling explain --help` for client usage.
 
 ## Develop
 
