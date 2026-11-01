@@ -787,3 +787,29 @@ fn ui_matrix_form_query_mapping() {
         vec![("C".into(), Some("1".into())), ("P".into(), None)]
     );
 }
+
+#[tokio::test]
+async fn ui_matrix_self_integration_keeps_positional_selectors() {
+    let s = start().await;
+    publish(&s, "Self", "Self", "1").await;
+    let canonical = "q[][pacticipant]=Self&q[][version]=1&q[][pacticipant]=Self&q[][latest]=true";
+    let api = s
+        .client
+        .get(format!("{}/matrix?{canonical}", s.base_url))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(api.status(), 200);
+    let expected: serde_json::Value = api.json().await.unwrap();
+    let r=s.client.get(format!("{}/ui/matrix/provider/Self/consumer/Self?ui_form=matrix&consumer_mode=version&consumer_value=1&provider_mode=latest&latestby=none",s.base_url)).send().await.unwrap();
+    assert_eq!(r.status(), 200);
+    let body = r.text().await.unwrap();
+    assert_eq!(
+        body.matches("data-consumer-version=").count(),
+        expected["matrix"].as_array().unwrap().len()
+    );
+    let (q, _) = pactling::http::ui::query::matrix_query(canonical, "Self", "Self").unwrap();
+    assert_eq!(q.selectors[0].version.as_deref(), Some("1"));
+    assert!(q.selectors[1].latest);
+    assert!(q.selectors[1].version.is_none());
+}
