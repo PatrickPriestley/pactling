@@ -1,0 +1,950 @@
+[
+  {
+    "task": 1,
+    "guard": "index_get",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 1,
+    "guard": "index_options",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 1,
+    "guard": "index_fallback",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 1,
+    "guard": "empty_guard_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 1,
+    "guard": "empty_guard_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 1,
+    "guard": "error_status",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 1,
+    "guard": "style_get",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 1,
+    "guard": "style_options",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 1,
+    "guard": "style_fallback",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_get",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_options",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_method_fallback",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_empty_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_empty_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_optional_interactions",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_missing_status",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_db_error_status",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_exact_version",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_provider_encoding",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_consumer_encoding",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_version_encoding",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_description_escape",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_state_escape",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "pact_body_escape",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_controls",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_whitespace",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_backslash",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_local_prefix",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_local_networkpath",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_local_branch",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_http",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_https",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_scheme_guard",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_parse_failure",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_external_rel",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 2,
+    "guard": "link_label_escape",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "raw_default",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "error_escape",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "error_internal_redaction",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "get",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "options",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "fallback",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "empty_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "empty_true",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "provider_null",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "verification_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "verification_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "verification_unknown",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "ignored_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "ignored_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "bad_request_detail",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "validation_detail",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "error_status",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "consumer_escape",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "provider_escape",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "form_provider_encode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "form_consumer_encode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "field_find",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "field_default",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "marker_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "marker_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "all_mode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "latest_mode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "main_mode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "empty_required_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "empty_required_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "version_mode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "branch_mode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "tag_mode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "unknown_mode",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "group_none",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "group_cvp",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "group_cpv",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "group_cp",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "group_unknown",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "pair_wrong",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "pair_consumer",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "pair_provider",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "pair_match",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "pair_default",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "pair_consumption",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 3,
+    "guard": "pair_duplicates",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "get",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "options",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "fallback",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "empty_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "empty_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "raw_default",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "validation_skip",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "error_status",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "error_bad_request",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "error_validation",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "error_internal",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_marker_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_marker_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_selector_some",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_mode_version",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_mode_tag",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_mode_branch",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_mode_main",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_mode_latest",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_mode_all",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_env",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_tag",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_ignore_version",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_ignore_name",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_selector_selected",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_target_selected",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "form_ignores_filter",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "nullable_null",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "nullable_string",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "verification_success",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "verification_failure",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "verification_unknown",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "verification_link",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "evidence_href_key",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "evidence_href_suffix",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "evidence_href_string",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "evidence_object",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "evidence_array",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "evidence_string_escape",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "evidence_null",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "evidence_scalar",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "query_marker_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "query_marker_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "query_name_required",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "query_target_required",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "target_env",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "target_tag",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "target_unknown",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "ignore_filter",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "ignore_empty",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "ignore_default",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "ignore_empty_name",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "ignore_version",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "shared_missing_selector",
+    "initial": "survived",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "shared_missing_target",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "shared_errors_return",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "ignore_control_empty_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 4,
+    "guard": "ignore_control_empty_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "auth",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "writes",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "method",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "asset",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "marker_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "marker_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "clear_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "clear_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "title_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "title_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "mode_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "mode_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "group_false",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "group_true",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "value_empty",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "raw_omitted",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "cache_public",
+    "initial": "killed",
+    "final": "killed"
+  },
+  {
+    "task": 5,
+    "guard": "delete_pending_delivery",
+    "initial": "killed",
+    "final": "killed"
+  }
+]

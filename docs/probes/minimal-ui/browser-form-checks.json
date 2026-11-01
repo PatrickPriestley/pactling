@@ -1,0 +1,32 @@
+{
+  "javascriptEnabled": false,
+  "checks": [
+    {
+      "flow": "matrix exact version form",
+      "ok": true,
+      "url": "http://localhost:9493/ui/matrix/provider/UiPayments/consumer/UiCheckout?ui_form=matrix&consumer_mode=version&consumer_value=1&provider_mode=all&provider_value=&latestby=none"
+    },
+    {
+      "flow": "explanation native form",
+      "version": "1",
+      "decision": "allowed",
+      "url": "http://localhost:9493/ui/deployment-explanation?ui_form=explanation&pacticipant=UiCheckout&selector_mode=version&selector_value=1&target_mode=environment&target_value=ui-test&ignore="
+    },
+    {
+      "flow": "explanation native form",
+      "version": "2",
+      "decision": "blocked",
+      "url": "http://localhost:9493/ui/deployment-explanation?ui_form=explanation&pacticipant=UiCheckout&selector_mode=version&selector_value=2&target_mode=environment&target_value=ui-test&ignore="
+    },
+    {
+      "flow": "explanation native form",
+      "version": "3",
+      "decision": "unknown",
+      "url": "http://localhost:9493/ui/deployment-explanation?ui_form=explanation&pacticipant=UiCheckout&selector_mode=version&selector_value=3&target_mode=environment&target_value=ui-test&ignore="
+    },
+    {
+      "flow": "main branch with empty unused version",
+      "decision": "unknown"
+    }
+  ]
+}

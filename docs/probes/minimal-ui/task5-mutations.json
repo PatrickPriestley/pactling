@@ -1,0 +1,128 @@
+[
+  {
+    "mutation": "auth",
+    "test": "ui_respects_read_auth",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "writes",
+    "test": "ui_reads_do_not_write",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "method",
+    "test": "ui_rejects_mutating_methods",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "asset",
+    "test": "ui_assets_are_embedded",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "marker_true",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "marker_false",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "clear_false",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "clear_true",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "title_true",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "title_false",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "mode_false",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "mode_true",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "group_false",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "group_true",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "value_empty",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "raw_omitted",
+    "test": "ui_matrix_preserves_submitted_form",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "cache_public",
+    "test": "ui_respects_read_auth",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  },
+  {
+    "mutation": "delete_pending_delivery",
+    "test": "ui_preserves_pending_webhook_deliveries",
+    "killed": true,
+    "initial_result": "killed",
+    "final_result": "killed"
+  }
+]

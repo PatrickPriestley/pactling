@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: implemented
 accepted_by: Patrick Priestley
 accepted_on: 2026-11-01
 ---
@@ -10,8 +10,8 @@ accepted_on: 2026-11-01
 
 Let a person inspect integrations, an exact pact, a pair's matrix and a deployment
 explanation without constructing API requests. Serve four plain-HTML pages from the
-existing axum binary, using existing data and decision services. This is a proposal only;
-no production code is included. Publishing, deployment recording, administration, a full
+existing axum binary, using existing data and decision services. This accepted plan is implemented on `feat/minimal-ui`; verification is recorded in
+[the build evidence](../probes/minimal-ui/README.md). Publishing, deployment recording, administration, a full
 Ruby UI clone, dashboards and live updates are out of scope. [Issue #15](https://github.com/PatrickPriestley/pactling/issues/15)
 (Leptos/WASM) stays deferred; no JS framework or JavaScript is required.
 

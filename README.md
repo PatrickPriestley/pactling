@@ -43,6 +43,12 @@ See the [deployment explanation API](docs/api/deployment-explanations.md) for it
 schema, open reason/action codes and snapshot limits. Existing Ruby-compatible routes and
 documents are unchanged.
 
+The read-only HTML UI is another deliberate extension: open `/ui/` on the same server
+for integrations, exact pacts, pair matrices and deployment explanations. It needs no
+JavaScript and uses the broker's existing read authentication. Unlike Ruby's UI, it has
+its own namespace; `/` and existing HAL/JSON responses stay unchanged. See the
+[minimal UI guide](docs/api/minimal-ui.md).
+
 Webhook settings use the Ruby broker's variable names and defaults:
 `PACT_BROKER_WEBHOOK_SCHEME_WHITELIST` (default `https`), `PACT_BROKER_WEBHOOK_HOST_WHITELIST`
 (empty: any host, response details hidden from logs), `PACT_BROKER_WEBHOOK_HTTP_METHOD_WHITELIST`

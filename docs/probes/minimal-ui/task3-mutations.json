@@ -1,0 +1,278 @@
+[
+  {
+    "name": "raw_default",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "error_escape",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "error_internal_redaction",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "get",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "options",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "fallback",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "empty_false",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "empty_true",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "provider_null",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "verification_true",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "verification_false",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "verification_unknown",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "ignored_false",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "ignored_true",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "bad_request_detail",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "validation_detail",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "error_status",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "consumer_escape",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "provider_escape",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "form_provider_encode",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "form_consumer_encode",
+    "file": "src/http/ui/matrix.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "field_find",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "field_default",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "marker_false",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "marker_true",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "all_mode",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "latest_mode",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "main_mode",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "empty_required_false",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "empty_required_true",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "version_mode",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "branch_mode",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "tag_mode",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "unknown_mode",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "group_none",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "group_cvp",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "group_cpv",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "group_cp",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "group_unknown",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "pair_wrong",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "pair_consumer",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "pair_provider",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "pair_match",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "pair_default",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "pair_consumption",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  },
+  {
+    "name": "pair_duplicates",
+    "file": "src/http/ui/query.rs",
+    "killed": true,
+    "exit": 101
+  }
+]

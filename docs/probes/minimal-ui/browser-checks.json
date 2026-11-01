@@ -1,0 +1,68 @@
+{
+  "javascriptEnabled": false,
+  "checks": [
+    {
+      "name": "index",
+      "width": 1280,
+      "status": 200,
+      "keyboardFocusedHref": "/ui/",
+      "title": "Integrations · pactling"
+    },
+    {
+      "name": "pact",
+      "width": 1280,
+      "status": 200,
+      "keyboardFocusedHref": "/ui/",
+      "title": "Pact · pactling"
+    },
+    {
+      "name": "matrix",
+      "width": 1280,
+      "status": 200,
+      "keyboardFocusedHref": "/ui/",
+      "title": "Matrix · pactling"
+    },
+    {
+      "name": "explanation",
+      "width": 1280,
+      "status": 200,
+      "keyboardFocusedHref": "/ui/",
+      "title": "Deployment explanation · pactling"
+    },
+    {
+      "name": "index",
+      "width": 390,
+      "status": 200,
+      "keyboardFocusedHref": "/ui/",
+      "title": "Integrations · pactling"
+    },
+    {
+      "name": "pact",
+      "width": 390,
+      "status": 200,
+      "keyboardFocusedHref": "/ui/",
+      "title": "Pact · pactling"
+    },
+    {
+      "name": "matrix",
+      "width": 390,
+      "status": 200,
+      "keyboardFocusedHref": "/ui/",
+      "title": "Matrix · pactling"
+    },
+    {
+      "name": "explanation",
+      "width": 390,
+      "status": 200,
+      "keyboardFocusedHref": "/ui/",
+      "title": "Deployment explanation · pactling"
+    }
+  ],
+  "requests": [
+    "http://localhost:9493/ui/",
+    "http://localhost:9493/ui/style.css",
+    "http://localhost:9493/ui/pacts/provider/UiPayments/consumer/UiCheckout/version/1",
+    "http://localhost:9493/ui/matrix/provider/UiPayments/consumer/UiCheckout",
+    "http://localhost:9493/ui/deployment-explanation?pacticipant=UiCheckout&version=3&environment=ui-test"
+  ]
+}
