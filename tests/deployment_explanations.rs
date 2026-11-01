@@ -257,3 +257,32 @@ async fn methods_and_no_store_headers_and_no_matrix_extension() {
         404
     );
 }
+
+#[tokio::test]
+async fn internal_errors_have_no_decision_or_database_details() {
+    let path = std::env::temp_dir().join(format!("explanation-error-{}.db", uuid::Uuid::new_v4()));
+    let mut config = Config::in_memory();
+    config.database_url = format!("sqlite://{}?mode=rwc", path.display());
+    let server = common::start_with(config.clone()).await;
+    let pool = sqlx::SqlitePool::connect(&config.database_url)
+        .await
+        .unwrap();
+    sqlx::query("DROP TABLE pacticipants")
+        .execute(&pool)
+        .await
+        .unwrap();
+    let response = server
+        .client
+        .get(format!("{}{ROUTE}?{QUERY}", server.base_url))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(response.status(), 500);
+    assert_eq!(response.headers()["cache-control"], "no-store");
+    assert_eq!(
+        response.json::<Value>().await.unwrap(),
+        json!({"error":"internal error"})
+    );
+    pool.close().await;
+    std::fs::remove_file(path).unwrap();
+}

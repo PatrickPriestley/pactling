@@ -301,10 +301,12 @@ async fn load(db: &Db, q: &MatrixQuery) -> Result<ResolvedMatrix> {
         }
     }
     let mut rows = vec![];
-    let mut provenance = provenance::Provenance::default();
-    provenance.environment = match &q.environment {
-        Some(name) => db.find_environment_by_name(name).await?,
-        None => None,
+    let mut provenance = provenance::Provenance {
+        environment: match &q.environment {
+            Some(name) => db.find_environment_by_name(name).await?,
+            None => None,
+        },
+        ..Default::default()
     };
     if q.selectors.len() < 2 {
         let result = matrix_pair(db, q).await?;

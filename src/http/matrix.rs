@@ -49,23 +49,7 @@ pub async fn can_i_deploy(
     match m {
         Method::GET => {
             let q = MatrixQuery::parse(query.as_deref());
-            let mut errors = Map::new();
-            let selector = q.selectors.first();
-            if selector.is_none() {
-                errors.insert("pacticipant".into(), json!(["is missing"]));
-            }
-            if selector.is_none_or(|s| s.version.is_none()) {
-                errors.insert("version".into(), json!(["is missing"]));
-            }
-            if q.environment.is_none() && q.tag.is_none() {
-                errors.insert(
-                    "".into(),
-                    json!(["Must specify either an environment or a 'to' tag."]),
-                );
-            }
-            if !errors.is_empty() {
-                return Err(Error::Validation(Value::Object(errors)));
-            }
+            validate_can_i_deploy(&q)?;
             let result = service::decision(&state.db, &q).await?;
             Ok(Hal(document(&l, &result)).into_response())
         }
@@ -202,4 +186,26 @@ fn row_document(l: &Links, row: &Row, decision: &DecisionEvaluation) -> Value {
 fn base64_url(s: &str) -> String {
     use base64::Engine;
     base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(s)
+}
+
+/// Shared validation for the compatibility route and its extension.
+pub(crate) fn validate_can_i_deploy(q: &MatrixQuery) -> Result<()> {
+    let mut errors = Map::new();
+    let selector = q.selectors.first();
+    if selector.is_none() {
+        errors.insert("pacticipant".into(), json!(["is missing"]));
+    }
+    if selector.is_none_or(|s| s.version.is_none()) {
+        errors.insert("version".into(), json!(["is missing"]));
+    }
+    if q.environment.is_none() && q.tag.is_none() {
+        errors.insert(
+            "".into(),
+            json!(["Must specify either an environment or a 'to' tag."]),
+        );
+    }
+    if !errors.is_empty() {
+        return Err(Error::Validation(Value::Object(errors)));
+    }
+    Ok(())
 }
