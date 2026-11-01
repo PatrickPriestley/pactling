@@ -24,3 +24,6 @@ pub async fn style(method: Method) -> Response {
 pub mod links;
 
 pub mod pact;
+
+pub mod matrix;
+pub mod query;
