@@ -390,3 +390,44 @@ async fn ui_pact_database_error_is_safe() {
     pool.close().await;
     std::fs::remove_file(path).unwrap();
 }
+
+#[tokio::test]
+async fn ui_pact_optional_interactions_and_empty_notice() {
+    let s = start().await;
+    publish_document(
+        &s,
+        "C",
+        "P",
+        "1",
+        json!([{"description":"one","request":{},"response":{}}]),
+    )
+    .await;
+    let body = s
+        .client
+        .get(format!(
+            "{}/ui/pacts/provider/P/consumer/C/version/1",
+            s.base_url
+        ))
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+    assert!(!body.contains("No interactions are recorded."));
+    publish_document(&s, "C", "P", "2", json!(null)).await;
+    let body = s
+        .client
+        .get(format!(
+            "{}/ui/pacts/provider/P/consumer/C/version/2",
+            s.base_url
+        ))
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+    assert!(body.contains("No interactions are recorded."));
+    assert!(body.contains("Full contract"));
+}
