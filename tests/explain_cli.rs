@@ -7,7 +7,6 @@ use std::{
 };
 use tokio::process::Command as AsyncCommand;
 const BIN: &str = env!("CARGO_BIN_EXE_pactling");
-const ROUTE: &str = "/pactling/v1/can-i-deploy/explanation";
 
 fn clean(command: &mut Command) {
     for (name, _) in std::env::vars_os() {
@@ -139,7 +138,7 @@ impl Server {
                 json!({"consumer":{"name":"C"},"provider":{"name":"P"},"interactions":[]}),
             )
             .await;
-        self.put("/pacticipants/C/versions/1", json!({"branch":"main"}))
+        self.put("/pacticipants/C/branches/main/versions/1", json!({}))
             .await;
         self.client
             .put(format!("{}/pacticipants/C/versions/1/tags/dev", self.base))
@@ -521,4 +520,102 @@ async fn client_never_approves_malformed_or_inconsistent_protocol_responses() {
         let output=explain(&base,PIN,&[]).await;task.abort();
         assert_code(&output,3);
     }
+}
+
+#[tokio::test]
+async fn explain_help_hides_secret_environment_values_and_returns_zero() {
+    let output = explain(
+        "",
+        &["--help"],
+        &[
+            ("PACT_BROKER_BASE_URL", "https://broker.example"),
+            ("PACT_BROKER_USERNAME", "reader"),
+            ("PACT_BROKER_PASSWORD", "disposable-help-password"),
+            ("PACT_BROKER_TOKEN", "disposable-help-token"),
+        ],
+    )
+    .await;
+    assert_code(&output, 0);
+    let help = String::from_utf8(output.stdout).unwrap();
+    assert!(help.contains("--pacticipant") && help.contains("--main-branch"));
+    assert!(
+        !help.contains("disposable-help-password") && !help.contains("disposable-help-token"),
+        "{help}"
+    );
+}
+
+#[tokio::test]
+async fn explicit_connection_and_auth_flags_override_their_environment_values() {
+    let server = Server::start(true, false).await;
+    server.seed(Some(true)).await;
+    let mut basic = PIN.to_vec();
+    basic.extend([
+        "--broker-username",
+        "reader",
+        "--broker-password",
+        "disposable-read",
+    ]);
+    assert_code(
+        &explain(
+            &server.base,
+            &basic,
+            &[
+                ("PACT_BROKER_BASE_URL", "http://127.0.0.1:1"),
+                ("PACT_BROKER_USERNAME", "wrong-user"),
+                ("PACT_BROKER_PASSWORD", "wrong-password"),
+            ],
+        )
+        .await,
+        0,
+    );
+    let mut token = PIN.to_vec();
+    token.extend(["--broker-token", "disposable-token"]);
+    assert_code(
+        &explain(
+            &server.base,
+            &token,
+            &[("PACT_BROKER_TOKEN", "wrong-token")],
+        )
+        .await,
+        0,
+    );
+}
+
+#[tokio::test]
+async fn client_does_not_follow_redirects_to_a_success_document() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let hits = Arc::new(AtomicUsize::new(0));
+    let observed = hits.clone();
+    let router = axum::Router::new()
+        .route(
+            "/destination",
+            axum::routing::get(move || {
+                let observed = observed.clone();
+                async move {
+                    observed.fetch_add(1, Ordering::SeqCst);
+                    (
+                        [("content-type", "application/json")],
+                        include_str!("fixtures/pactling/explanations/allowed.json"),
+                    )
+                }
+            }),
+        )
+        .fallback(|| async {
+            (
+                axum::http::StatusCode::FOUND,
+                [("location", "/destination")],
+                "redirect",
+            )
+        });
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let base = format!("http://{}", listener.local_addr().unwrap());
+    let task = tokio::spawn(async move { axum::serve(listener, router).await.unwrap() });
+    let output = explain(&base, PIN, &[]).await;
+    task.abort();
+    assert_code(&output, 3);
+    assert_eq!(
+        hits.load(Ordering::SeqCst),
+        0,
+        "redirect must not be followed"
+    );
 }
