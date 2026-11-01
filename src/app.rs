@@ -23,6 +23,7 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
         .route("/", any(http::index::index))
         .route("/ui/", any(http::ui::index::index))
         .route("/ui/style.css", any(http::ui::style))
+        .route("/ui/pacts/provider/{provider}/consumer/{consumer}/version/{version}", any(http::ui::pact::pact))
         .route("/pacticipants", any(http::pacticipants::collection))
         .route("/pacticipants/{name}", any(http::pacticipants::resource))
         .route(

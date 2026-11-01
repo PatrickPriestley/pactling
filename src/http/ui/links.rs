@@ -1,7 +1,21 @@
 //! HTML links never turn untrusted schemes into executable navigation.
 use maud::{Markup, html};
 
-pub fn link(_href: &str, label: &str) -> Markup {
+pub fn link(href: &str, label: &str) -> Markup {
+    if href
+        .chars()
+        .any(|c| c.is_control() || c.is_whitespace() || c == '\\')
+    {
+        return html! { (label) };
+    }
+    if href.starts_with('/') && !href.starts_with("//") {
+        return html! { a href=(href) { (label) } };
+    }
+    if let Ok(url) = reqwest::Url::parse(href)
+        && matches!(url.scheme(), "http" | "https")
+    {
+        return html! { a href=(href) rel="noopener noreferrer" { (label) } };
+    }
     html! { (label) }
 }
 
