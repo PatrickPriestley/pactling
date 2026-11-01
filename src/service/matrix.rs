@@ -1,6 +1,7 @@
 //! The matrix and can-i-deploy: query grammar, row resolution, verdict and the reason
 //! strings the CLI prints. Strings and rules follow the Phase 4 capture in the plan.
 pub mod evaluation;
+pub mod provenance;
 #[cfg(test)]
 use evaluation::apply_latestby;
 use evaluation::{Cause, DecisionEvaluation, ResolvedMatrix, VersionDetails};
@@ -212,8 +213,15 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
 
 /// Materialize all decision evidence and rendering decorations before leaving the snapshot.
 pub async fn resolve(db: &Db, q: &MatrixQuery) -> Result<ResolvedMatrix> {
+    let mut context = provenance::EvaluationContext {
+        id: uuid::Uuid::new_v4().to_string(),
+        started_at: chrono::Utc::now().to_rfc3339(),
+        evaluated_at: String::new(),
+    };
     let snapshot = db.begin_read().await?;
-    let resolved = load(&snapshot, q).await?;
+    let mut resolved = load(&snapshot, q).await?;
+    context.evaluated_at = chrono::Utc::now().to_rfc3339();
+    resolved.context = context;
     snapshot.commit().await?;
     Ok(resolved)
 }
@@ -293,8 +301,16 @@ async fn load(db: &Db, q: &MatrixQuery) -> Result<ResolvedMatrix> {
         }
     }
     let mut rows = vec![];
+    let mut provenance = provenance::Provenance {
+        environment: match &q.environment {
+            Some(name) => db.find_environment_by_name(name).await?,
+            None => None,
+        },
+        ..Default::default()
+    };
     if q.selectors.len() < 2 {
         let result = matrix_pair(db, q).await?;
+        add_provenance(db, q, &mut provenance, &result, vec![0]).await?;
         notices.extend(result.notices);
         rows.extend(result.rows);
     } else {
@@ -308,18 +324,130 @@ async fn load(db: &Db, q: &MatrixQuery) -> Result<ResolvedMatrix> {
                     ..q.clone()
                 };
                 let result = matrix_pair(db, &pair).await?;
+                add_provenance(db, q, &mut provenance, &result, vec![i, j]).await?;
                 notices.extend(result.notices);
                 rows.extend(result.rows);
             }
         }
     }
+    for (index, requested) in q.selectors.iter().enumerate() {
+        let participant = db
+            .find_pacticipant(&requested.pacticipant)
+            .await?
+            .expect("validated participant");
+        let versions = resolve_selector(db, &participant, requested).await?.0;
+        let missing = notices
+            .iter()
+            .any(|n| matches!(&n.cause, Cause::MissingSelector(s) if s == requested));
+        provenance.selectors.push(provenance::SelectorResolution {
+            index,
+            requested: requested.clone(),
+            versions,
+            missing,
+        });
+    }
     let versions = load_version_details(db, &rows).await?;
     Ok(ResolvedMatrix {
+        context: provenance::EvaluationContext::default(),
+        provenance,
         query: q.clone(),
         rows,
         notices,
         versions,
     })
+}
+
+/// Capture counterpart identity from the selected direction, not the Ruby-null side.
+async fn add_provenance(
+    db: &Db,
+    q: &MatrixQuery,
+    out: &mut provenance::Provenance,
+    selected: &SelectedRows,
+    mut selector_indices: Vec<usize>,
+) -> Result<()> {
+    use provenance::{
+        Candidate, ExcludedEvidence, ExclusionKind, MembershipSource, RowProvenance, merge_indices,
+    };
+    selector_indices.sort_unstable();
+    for (row, excluded) in selected
+        .rows
+        .iter()
+        .map(|r| (r, false))
+        .chain(selected.excluded.iter().map(|r| (r, true)))
+    {
+        // Multi-selector pairs are consumer-directed; single-selector provider queries
+        // infer a consumer counterpart. The provider candidate remains on Row for actions.
+        let candidate = if q.selectors.len() == 1
+            && row.consumer.pacticipant.name != q.selectors[0].pacticipant
+        {
+            row.consumer.version.as_ref()
+        } else {
+            row.provider_candidate.as_ref()
+        };
+        let mut candidate_indices = vec![];
+        if let Some(version) = candidate {
+            let index = match out
+                .candidates
+                .iter()
+                .position(|c| c.version.id == version.id)
+            {
+                Some(index) => {
+                    merge_indices(
+                        &mut out.candidates[index].selector_indices,
+                        &selector_indices,
+                    );
+                    index
+                }
+                None => {
+                    let mut sources = vec![];
+                    // Environment is selection context only for a single selector. Explicit
+                    // counterpart selectors take precedence, so do not claim membership caused them.
+                    if q.selectors.len() == 1
+                        && let Some(env) = &out.environment
+                    {
+                        sources.extend(
+                            db.deployments_of_version(version.id)
+                                .await?
+                                .into_iter()
+                                .filter(|v| v.environment_id == env.id && v.currently_deployed)
+                                .map(MembershipSource::Deployed),
+                        );
+                        sources.extend(
+                            db.releases_of_version(version.id)
+                                .await?
+                                .into_iter()
+                                .filter(|v| v.environment_id == env.id && v.currently_supported)
+                                .map(MembershipSource::Released),
+                        );
+                    }
+                    let index = out.candidates.len();
+                    out.candidates.push(Candidate {
+                        version: version.clone(),
+                        selector_indices: selector_indices.clone(),
+                        sources,
+                    });
+                    index
+                }
+            };
+            candidate_indices.push(index);
+        }
+        if excluded {
+            out.excluded.push(ExcludedEvidence {
+                kind: ExclusionKind::UnverifiedCandidate,
+                row: row.clone(),
+                candidate_indices,
+                selector_indices: selector_indices.clone(),
+                selected_row: None,
+            });
+        } else {
+            out.rows.push(RowProvenance {
+                candidate_indices,
+                selector_indices: selector_indices.clone(),
+                ignore_indices: vec![],
+            });
+        }
+    }
+    Ok(())
 }
 
 type VersionDescription = Box<dyn Fn(&Version) -> String + Send + Sync>;
@@ -445,6 +573,7 @@ fn missing_selector_notice(subject: &Pacticipant, selector: &Selector) -> String
 
 struct SelectedRows {
     rows: Vec<Row>,
+    excluded: Vec<Row>,
     notices: Vec<Notice>,
 }
 
@@ -514,6 +643,7 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
     }
 
     let mut rows: Vec<Row> = vec![];
+    let mut excluded = vec![];
     if subject_versions.is_empty() {
         // An unconstrained provider may have publications but no provider versions
         // yet. Its opposite direction supplies the unknown row, not a missing pin.
@@ -524,7 +654,11 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                 text: missing_selector_notice(subject, subject_selector),
             });
         }
-        return Ok(SelectedRows { rows, notices });
+        return Ok(SelectedRows {
+            rows,
+            notices,
+            excluded,
+        });
     }
     for sv in &subject_versions {
         let sdesc = subject_description(sv);
@@ -559,6 +693,7 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                     // Verified: only the versions in the environment that verified the pact
                     // are rows; when none did, a single blank row names the newest one.
                     let mut selected = vec![];
+                    let mut unverified = vec![];
                     for id in &ids {
                         let pv = db.find_version_by_id(*id).await?.expect("exists");
                         let verification = db
@@ -566,11 +701,37 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                             .await?;
                         if verification.is_some() {
                             selected.push((pv, verification));
+                        } else {
+                            unverified.push(pv);
                         }
                     }
                     if selected.is_empty() && !ids.is_empty() {
                         let pv = db.find_version_by_id(ids[0]).await?.expect("exists");
                         selected.push((pv, None));
+                    }
+                    for pv in unverified {
+                        if selected.iter().any(|(v, _)| v.id == pv.id) {
+                            continue;
+                        }
+                        excluded.push(Row {
+                            provider_candidate: Some(pv.clone()),
+                            consumer: Side {
+                                pacticipant: subject.clone(),
+                                version: Some(sv.clone()),
+                                description: sdesc.clone(),
+                            },
+                            provider: Side {
+                                pacticipant: provider.clone(),
+                                version: None,
+                                description: format!(
+                                    "{version_description} of {} currently in {} ({})",
+                                    provider.name, e.name, pv.number
+                                ),
+                            },
+                            pact: pact.clone(),
+                            verification: None,
+                            ignored,
+                        });
                     }
                     for (pv, verification) in selected {
                         rows.push(Row {
@@ -675,6 +836,27 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                             .map(|(pv, d, vf)| ((pv.clone(), d.clone()), Some(vf)))
                             .collect()
                     };
+                    for (pv, description) in versions {
+                        if selected.iter().any(|((v, _), _)| v.id == pv.id) {
+                            continue;
+                        }
+                        excluded.push(Row {
+                            provider_candidate: Some(pv.clone()),
+                            consumer: Side {
+                                pacticipant: subject.clone(),
+                                version: Some(sv.clone()),
+                                description: sdesc.clone(),
+                            },
+                            provider: Side {
+                                pacticipant: provider.clone(),
+                                version: None,
+                                description: description.clone(),
+                            },
+                            pact: pact.clone(),
+                            verification: None,
+                            ignored,
+                        });
+                    }
                     for ((pv, description), verification) in selected {
                         rows.push(Row {
                             provider_candidate: Some(pv.clone()),
@@ -848,7 +1030,11 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
             }
         }
     }
-    Ok(SelectedRows { rows, notices })
+    Ok(SelectedRows {
+        rows,
+        notices,
+        excluded,
+    })
 }
 
 #[cfg(test)]

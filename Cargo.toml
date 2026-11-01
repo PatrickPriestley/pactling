@@ -28,3 +28,4 @@ regex = "1.13.1"
 reqwest = { version = "0.13", features = ["json"] }
 
 [dev-dependencies]
+jsonschema = { version = "=0.60.2", default-features = false }

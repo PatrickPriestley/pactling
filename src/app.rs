@@ -168,6 +168,7 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
         .route("/matrix", any(http::matrix::matrix))
         .route("/matrix/provider/{provider}/consumer/{consumer}", any(http::matrix::integration))
         .route("/can-i-deploy", any(http::matrix::can_i_deploy))
+        .route("/pactling/v1/can-i-deploy/explanation", any(http::deployment_explanations::explanation))
         .fallback(|| async { Error::NoRoute })
         .layer(middleware::from_fn_with_state(creds, http::auth::require))
         .layer(SetResponseHeaderLayer::overriding(
