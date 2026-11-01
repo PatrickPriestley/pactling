@@ -352,3 +352,25 @@ async fn read_snapshot_does_not_block_deployment_and_sees_all_before_or_after() 
         .unwrap();
     std::fs::remove_file(path).unwrap();
 }
+
+#[tokio::test]
+async fn read_snapshot_cannot_escape_through_raw_pool_or_migrations() {
+    let db = memory().await;
+    let read = db.begin_read().await.unwrap();
+    let raw_pool = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let _ = read.pool();
+    }));
+    assert!(
+        raw_pool.is_err(),
+        "read handle must not expose its writable backing pool"
+    );
+    let migration = tokio::time::timeout(Duration::from_millis(100), read.migrate())
+        .await
+        .expect("migration rejection must not reacquire the pool");
+    assert!(
+        matches!(migration, Err(sqlx::Error::Protocol(_))),
+        "migrations must not bypass the read connection"
+    );
+    read.commit().await.unwrap();
+    assert_writable(&db, "2").await;
+}
