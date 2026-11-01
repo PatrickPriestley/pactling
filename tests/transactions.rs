@@ -25,6 +25,23 @@ fn publish_body(version: &str, tag: &str, content: &Value) -> Value {
 #[tokio::test]
 async fn a_refused_concurrent_publish_leaves_none_of_its_metadata() {
     let s = common::start().await;
+    concurrent_publishes_leave_one_winner(&s).await;
+}
+
+/// The same race on a file database with several pooled connections, where a deferred
+/// transaction would fail with "database is locked" on lock upgrade instead of waiting.
+#[tokio::test]
+async fn concurrent_publishes_on_a_file_database_wait_for_each_other() {
+    let dir = std::env::temp_dir().join(format!("pactling-tx-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let mut config = pactling::config::Config::in_memory();
+    config.database_url = format!("sqlite://{}/broker.db?mode=rwc", dir.display());
+    let s = common::start_with(config).await;
+    concurrent_publishes_leave_one_winner(&s).await;
+    std::fs::remove_dir_all(&dir).ok();
+}
+
+async fn concurrent_publishes_leave_one_winner(s: &common::TestServer) {
     for i in 0..10 {
         let version = format!("r{i}");
         let publish = |tag: &'static str, status: u16| {
