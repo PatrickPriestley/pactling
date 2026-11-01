@@ -645,10 +645,13 @@ cap5 GET_triggered_webhook_logs_unknown "${J[@]}" "$B/triggered-webhooks/nope/lo
 cli5 publish-same-3.0.1 publish "$TMP/p3" --consumer-app-version 3.0.1 --branch main
 sleep 30
 cap5 GET_triggered_webhooks_3.0.1 "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/version/3.0.1/triggered-webhooks
+cap5 GET_pact_webhooks_status_after_republish "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/webhooks/status
 BROKER=$B PROVIDER_VERSION=2 PROVIDER_BRANCH=main SELECTORS='[{"branch":"main"}]' node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
 sleep 30
 VR=$(curl -s "$B/pacts/provider/Provider/consumer/Consumer/latest/verification-results/latest" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["_links"]["self"]["href"])')
 cap5 GET_verification_triggered_webhooks_success "${J[@]}" "$VR/triggered-webhooks"
+i=0; for u in $(python3 -c 'import json; d=json.load(open("'"$F5"'/GET_verification_triggered_webhooks_success.json")); print(" ".join(t["_links"]["pb:logs"]["href"].split("/")[-2] for t in d["_embedded"]["triggeredWebhooks"]))'); do
+  cap5 "GET_verification_triggered_webhook_logs_$i" "${J[@]}" "$B/triggered-webhooks/$u/logs"; i=$((i+1)); done
 BROKER=$B PROVIDER_VERSION=3 PROVIDER_BRANCH=main FAIL=true SELECTORS='[{"branch":"main"}]' node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
 sleep 30
 VR=$(curl -s "$B/pacts/provider/Provider/consumer/Consumer/latest/verification-results/latest" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["_links"]["self"]["href"])')
@@ -664,6 +667,16 @@ cap5 GET_triggered_webhooks_3.0.2 "${J[@]}" $B/pacts/provider/Provider/consumer/
 u=$(python3 -c 'import json; d=json.load(open("'"$F5"'/GET_triggered_webhooks_3.0.2.json")); print([t["_links"]["pb:logs"]["href"].split("/")[-2] for t in d["_embedded"]["triggeredWebhooks"] if t["status"]!="success"][0])')
 cap5 GET_triggered_webhook_logs_failing "${J[@]}" "$B/triggered-webhooks/$u/logs"
 cap5 GET_pact_webhooks_status_retrying "${J[@]}" $B/pacts/provider/Provider/consumer/Consumer/webhooks/status
+
+echo "phase 5: publish notices without a matching webhook"
+mkdir -p "$TMP/other"; python3 - "$PACT" "$TMP/other/other-otherp.json" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1])); d["consumer"]["name"] = "Other"; d["provider"]["name"] = "OtherP"
+json.dump(d, open(sys.argv[2], "w"), indent=2)
+PY
+cli5 publish-no-webhooks publish "$TMP/other" --consumer-app-version 1 --branch main
+cap5 POST_webhooks_verification_only "${J[@]}" -X POST -d '{"provider":{"name":"OtherP"},"events":[{"name":"provider_verification_published"}],"request":{"method":"POST","url":"'"$HOOK"'/hook/otherp"}}' $B/webhooks
+cli5 publish-no-webhook-for-event publish "$TMP/other" --consumer-app-version 2 --branch main
 
 echo "phase 5: delete"
 cap5 DELETE_webhook -X DELETE "$B/webhooks/$W_BAD"
