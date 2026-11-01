@@ -1,0 +1,284 @@
+<!DOCTYPE html><html style="--kebab-url: url('/images/kebab-horizontal.svg'); --arrow-switch-url: url('/images/arrow-switch.svg'); --alert-url: url('/images/alert.svg'); --copy-url: url('/images/copy.svg'); --check-url: url('/images/check.svg');"><head>
+<title>UiCheckout / UiPayments</title>
+<link href="/images/favicon.ico" rel="shortcut icon" type="image/x-icon">
+<link href="/css/bootstrap.min.css?v=2.121.2" rel="stylesheet">
+<script src="/javascripts/jquery-3.5.1.min.js?v=2.121.2" type="text/javascript"></script>
+<script src="/js/bootstrap.bundle.min.js?v=2.121.2" type="text/javascript"></script>
+<script>
+  const BASE_URL = '';
+</script>
+</head>
+<body>
+<link href="/stylesheets/index.css?v=2.121.2" rel="stylesheet">
+<link href="/stylesheets/material-menu.css?v=2.121.2" rel="stylesheet">
+<link href="/stylesheets/material-icon.css?v=2.121.2" rel="stylesheet">
+<link href="/stylesheets/jquery-confirm.min.css?v=2.121.2" rel="stylesheet">
+<script src="/javascripts/jquery.tablesorter.min.js?v=2.121.2" type="text/javascript"></script>
+<script src="/javascripts/material-menu.js?v=2.121.2" type="text/javascript"></script>
+<script src="/javascripts/index.js?v=2.121.2" type="text/javascript"></script>
+<script src="/javascripts/clipboard.js?v=2.121.2" type="text/javascript"></script>
+<script src="/javascripts/jquery-confirm.min.js?v=2.121.2" type="text/javascript"></script>
+<script src="/javascripts/set-css-asset-base-url.js?v=2.121.2" type="text/javascript"></script>
+
+<div class="container">
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb">
+<li class="breadcrumb-item">
+<a href="/">
+Home
+</a>
+</li>
+<li aria-current="page" class="breadcrumb-item active">
+Pact publications
+</li>
+</ol>
+</nav>
+
+<div class="mt-4">
+<div class="row">
+<div class="col">
+<div class="row my-0">
+<div class="col my-0" style="text-transform: uppercase; font-size: 70%">
+Consumer
+</div>
+</div>
+<div class="row my-0">
+<div class="col my-0">
+<h2 class="page-header" style="margin-top: 0">
+UiCheckout
+</h2>
+</div>
+</div>
+</div>
+<div class="col">
+<div class="row">
+<div class="col my-0" style="text-transform: uppercase; font-size: 70%">
+Provider
+</div>
+</div>
+<div class="row my-0">
+<div class="col my-0">
+<h2 class="page-header" style="margin-top: 0">
+UiPayments
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+<form>
+<div class="mt-4 mb-2">
+<label class="mr-2">
+View pacts by:
+</label>
+<div class="form-check form-check-inline">
+<input checked="" class="form-check-input" id="by_branch" name="view" type="radio" value="branch" style="">
+<label class="form-check-label" for="by_branch">branches</label>
+</div>
+<div class="form-check form-check-inline">
+<input class="form-check-input" id="by_tag" name="view" type="radio" value="tag" style="">
+<label class="form-check-label" for="by_tag">tags</label>
+</div>
+<div class="form-check form-check-inline">
+<input class="form-check-input" id="by_environment" name="view" type="radio" value="environment" style="">
+<label class="form-check-label" for="by_environment">environments</label>
+</div>
+<div class="form-check form-check-inline">
+<input class="form-check-input" id="by_all" name="view" type="radio" value="all" style="">
+<label class="form-check-label" for="by_all">no filter</label>
+</div>
+</div>
+<input name="page" type="hidden" value="1" style="">
+<input name="pageSize" type="hidden" value="30" style="">
+</form>
+<table class="table table-bordered table-striped tablesorter tablesorter-default" id="relationships" role="grid">
+<thead>
+<tr class="tablesorter-headerRow" role="row">
+<th class="consumer-version-number tablesorter-header tablesorter-headerUnSorted" data-column="0" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="relationships" unselectable="on" aria-sort="none" aria-label="
+ConsumerVersion
+
+: No sort applied, activate to apply an ascending sort" style="user-select: none;"><div class="tablesorter-header-inner">
+Consumer<br>Version
+<span class="sort-icon relationships-sort"></span>
+</div></th>
+<th class="provider-version-number tablesorter-header tablesorter-headerUnSorted" data-column="1" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="relationships" unselectable="on" aria-sort="none" aria-label="
+ProviderVersion
+
+: No sort applied, activate to apply an ascending sort" style="user-select: none;"><div class="tablesorter-header-inner">
+Provider<br>Version
+<span class="sort-icon relationships-sort"></span>
+</div></th>
+<th class="pact tablesorter-header tablesorter-headerUnSorted" style="width: 40px; user-select: none;" data-column="2" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="relationships" unselectable="on" aria-sort="none" aria-label=": No sort applied, activate to apply an ascending sort"><div class="tablesorter-header-inner"></div></th>
+<th data-column="3" class="tablesorter-header tablesorter-headerUnSorted" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="relationships" unselectable="on" aria-sort="none" aria-label="
+Published
+
+: No sort applied, activate to apply an ascending sort" style="user-select: none;"><div class="tablesorter-header-inner">
+Published
+<span class="sort-icon relationships-sort"></span>
+</div></th>
+<th data-column="4" class="tablesorter-header tablesorter-headerUnSorted" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="relationships" unselectable="on" aria-sort="none" aria-label="
+Webhookstatus
+: No sort applied, activate to apply an ascending sort" style="user-select: none;"><div class="tablesorter-header-inner">
+Webhook<br>status
+</div></th>
+<th data-column="5" class="tablesorter-header tablesorter-headerUnSorted" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="relationships" unselectable="on" aria-sort="none" aria-label="
+Lastverified
+
+: No sort applied, activate to apply an ascending sort" style="user-select: none;"><div class="tablesorter-header-inner">
+Last<br>verified
+<span class="sort-icon relationships-sort"></span>
+</div></th>
+<th data-column="6" class="tablesorter-header tablesorter-headerUnSorted" tabindex="0" scope="col" role="columnheader" aria-disabled="false" aria-controls="relationships" unselectable="on" aria-sort="none" aria-label=": No sort applied, activate to apply an ascending sort" style="user-select: none;"><div class="tablesorter-header-inner"></div></th>
+</tr>
+</thead>
+<tbody aria-live="polite" aria-relevant="all">
+<tr data-consumer-name="UiCheckout" data-integration-url="/integrations/provider/UiPayments/consumer/UiCheckout" data-pact-branches="[{&quot;name&quot;:&quot;main&quot;,&quot;deletionUrl&quot;:&quot;/pacts/provider/UiPayments/consumer/UiCheckout/branch/main&quot;}]" data-pact-tags="[]" data-pact-versions-url="/pacts/provider/UiPayments/consumer/UiCheckout/versions" data-provider-name="UiPayments" data-view="branch">
+<td class="consumer-version-number" data-text="203">
+<div class="clippable" data-clippable="3">
+3
+<button class="clippy invisible" title="Copy to clipboard">
+<span class="copy-icon"></span>
+</button>
+</div>
+<div class="clippable" data-clippable="main">
+<div class="tag badge badge-dark" data-placement="right" data-toggle="tooltip" title="" data-original-title="This is the latest pact from branch &quot;main&quot;.">
+branch: main
+</div>
+<button class="clippy invisible" title="Copy to clipboard">
+<span class="copy-icon"></span>
+</button>
+</div>
+</td>
+<td class="provider-version-number">
+<div class="clippable" data-clippable="2">
+2
+<button class="clippy invisible" title="Copy to clipboard">
+<span class="copy-icon"></span>
+</button>
+</div>
+</td>
+<td class="pact">
+<span class="pact">
+<a href="/pacts/provider/UiPayments/consumer/UiCheckout/version/3" title="View pact"><svg height="1000" width="714.286" viewBox="0 0 1000 714.286" xmlns="http://www.w3.org/2000/svg"><path d="M571.392 660.736v35.712q0 7.812 -5.022 12.834t-12.834 5.022h-392.832q-7.812 0 -12.834 -5.022t-5.022 -12.834v-35.712q0 -7.812 5.022 -12.834t12.834 -5.022h392.832q7.812 0 12.834 5.022t5.022 12.834zm0 -142.848v35.712q0 7.812 -5.022 12.834t-12.834 5.022h-392.832q-7.812 0 -12.834 -5.022t-5.022 -12.834v-35.712q0 -7.812 5.022 -12.834t12.834 -5.022h392.832q7.812 0 12.834 5.022t5.022 12.834zm-499.968 339.264h571.392v-428.544h-232.128q-22.32 0 -37.944 -15.624t-15.624 -37.944v-232.128h-285.696v714.24zm357.12 -499.968h209.808q-5.58 -16.182 -12.276 -22.878l-174.654 -174.654q-6.696 -6.696 -22.878 -12.276v209.808zm285.696 17.856v499.968q0 22.32 -15.624 37.944t-37.944 15.624h-607.104q-22.32 0 -37.944 -15.624t-15.624 -37.944v-749.952q0 -22.32 15.624 -37.944t37.944 -15.624h357.12q22.32 0 49.104 11.16t42.408 26.784l174.096 174.096q15.624 15.624 26.784 42.408t11.16 49.104z"></path></svg></a>
+</span>
+<span class="pact-matrix">
+<a href="/matrix?q%5B%5D%5Bpacticipant%5D=UiCheckout&amp;q%5B%5D%5Bversion%5D=3&amp;q%5B%5D%5Bpacticipant%5D=UiPayments&amp;latestby=cvpv" title="View pact matrix"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
+<svg xmlns="http://www.w3.org/2000/svg" height="1000" width="714.286" viewBox="0 0 1000 714.286">
+  <path style="fill:none;stroke-width:69.99996948;stroke-miterlimit:4;stroke-dasharray:none" d="M 58.737488,108.822 H 648.14627 c 13.15058,0 23.7375,10.58692 23.7375,23.7375 v 737.27957 c 0,13.15058 -10.58692,23.73751 -23.7375,23.73751 H 58.737488 c -13.150577,0 -23.737503,-10.58693 -23.737503,-23.73751 V 132.5595 c 0,-13.15058 10.586926,-23.7375 23.737503,-23.7375 z" id="rect5097"></path>
+  <path d="M 329.77344 325.21094 C 322.19921 325.21094 316.10156 331.30858 316.10156 338.88281 L 316.10156 435 L 196.18555 435 L 196.18555 345.24023 C 196.18555 337.666 190.0879 331.56836 182.51367 331.56836 L 159.85742 331.56836 C 152.28319 331.56836 146.18555 337.666 146.18555 345.24023 L 146.18555 435 L 41.455078 435 C 33.880859 435 27.783203 441.09766 27.783203 448.67188 L 27.783203 471.32812 C 27.783203 478.90234 33.880859 485 41.455078 485 L 146.18555 485 L 146.18555 575 L 37.21875 575 C 29.644531 575 23.546875 581.09766 23.546875 588.67188 L 23.546875 611.32812 C 23.546875 618.90234 29.644531 625 37.21875 625 L 146.18555 625 L 146.18555 715 L 38.277344 715 C 30.703125 715 24.605469 721.09766 24.605469 728.67188 L 24.605469 751.32812 C 24.605469 758.90234 30.703125 765 38.277344 765 L 146.18555 765 L 146.18555 866.625 C 146.18555 874.19923 152.28319 880.29687 159.85742 880.29688 L 182.51367 880.29688 C 190.0879 880.29687 196.18555 874.19923 196.18555 866.625 L 196.18555 765 L 316.10156 765 L 316.10156 860.26953 C 316.10156 867.84376 322.19921 873.94141 329.77344 873.94141 L 352.42969 873.94141 C 360.00392 873.94141 366.10156 867.84376 366.10156 860.26953 L 366.10156 765 L 465.95898 765 C 473.5332 765 479.63086 758.90234 479.63086 751.32812 L 479.63086 728.67188 C 479.63086 721.09766 473.5332 715 465.95898 715 L 366.10156 715 L 366.10156 625 L 464.90039 625 C 472.47462 625 478.57227 618.90234 478.57227 611.32812 L 478.57227 588.67188 C 478.57227 581.09766 472.47462 575 464.90039 575 L 366.10156 575 L 366.10156 485 L 469.13672 485 C 476.71094 485 482.80859 478.90234 482.80859 471.32812 L 482.80859 448.67188 C 482.80859 441.09766 476.71094 435 469.13672 435 L 366.10156 435 L 366.10156 338.88281 C 366.10156 331.30858 360.00392 325.21094 352.42969 325.21094 L 329.77344 325.21094 z M 196.18555 485 L 316.10156 485 L 316.10156 575 L 196.18555 575 L 196.18555 485 z M 196.18555 625 L 316.10156 625 L 316.10156 715 L 196.18555 715 L 196.18555 625 z " transform="matrix(1.3999994,0,0,1.3999994,0,-342.85671)" id="rect5195"></path>
+</svg>
+</a>
+</span>
+</td>
+<td data-text="1793565046">
+3 minutes ago
+</td>
+<td class="table-">
+<a href="/hal-browser/browser.html#/webhooks/provider/UiPayments/consumer/UiCheckout">
+Create
+</a>
+</td>
+<td class="table-danger" data-placement="left" data-toggle="tooltip" title="" data-original-title="Verification by UiPayments (2) failed">
+<div>
+3 minutes ago
+</div>
+</td>
+<td>
+<span aria-hidden="" class="integration-settings kebab-horizontal"></span>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="pagination text-center"><nav class="paginationjs"><div class="paginationjs-pages"><ul class="pagination"><li class="paginationjs-prev disabled"><a>«</a></li><li class="paginationjs-page J-paginationjs-page active" data-num="1"><a>1</a></li><li class="paginationjs-next disabled"><a>»</a></li></ul></div><div class="nav-footer">1 of 1 pacts</div></nav></div>
+<script src="/javascripts/pagination.js?v=2.121.2" type="text/javascript"></script>
+<script>
+  const PAGE_NUMBER = 1;
+  const PAGE_SIZE = 30;
+  const TOTAL_NUMBER = 1
+  const CURRENT_PAGE_SIZE = 1
+  
+  $(document).ready(function(){
+    function createPageLink(pageNumber, pageSize) {
+      const url = new URL(window.location)
+      url.searchParams.set('page', pageNumber)
+      url.searchParams.set('pageSize', pageSize)
+      return url.toString()
+    }
+  
+    function createFooter(currentPage, totalPage, totalNumber) {
+      return `<div class='nav-footer'>${CURRENT_PAGE_SIZE} of ${totalNumber} pacts</div>`
+    }
+  
+    $('div.pagination').pagination({
+        dataSource: [],
+        totalNumber: TOTAL_NUMBER,
+        pageNumber: PAGE_NUMBER,
+        pageSize: PAGE_SIZE,
+        pageRange: 2,
+        pageLink: createPageLink,
+        ulClassName: 'pagination',
+        footer: createFooter
+    })
+  });
+</script>
+
+</div>
+<script>
+  $(function(){
+    $("#relationships").tablesorter();
+  });
+  
+  $(document).ready(function(){
+    initializeClipper(".clippable");
+  
+    $("span.pact a").load("/images/doc-text.svg");
+    $("span.pact-matrix a").load("/images/doc-matrix.svg");
+    $('td[data-toggle="tooltip"]').each(function(index, td){
+      //appended tooltip div screws up table if it's appended after a
+      //td, so need to append it to a div
+      $(td).tooltip({ container: $(td).first() });
+    });
+  
+    // https://www.w3schools.com/bootstrap/bootstrap_ref_js_tooltip.asp
+  
+    $('div[data-toggle="tooltip"]').each(function(index, div){
+      $(div).tooltip()
+    });
+  
+  });
+  
+  $(".reset-search").on("click", function() {
+    const url = new URL(window.location)
+    url.searchParams.delete('search')
+    window.location = url.toString();
+  })
+  
+  $(".submit-search").on("click", function() {
+    search = $("#search").val();
+    const url = new URL(window.location)
+    url.searchParams.set('search', search)
+    window.location = url.toString();
+  })
+  
+  $(".search").keypress(function(event) {
+    const enterKeyCode = 13;
+  
+    const key = event.which;
+    if (key === enterKeyCode) {
+      event.preventDefault();
+      search = $("#search").val();
+      const url = new URL(window.location)
+      url.searchParams.set('search', search)
+      window.location = url.toString();
+    }
+  })
+  
+  $("[name*='view']").change(function(event){
+    $("[name='page']").attr('disabled','disabled');
+    $(this.form).submit()
+  })
+</script>
+
+
+
+</body></html>

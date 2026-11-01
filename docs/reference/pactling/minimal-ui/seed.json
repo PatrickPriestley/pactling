@@ -1,0 +1,174 @@
+[
+  {
+    "method": "PUT",
+    "path": "/pacts/provider/UiPayments/consumer/UiCheckout/version/1",
+    "body": {
+      "consumer": {
+        "name": "UiCheckout"
+      },
+      "provider": {
+        "name": "UiPayments"
+      },
+      "interactions": [
+        {
+          "description": "an order lookup",
+          "providerState": "order 42 exists",
+          "request": {
+            "method": "GET",
+            "path": "/orders/42"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 42,
+              "state": "ready"
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "pactSpecification": {
+          "version": "2.0.0"
+        }
+      }
+    },
+    "status": 201
+  },
+  {
+    "method": "PUT",
+    "path": "/pacticipants/UiCheckout/branches/main/versions/1",
+    "body": {},
+    "status": 201
+  },
+  {
+    "method": "POST",
+    "path": "/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/8a7652bc64a256594dac3fff8a01d5b373e63724/verification-results",
+    "body": {
+      "providerApplicationVersion": "2",
+      "success": true,
+      "providerVersionBranch": "main"
+    },
+    "status": 201
+  },
+  {
+    "method": "PUT",
+    "path": "/pacts/provider/UiPayments/consumer/UiCheckout/version/2",
+    "body": {
+      "consumer": {
+        "name": "UiCheckout"
+      },
+      "provider": {
+        "name": "UiPayments"
+      },
+      "interactions": [
+        {
+          "description": "an order lookup",
+          "providerState": "order 42 exists",
+          "request": {
+            "method": "GET",
+            "path": "/orders/42"
+          },
+          "response": {
+            "status": 201,
+            "body": {
+              "id": 42,
+              "state": "ready"
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "pactSpecification": {
+          "version": "2.0.0"
+        }
+      }
+    },
+    "status": 201
+  },
+  {
+    "method": "PUT",
+    "path": "/pacticipants/UiCheckout/branches/main/versions/2",
+    "body": {},
+    "status": 201
+  },
+  {
+    "method": "POST",
+    "path": "/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/4e635887b3eaf954e1addb3d89dac3a4e6abe9e3/verification-results",
+    "body": {
+      "providerApplicationVersion": "2",
+      "success": false,
+      "providerVersionBranch": "main"
+    },
+    "status": 201
+  },
+  {
+    "method": "PUT",
+    "path": "/pacts/provider/UiPayments/consumer/UiCheckout/version/3",
+    "body": {
+      "consumer": {
+        "name": "UiCheckout"
+      },
+      "provider": {
+        "name": "UiPayments"
+      },
+      "interactions": [
+        {
+          "description": "an order lookup",
+          "providerState": "order 42 exists",
+          "request": {
+            "method": "GET",
+            "path": "/orders/42"
+          },
+          "response": {
+            "status": 202,
+            "body": {
+              "id": 42,
+              "state": "ready"
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "pactSpecification": {
+          "version": "2.0.0"
+        }
+      }
+    },
+    "status": 201
+  },
+  {
+    "method": "PUT",
+    "path": "/pacticipants/UiCheckout/branches/main/versions/3",
+    "body": {},
+    "status": 201
+  },
+  {
+    "method": "PUT",
+    "path": "/pacts/provider/UiInventory/consumer/UiOrders/version/1",
+    "body": {
+      "consumer": {
+        "name": "UiOrders"
+      },
+      "provider": {
+        "name": "UiInventory"
+      },
+      "interactions": []
+    },
+    "status": 201
+  },
+  {
+    "method": "POST",
+    "path": "/environments",
+    "body": {
+      "name": "ui-test",
+      "production": false
+    },
+    "status": 201
+  },
+  {
+    "method": "POST",
+    "path": "/pacticipants/UiPayments/versions/2/deployed-versions/environment/d6236ad3-59bf-4b30-b548-44f182b0aef2",
+    "body": {},
+    "status": 201
+  }
+]

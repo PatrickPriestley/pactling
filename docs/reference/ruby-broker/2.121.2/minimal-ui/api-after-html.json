@@ -1,0 +1,112 @@
+[
+  {
+    "name": "index",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "index",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "integrations",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "integrations",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "pact",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "pact",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "json",
+    "byteIdentical": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "hal",
+    "byteIdentical": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "json",
+    "byteIdentical": true
+  }
+]
