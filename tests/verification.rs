@@ -820,9 +820,11 @@ async fn each_selector_group_in_the_metadata_names_its_own_consumer_version() {
     .unwrap();
     let pacts = fv["_embedded"]["pacts"].as_array().unwrap();
     assert_eq!(pacts.len(), 1, "same content is one pact to verify");
+    // Ruby's Selector#<=> orders two branch selectors by branch name, not request order
+    // (exact source, pact_broker/pacts/selector.rb#branch_comparison).
     assert_eq!(
         pacts[0]["shortDescription"],
-        "latest from branch main, latest from branch feature"
+        "latest from branch feature, latest from branch main"
     );
     let decoded = decode_metadata(pacts[0]["_links"]["self"]["href"].as_str().unwrap());
     let a: Value = get(&s, "/pacticipants/Consumer/versions/A")

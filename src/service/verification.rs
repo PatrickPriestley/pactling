@@ -179,9 +179,13 @@ pub async fn pacts_for_verification(
     provider: &Pacticipant,
     req: &ForVerificationRequest,
 ) -> Result<Vec<VerifiablePact>> {
+    // Verified in Ruby's PactsForVerificationRepository#default_selectors: with no
+    // selectors, the latest main-branch (or overall latest) version of every consumer plus
+    // the versions currently deployed or released; the capture lists the deployed reasons
+    // first.
     let default_main_branch = req.selectors.is_empty();
     let selectors: Vec<Selector> = if default_main_branch {
-        vec![Selector::MainBranch]
+        vec![Selector::Deployed, Selector::Released, Selector::MainBranch]
     } else {
         req.selectors.clone()
     };
@@ -410,8 +414,10 @@ pub async fn pacts_for_verification(
             .consumer_name
             .cmp(&b.publication.consumer_name)
     });
-    // Verified on one capture: a branch match is listed before a main-branch match whatever
-    // the selector order. The rest of the ranking is assumed.
+    // Ruby's Selector#<=> (exact source, pact_broker/pacts/selector.rb): overall latest,
+    // then latest-for-branch by branch name, latest-for-tag by tag, all-for-tag, currently
+    // deployed by environment, currently supported by environment, then the rest (a main
+    // branch selector carries no branch name, so it sorts after a deployment).
     for v in &mut out {
         v.reasons.sort_by_key(reason_rank);
     }
@@ -422,13 +428,24 @@ pub async fn pacts_for_verification(
     Ok(out)
 }
 
-fn reason_rank(r: &Reason) -> u8 {
-    if r.short.starts_with("latest from branch ") {
-        0
-    } else if r.short == "latest from main branch" {
-        1
+fn reason_rank(r: &Reason) -> (u8, String) {
+    let short = r.short.as_str();
+    if short == "latest" {
+        (0, String::new())
+    } else if let Some(b) = short.strip_prefix("latest from branch ") {
+        (1, b.to_owned())
+    } else if let Some(t) = short.strip_prefix("latest with tag ") {
+        (2, t.to_owned())
+    } else if let Some(t) = short.strip_prefix("one of ") {
+        (3, t.to_owned())
+    } else if let Some(e) = short.strip_prefix("deployed to ") {
+        (4, e.to_owned())
+    } else if let Some(e) = short.strip_prefix("released to ") {
+        (5, e.to_owned())
+    } else if let Some(e) = short.strip_prefix("in ") {
+        (6, e.to_owned())
     } else {
-        2
+        (7, String::new())
     }
 }
 
