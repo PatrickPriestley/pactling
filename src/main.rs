@@ -3,6 +3,9 @@ use pactling::{app, config::Config};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    if std::env::args_os().nth(1).as_deref() == Some(std::ffi::OsStr::new("explain")) {
+        std::process::exit(pactling::cli::run(std::env::args_os().skip(1)).await);
+    }
     tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();

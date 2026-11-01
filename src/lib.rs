@@ -4,3 +4,5 @@ pub mod db;
 pub mod error;
 pub mod http;
 pub mod service;
+
+pub mod cli;

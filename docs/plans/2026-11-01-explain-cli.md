@@ -4,7 +4,7 @@ Implement the maintainer-approved CLI over the v1 explanation endpoint, based on
 
 ## Probed evidence
 
-Verified with the installed pact-broker CLI 1.77.0, its actual help and `e2e/proxy.js` forwarding to the real baseline pactling binary: pinned, latest, latest-tag, branch, main-branch, version-specific ignore and target-tag requests. Recorded request paths are in `tests/fixtures/cli/explain-can-i-deploy-queries.json`. Environment base URL and basic authentication were observed on the real requests; bearer-token environment handling is probed separately. The real unpinned requests received explanation400/version missing, establishing the need for the approved validation amendment. All probe processes are stopped.
+Verified with the installed pact-broker CLI 1.77.0, its actual help and `e2e/proxy.js` forwarding to the real baseline pactling binary: pinned, latest, latest-tag, branch, main-branch, version-specific ignore and target-tag requests. Recorded request paths are in `tests/fixtures/cli/explain-can-i-deploy-queries.json`. Environment base URL, basic authentication and bearer-token environment handling were observed on the real requests. The real unpinned requests received explanation400/version missing, establishing the need for the approved validation amendment. All probe processes are stopped.
 
 ## Decisions
 

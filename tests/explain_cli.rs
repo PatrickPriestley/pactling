@@ -513,12 +513,20 @@ async fn client_never_approves_malformed_or_inconsistent_protocol_responses() {
         (400,json!({"schemaVersion":"1.0","error":{"code":"INVALID_QUERY","details":{"version":["is missing"]}}}).to_string()),
         (500,valid.to_string()),
     ] {
+        let expected_body=body.clone();
         let router=axum::Router::new().fallback(move || {let body=body.clone();async move {(axum::http::StatusCode::from_u16(status).unwrap(),[("content-type","application/json")],body)}});
         let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
         let base=format!("http://{}",listener.local_addr().unwrap());
         let task=tokio::spawn(async move {axum::serve(listener,router).await.unwrap()});
-        let output=explain(&base,PIN,&[]).await;task.abort();
+        let output=explain(&base,PIN,&[]).await;
         assert_code(&output,3);
+        if status != 200 {
+            let mut args=PIN.to_vec();args.extend(["--output","json"]);
+            let output=explain(&base,&args,&[]).await;
+            assert_code(&output,3);
+            assert_eq!(output.stdout,expected_body.as_bytes(),"JSON errors preserve endpoint bytes");
+        }
+        task.abort();
     }
 }
 
