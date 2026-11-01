@@ -11,7 +11,7 @@ in CI:
 - **End-to-end tests** (`e2e/`) run the real `pact-broker` CLI and pact-js against the
   binary.
 
-Verified against Ruby broker **2.121.2** and `@pact-foundation/pact-cli` **16.1.2**.
+Compatibility is verified against Ruby broker 2.121.2 and pact-cli 16.1.2.
 
 ## Status
 
@@ -46,6 +46,65 @@ seconds, the Ruby broker's `5 + 3i`) set when the i-th webhook fired by one requ
 
 ## Run
 
+Release artifacts are published by a `v<version>` tag matching `Cargo.toml`.
+The first release and tap publication are still pending; until then use
+`docker compose up --build -d` from this checkout or build with Cargo below.
+
+Before distributing the first image, the maintainer must set the GHCR package's
+visibility to **Public** in its package settings; GitHub defaults new packages to
+private ([registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)).
+Stable releases update `latest`; prerelease tags publish only their versioned image.
+
+After a release, run the container with persistent storage:
+
+```bash
+docker run -d --name pact-broker -p 9292:9292 -v pact-data:/data \
+  ghcr.io/patrickpriestley/pactling:latest
+# Or use this repository's docker-compose.yml:
+docker compose pull
+docker compose up -d --no-build
+```
+
+To swap a Ruby broker Compose service, keep its service name, port mapping and auth /
+webhook settings, change the image, remove `PACT_BROKER_DATABASE_*` settings and the
+Postgres dependency, and add the SQLite URL and volume:
+
+```yaml
+services:
+  pact-broker:
+    image: ghcr.io/patrickpriestley/pactling:latest
+    ports: ["9292:9292"]
+    environment:
+      PACTLING_DATABASE_URL: sqlite:///data/pactling.db?mode=rwc
+      # Keep your PACT_BROKER_BASIC_AUTH_* and webhook settings here.
+    volumes: ["pact-data:/data"]
+volumes:
+  pact-data:
+```
+
+This starts a new broker; it does not import an existing Postgres database. The image
+runs as UID/GID 65532, and a fresh named volume is writable by that user. Host bind
+mounts must provide equivalent permissions. Pin an image tag such as `v0.1.0` when
+upgrading deliberately.
+
+The release includes macOS arm64 and Linux x86_64 (glibc 2.36+) tarballs and `.sha256`
+files. Verify with `shasum -a 256 -c <archive>.sha256`, extract, and put `pactling`
+on your PATH. The image supports Linux arm64 and x86_64.
+
+The release also includes `pactling.rb`, generated from those exact tarballs. Copy it
+to `Formula/pactling.rb` in the existing `PatrickPriestley/homebrew-tap`; once published:
+
+```bash
+brew install PatrickPriestley/tap/pactling
+pactling --version
+```
+
+The checked-in `homebrew/pactling.rb` records local build checksums for packaging
+validation. Use the formula attached to the release for distribution: rebuilds may
+have different checksums. See [local packaging evidence](docs/plans/2026-11-01-phase6-release.md).
+
+Build from source:
+
 ```bash
 cargo run -- --port 9292
 # or
@@ -62,6 +121,12 @@ Configuration reuses the Ruby broker's variable names where one exists:
 | `PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME` / `_PASSWORD` | Read-only user |
 | `PACT_BROKER_ALLOW_PUBLIC_READ` | `true` lets anonymous clients read |
 | `PACTLING_BEARER_TOKEN` | Static bearer token with read/write rights (pactling only) |
+| `PACT_BROKER_WEBHOOK_SCHEME_WHITELIST` | Allowed schemes (default `https`) |
+| `PACT_BROKER_WEBHOOK_HOST_WHITELIST` | Hosts or `/regex/` entries (empty: any host; response details hidden) |
+| `PACT_BROKER_WEBHOOK_HTTP_METHOD_WHITELIST` | Allowed methods (default `POST`) |
+| `PACT_BROKER_WEBHOOK_HTTP_CODE_SUCCESS` | Success codes (default `200 201 202 203 204 205 206`) |
+| `PACT_BROKER_WEBHOOK_RETRY_SCHEDULE` | Retry delays in seconds (default `10 60 120 300 600 1200`) |
+| `PACTLING_WEBHOOK_INITIAL_DELAY` / `PACTLING_WEBHOOK_DELAY_STEP` | Initial and per-delivery delay in seconds (defaults 5 / 3) |
 
 With no credentials configured the broker is open, as the Ruby broker is.
 
@@ -69,6 +134,7 @@ With no credentials configured the broker is open, as the Ruby broker is.
 
 ```bash
 cargo test                 # unit and fidelity tests
+python3 scripts/test-release.py # packaging contracts
 (cd e2e && npm ci)         # once
 bash e2e/run.sh            # real clients against the binary
 ```

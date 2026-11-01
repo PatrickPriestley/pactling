@@ -1,0 +1,81 @@
+name: release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: cargo build --locked --release --target aarch64-apple-darwin
+      - run: target/aarch64-apple-darwin/release/pactling --version
+      - run: bash scripts/package-release.sh aarch64-apple-darwin "$RELEASE_TAG"
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/*
+          if-no-files-found: error
+  linux:
+    runs-on: ubuntu-24.04
+    container: rust:1.99.0-bookworm
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test-release.py
+      - run: cargo build --locked --release --target x86_64-unknown-linux-gnu
+      - run: target/x86_64-unknown-linux-gnu/release/pactling --version
+      - run: bash scripts/package-release.sh x86_64-unknown-linux-gnu "$RELEASE_TAG"
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/*
+          if-no-files-found: error
+  publish:
+    needs: [macos, linux]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: '*'
+          merge-multiple: true
+          path: dist
+      - run: sha256sum -c ./*.sha256
+        working-directory: dist
+      - run: python3 scripts/release-formula.py dist > dist/pactling.rb
+      - id: tags
+        run: python3 scripts/release-tags.py "$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.tags.outputs.value }}
+      - run: gh release create "$RELEASE_TAG" dist/* --verify-tag --generate-notes --prerelease="$PRERELEASE"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PRERELEASE: ${{ steps.tags.outputs.prerelease }}
+          RELEASE_TAG: ${{ github.ref_name }}
