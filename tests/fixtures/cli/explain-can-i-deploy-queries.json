@@ -1,0 +1,144 @@
+[
+  {
+    "pactBrokerVersion": "1.77.0",
+    "pactBrokerOptions": [
+      "--pacticipant",
+      "C",
+      "--version",
+      "1",
+      "--to-environment",
+      "test"
+    ],
+    "explainOptions": [
+      "--pacticipant",
+      "C",
+      "--version",
+      "1",
+      "--to-environment",
+      "test"
+    ],
+    "requestPath": "/matrix?q[][pacticipant]=C&q[][version]=1&latestby=cvp&environment=test"
+  },
+  {
+    "pactBrokerVersion": "1.77.0",
+    "pactBrokerOptions": [
+      "--pacticipant",
+      "C",
+      "--latest",
+      "--to-environment",
+      "test"
+    ],
+    "explainOptions": [
+      "--pacticipant",
+      "C",
+      "--latest",
+      "--to-environment",
+      "test"
+    ],
+    "requestPath": "/matrix?q[][pacticipant]=C&q[][latest]=true&latestby=cvp&environment=test"
+  },
+  {
+    "pactBrokerVersion": "1.77.0",
+    "pactBrokerOptions": [
+      "--pacticipant",
+      "C",
+      "--latest",
+      "dev",
+      "--to-environment",
+      "test"
+    ],
+    "explainOptions": [
+      "--pacticipant",
+      "C",
+      "--latest",
+      "dev",
+      "--to-environment",
+      "test"
+    ],
+    "requestPath": "/matrix?q[][pacticipant]=C&q[][latest]=true&q[][tag]=dev&latestby=cvp&environment=test"
+  },
+  {
+    "pactBrokerVersion": "1.77.0",
+    "pactBrokerOptions": [
+      "--pacticipant",
+      "C",
+      "--branch",
+      "main",
+      "--to-environment",
+      "test"
+    ],
+    "explainOptions": [
+      "--pacticipant",
+      "C",
+      "--branch",
+      "main",
+      "--to-environment",
+      "test"
+    ],
+    "requestPath": "/matrix?q[][pacticipant]=C&q[][latest]=true&q[][branch]=main&latestby=cvp&environment=test"
+  },
+  {
+    "pactBrokerVersion": "1.77.0",
+    "pactBrokerOptions": [
+      "--pacticipant",
+      "C",
+      "--main-branch",
+      "--to-environment",
+      "test"
+    ],
+    "explainOptions": [
+      "--pacticipant",
+      "C",
+      "--main-branch",
+      "--to-environment",
+      "test"
+    ],
+    "requestPath": "/matrix?q[][pacticipant]=C&q[][latest]=true&q[][mainBranch]=true&latestby=cvp&environment=test"
+  },
+  {
+    "pactBrokerVersion": "1.77.0",
+    "pactBrokerOptions": [
+      "--pacticipant",
+      "C",
+      "--version",
+      "1",
+      "--ignore",
+      "P",
+      "--version",
+      "2",
+      "--to-environment",
+      "test"
+    ],
+    "explainOptions": [
+      "--pacticipant",
+      "C",
+      "--version",
+      "1",
+      "--ignore",
+      "P=2",
+      "--to-environment",
+      "test"
+    ],
+    "requestPath": "/matrix?q[][pacticipant]=C&q[][version]=1&latestby=cvp&environment=test&ignore[][pacticipant]=P&ignore[][version]=2"
+  },
+  {
+    "pactBrokerVersion": "1.77.0",
+    "pactBrokerOptions": [
+      "--pacticipant",
+      "C",
+      "--version",
+      "1",
+      "--to",
+      "dev"
+    ],
+    "explainOptions": [
+      "--pacticipant",
+      "C",
+      "--version",
+      "1",
+      "--to",
+      "dev"
+    ],
+    "requestPath": "/matrix?q[][pacticipant]=C&q[][version]=1&latestby=cvp&latest=true&tag=dev"
+  }
+]
