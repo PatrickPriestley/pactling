@@ -1271,3 +1271,291 @@ async fn ui_explanation_ignores_keep_one_empty_control() {
         1
     );
 }
+
+const UI_READ_PATHS: &[&str] = &[
+    "/ui/",
+    "/ui/pacts/provider/Payments/consumer/Checkout/version/1",
+    "/ui/matrix/provider/Payments/consumer/Checkout",
+    "/ui/deployment-explanation?pacticipant=Checkout&version=1&environment=test",
+    "/ui/style.css",
+];
+
+#[tokio::test]
+async fn ui_matrix_preserves_submitted_form() {
+    let s = start().await;
+    matrix_seed(&s).await;
+    assert!(
+        s.client
+            .put(format!(
+                "{}/pacticipants/Checkout/versions/1/tags/release",
+                s.base_url
+            ))
+            .json(&json!({}))
+            .send()
+            .await
+            .unwrap()
+            .status()
+            .is_success()
+    );
+    for (mode, value) in [
+        ("version", "1"),
+        ("all", "<&\""),
+        ("latest", "unused"),
+        ("branch", "main"),
+        ("main", "unused"),
+        ("tag", "release"),
+    ] {
+        for grouping in ["none", "cvpv", "cvp", "cp"] {
+            let fields = vec![
+                ("ui_form".into(), "matrix".into()),
+                ("consumer_mode".into(), mode.into()),
+                ("consumer_value".into(), value.into()),
+                ("provider_mode".into(), "version".into()),
+                ("provider_value".into(), "1".into()),
+                ("latestby".into(), grouping.into()),
+            ];
+            let (status, body) =
+                matrix_html(&s, &pactling::http::ui::query::encode_fields(&fields)).await;
+            assert_eq!(status, 200);
+            assert!(body.contains("Update matrix query"));
+            assert_eq!(body.matches(" selected>").count(), 3);
+            assert!(
+                body.contains(&format!("<option value=\"{mode}\" selected>")),
+                "{mode}: {body}"
+            );
+            assert!(body.contains(&format!("<option value=\"{grouping}\" selected>")));
+            let escaped = maud::html! {(value)}.into_string();
+            assert!(body.contains(&format!("name=\"consumer_value\" value=\"{escaped}\"")));
+            assert!(body.contains("name=\"provider_value\" value=\"1\""));
+        }
+    }
+    let (status, body) = matrix_html(&s, "q[][pacticipant]=Checkout&q[][version]=1&consumer_value=ignored&consumer_mode=version&latestby=cvp").await;
+    assert_eq!(status, 200);
+    assert!(body.contains("New matrix query"));
+    assert!(body.contains("name=\"consumer_value\" value=\"\""));
+    assert!(!body.contains("value=\"version\" selected"));
+}
+
+#[tokio::test]
+async fn ui_respects_read_auth() {
+    use base64::Engine;
+    for public in [false, true] {
+        let mut config = pactling::config::Config::in_memory();
+        config.basic_auth_username = Some("writer".into());
+        config.basic_auth_password = Some("write-test".into());
+        config.basic_auth_read_only_username = Some("reader".into());
+        config.basic_auth_read_only_password = Some("read-test".into());
+        config.bearer_token = Some("test-token".into());
+        config.allow_public_read = public;
+        let mut s = common::start_with(config).await;
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            reqwest::header::AUTHORIZATION,
+            format!(
+                "Basic {}",
+                base64::engine::general_purpose::STANDARD.encode("writer:write-test")
+            )
+            .parse()
+            .unwrap(),
+        );
+        s.client = reqwest::Client::builder()
+            .default_headers(headers)
+            .build()
+            .unwrap();
+        explanation_seed(&s).await;
+        let client = reqwest::Client::new();
+        for path in UI_READ_PATHS {
+            for credential in ["none", "wrong", "reader", "writer", "bearer"] {
+                let request = client.get(format!("{}{path}", s.base_url));
+                let request = match credential {
+                    "reader" => request.basic_auth("reader", Some("read-test")),
+                    "writer" => request.basic_auth("writer", Some("write-test")),
+                    "bearer" => request.bearer_auth("test-token"),
+                    "wrong" => request.basic_auth("reader", Some("wrong-test")),
+                    _ => request,
+                };
+                let response = request.send().await.unwrap();
+                let expected = if public || matches!(credential, "reader" | "writer" | "bearer") {
+                    200
+                } else {
+                    401
+                };
+                assert_eq!(
+                    response.status(),
+                    expected,
+                    "public={public} {credential} {path}"
+                );
+                if expected == 401 {
+                    assert_eq!(
+                        response.headers()["www-authenticate"],
+                        "Basic realm=\"Restricted area\""
+                    );
+                    assert_eq!(response.text().await.unwrap(), "");
+                } else if *path != "/ui/style.css" {
+                    assert_eq!(response.headers()["cache-control"], "no-store");
+                }
+            }
+            let response = client
+                .post(format!("{}{path}", s.base_url))
+                .basic_auth("reader", Some("read-test"))
+                .send()
+                .await
+                .unwrap();
+            assert_eq!(response.status(), 401, "read-only POST {path}");
+        }
+    }
+}
+
+#[tokio::test]
+async fn ui_rejects_mutating_methods() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    for path in UI_READ_PATHS {
+        for method in [
+            reqwest::Method::POST,
+            reqwest::Method::PUT,
+            reqwest::Method::PATCH,
+            reqwest::Method::DELETE,
+            reqwest::Method::HEAD,
+        ] {
+            let r = s
+                .client
+                .request(method.clone(), format!("{}{path}", s.base_url))
+                .send()
+                .await
+                .unwrap();
+            assert_eq!(r.status(), 405, "{method} {path}");
+            assert_eq!(r.headers()["allow"], "GET, OPTIONS");
+        }
+        let r = s
+            .client
+            .request(reqwest::Method::OPTIONS, format!("{}{path}", s.base_url))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(r.status(), 200);
+        assert_eq!(r.headers()["access-control-allow-methods"], "GET, OPTIONS");
+    }
+}
+
+async fn database_contents(pool: &sqlx::SqlitePool) -> Vec<(String, Vec<String>)> {
+    let tables: Vec<String> =
+        sqlx::query_scalar("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+            .fetch_all(pool)
+            .await
+            .unwrap();
+    let mut contents = vec![];
+    for table in tables {
+        let columns: Vec<String> =
+            sqlx::query_scalar("SELECT name FROM pragma_table_info(?) ORDER BY cid")
+                .bind(&table)
+                .fetch_all(pool)
+                .await
+                .unwrap();
+        let values = columns
+            .iter()
+            .map(|c| format!("quote(\"{}\")", c.replace('"', "\"\"")))
+            .collect::<Vec<_>>()
+            .join(" || '|' || ");
+        let rows: Vec<String> = sqlx::query_scalar(sqlx::AssertSqlSafe(format!(
+            "SELECT {values} AS contents FROM \"{}\" ORDER BY contents",
+            table.replace('"', "\"\"")
+        )))
+        .fetch_all(pool)
+        .await
+        .unwrap();
+        contents.push((table, rows));
+    }
+    contents
+}
+
+#[tokio::test]
+async fn ui_reads_do_not_write() {
+    let file = std::env::temp_dir().join(format!("pactling-ui-read-{}.db", uuid::Uuid::new_v4()));
+    let mut config = pactling::config::Config::in_memory();
+    config.database_url = format!("sqlite://{}?mode=rwc", file.display());
+    let s = common::start_with(config.clone()).await;
+    explanation_seed(&s).await;
+    let pool = sqlx::SqlitePool::connect(&config.database_url)
+        .await
+        .unwrap();
+    let before = database_contents(&pool).await;
+    assert!(before.iter().any(|(name, _)| name == "triggered_webhooks"));
+    assert!(before.iter().any(|(name, _)| name == "webhook_executions"));
+    for _ in 0..2 {
+        for path in UI_READ_PATHS {
+            let r = s
+                .client
+                .get(format!("{}{path}", s.base_url))
+                .send()
+                .await
+                .unwrap();
+            assert_eq!(r.status(), 200);
+        }
+        for version in ["2", "3"] {
+            assert_eq!(
+                explanation_html(
+                    &s,
+                    &format!("pacticipant=Checkout&version={version}&environment=test")
+                )
+                .await
+                .0,
+                200
+            );
+        }
+    }
+    assert_eq!(
+        database_contents(&pool).await,
+        before,
+        "UI reads changed database or webhook queue"
+    );
+    // A write via the same app after its read snapshots must still work: query_only cannot leak.
+    publish(&s, "Checkout", "Payments", "4").await;
+    assert!(
+        s.client
+            .get(format!(
+                "{}/pacts/provider/Payments/consumer/Checkout/version/4",
+                s.base_url
+            ))
+            .send()
+            .await
+            .unwrap()
+            .status()
+            .is_success()
+    );
+}
+
+#[tokio::test]
+async fn ui_assets_are_embedded() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    for path in &UI_READ_PATHS[..4] {
+        let r = s
+            .client
+            .get(format!("{}{path}", s.base_url))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(r.status(), 200);
+        let html = r.text().await.unwrap();
+        assert!(html.contains("href=\"/ui/style.css\""));
+        assert!(!html.contains("<script"));
+        assert!(!html.contains("<iframe"));
+        assert!(!html.contains("src="));
+        assert_eq!(html.matches("rel=\"stylesheet\"").count(), 1);
+        assert!(!html.contains("<link rel=\"stylesheet\" href=\"http"));
+    }
+    let r = s
+        .client
+        .get(format!("{}/ui/style.css", s.base_url))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 200);
+    assert_eq!(r.headers()["content-type"], "text/css; charset=utf-8");
+    let css = r.text().await.unwrap();
+    assert!(css.contains("focus-visible"));
+    assert!(css.contains("@media"));
+    assert!(!css.contains("@import"));
+    assert!(!css.contains("url("));
+}
