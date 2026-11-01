@@ -30,3 +30,47 @@ Ordered work and verification:
 
 GitHub Actions billing prevents hosted execution. Local shell/Docker runs can prove
 builds and packaging, but not GitHub token permissions, release upload or GHCR push.
+
+## Probe results
+
+Verified against real systems:
+- Rust 1.99.0 runs on the host and in rust:1.99.0-bookworm on both Docker architectures.
+- ARM64 Docker build succeeds. UID 65532 publishes via pact-cli 16.1.2, survives
+  restart and a second container attached to the same named volume; the nonempty
+  SQLite file is copied from /data. Docker reallocates ephemeral ports on restart,
+  so the smoke test re-reads the published port.
+- Docker Compose v2.39.4 accepts the file, starts the service on 9292, publishes a
+  pact, and can-i-deploy exits 1 with the expected missing-verification explanation.
+- macOS arm64 release build runs --version; tar creation and SHA-256 verification pass.
+- Installed actionlint accepts release.yml. This is syntax validation, not hosted
+  execution. The current runner-images catalog identifies macos-15 as arm64;
+  macos-14 is deprecated, so the workflow uses macos-15.
+- The tag mismatch test fails when the comparison guard is inverted; restored.
+  Formula hash unit tests use synthetic bytes and prove only our generator's logic.
+- fmt, clippy and cargo test pass. The first e2e run exposed an existing client
+  parser limitation when a generated webhook UUID starts with '-'. Both separate
+  and equals syntax fail in pact-cli 16.1.2. Its bundled CustomThor splits equals
+  arguments. A real CLI probe with `--uuid -- -GUGBEUOSIyYtUbApOdtRQ` reaches the
+  exact intended HTTP URL (404 for the absent webhook), proving the parser fix.
+  The harness now places broker options before the end-of-options marker.
+
+No application endpoint behaviour or fixture was changed. The harness fix was driven
+by the failed real-client run. No new application guards were added.
+- Linux x86_64 builds in the same Rust/Debian container used by release.yml under
+  local Docker emulation (6 minutes). Its executable reports pactling 0.1.0. The
+  workflow's archive script and checksum verification pass for both targets.
+- Homebrew 7 rejects `brew install --build-from-source ./homebrew/pactling.rb` because
+  formulae must belong to a tap. Created a local pactling-phase6/probe tap, copied the
+  same formula with only URLs rewritten to file:// local archives, and successfully
+  installed with --build-from-source. The real PatrickPriestley tap is untouched.
+- The complete e2e suite passes after the CLI invocation correction, including all
+  seven expected webhook deliveries. ci.yml is unchanged.
+
+Hosted validation limits: act is not installed, so build/package/checksum commands
+were executed directly in the shell and Docker, not via act. actionlint checks the
+workflow structure. Runner provisioning, artifact actions, GitHub token permissions,
+release upload, GHCR authentication/push, and the multi-platform registry manifest
+are unverified here. No tag, release, registry image, or tap update was published.
+The checked-in formula hashes identify local artifacts only; release.yml renders
+and attaches a formula using its own actual artifact hashes for tap publication.
+Unsigned macOS binaries were exercised locally, not through browser-download quarantine.
