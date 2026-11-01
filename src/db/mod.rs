@@ -132,13 +132,24 @@ impl<'c> Executor<'c> for &'c Conn {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Db {
     pool: SqlitePool,
     conn: Conn,
     /// True for the handle that opened the transaction; a handle handed to an inner
     /// operation cannot commit, and the owner refuses to while such a handle is alive.
     owner: bool,
+}
+
+/// A clone shares the pool or the transaction but never the authority to commit it.
+impl Clone for Db {
+    fn clone(&self) -> Self {
+        Db {
+            pool: self.pool.clone(),
+            conn: self.conn.clone(),
+            owner: false,
+        }
+    }
 }
 
 impl Db {
@@ -179,10 +190,7 @@ impl Db {
     /// `Db` that already is one, this returns a clone sharing the transaction.
     pub async fn begin(&self) -> sqlx::Result<Db> {
         match &self.conn {
-            Conn::Tx(_) => Ok(Db {
-                owner: false,
-                ..self.clone()
-            }),
+            Conn::Tx(_) => Ok(self.clone()),
             Conn::Pool(pool) => {
                 let tx = pool.begin_with("BEGIN IMMEDIATE").await?;
                 Ok(Db {

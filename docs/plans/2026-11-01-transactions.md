@@ -54,3 +54,7 @@ failing on the unique constraint; `commit()` is owned by the handle that opened 
 transaction, a handle handed to an inner operation cannot commit, and the owner refuses to
 commit while such a handle is alive instead of reporting success before a later drop
 rolls everything back.
+- Second review: `Clone` now sets `owner: false` so a clone can neither commit nor inherit
+  commit authority when the owner drops (test `a_cloned_handle_never_commits`, red before
+  the change). The WAL assertion was run on a real file database:
+  `cargo test --test transactions file_databases_run_in_wal_mode -- --exact` passes.

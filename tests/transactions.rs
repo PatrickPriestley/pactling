@@ -231,3 +231,36 @@ async fn committing_while_a_shared_handle_is_alive_is_an_error() {
     // it rolled back, so nothing was written.
     assert!(db.find_pacticipant("Shared").await.unwrap().is_none());
 }
+
+#[tokio::test]
+async fn a_cloned_handle_never_commits() {
+    // Review finding: `clone()` must not copy commit authority, or a clone could commit
+    // writes the owner's failed commit or drop was meant to roll back.
+    let db = pactling::db::Db::connect("sqlite::memory:").await.unwrap();
+    db.migrate().await.unwrap();
+    let tx = db.begin().await.unwrap();
+    let copy = tx.clone();
+    pactling::service::versions::put(&copy, "Cloned", "1", None)
+        .await
+        .unwrap();
+    assert!(copy.commit().await.is_ok(), "a clone's commit is a no-op");
+    drop(tx);
+    assert!(
+        db.find_pacticipant("Cloned").await.unwrap().is_none(),
+        "the owner's drop rolled back"
+    );
+    let tx = db.begin().await.unwrap();
+    let copy = tx.clone();
+    pactling::service::versions::put(&copy, "Cloned", "2", None)
+        .await
+        .unwrap();
+    assert!(
+        tx.commit().await.is_err(),
+        "the owner cannot commit while the clone is alive"
+    );
+    assert!(copy.commit().await.is_ok());
+    assert!(
+        db.find_pacticipant("Cloned").await.unwrap().is_none(),
+        "nothing committed"
+    );
+}
