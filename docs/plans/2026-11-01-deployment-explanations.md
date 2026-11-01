@@ -1,14 +1,14 @@
 ---
 change_id: deployment-explanations
-status: draft
-accepted_by: null
-accepted_on: null
+status: accepted
+accepted_by: Patrick Priestley
+accepted_on: 2026-11-01
 divergences: []
 ---
 
 # Plan: evidence-backed deployment explanations (#10)
 
-This is a plan only, for maintainer review before any build. It proposes item 6 of
+This plan was accepted by the maintainer on 2026-11-01; PR A is being built from it. It proposes item 6 of
 the requested roadmap work, scoped to [#10](https://github.com/PatrickPriestley/pactling/issues/10).
 [#5](https://github.com/PatrickPriestley/pactling/issues/5),
 [#11](https://github.com/PatrickPriestley/pactling/issues/11), and
@@ -451,7 +451,20 @@ compatibility check. This planning task has not run the future tests or claimed 
 The maintainer selected one can-i-deploy route, a separate pure-evaluator/read-snapshot
 prerequisite PR, timestamps without age policy, separate candidate provenance preserving
 Ruby nulls, and open reason/action enums. Those choices are settled, not open questions.
-No remaining product decision blocks this revised plan. The prerequisite's internal
+No remaining product decision blocks this revised plan.
+
+Two further maintainer conditions apply to PR A:
+
+- **No slower deployment gate.** PR A changes no output, and it must not make can-i-deploy
+  measurably slower. Run `scripts/bench.py` on the medium and large datasets before and
+  after (commands in `docs/benchmarks/2026-11-01.md`) and report can-i-deploy and matrix
+  latencies in the PR. If loading all evidence up front slows can-i-deploy, stop for
+  review rather than optimising beyond this plan.
+- **Read-only enforcement may be a connection mode.** The read snapshot may enforce
+  read-only access with SQLite's `PRAGMA query_only = ON` on its connection, reset when
+  the snapshot ends, instead of a type-level split of every `Db` method, unless that split
+  turns out small. Either way a test proves a write through the snapshot fails and that
+  the setting does not leak to the pooled connection afterwards. The prerequisite's internal
 read-query interface and lifetime implementation will be reviewed in its own PR against
 the API and concurrency acceptance criteria above. Implementation still awaits plan review.
 
