@@ -487,3 +487,213 @@ async fn webhook_documents_match_the_ruby_broker() {
     let list: Value = r.json().await.unwrap();
     assert_eq!(list["_links"]["pb:webhooks"].as_array().unwrap().len(), 3);
 }
+
+/// The receiver's address, the Ruby broker's user agent and request sizes differ.
+fn normalise_execution(v: Value, receiver_base: &str) -> Value {
+    let text = serde_json::to_string(&v).unwrap();
+    let text = text
+        .replace(
+            &receiver_base.trim_start_matches("http://").to_owned(),
+            "RECEIVER",
+        )
+        .replace("host.docker.internal:18100", "RECEIVER")
+        .replace("host.docker.internal:18101", "RECEIVER")
+        .replace("Pact Broker v2.121.2", "UA");
+    let text = regex::Regex::new(r"Pactling/[0-9.]+")
+        .unwrap()
+        .replace_all(&text, "UA")
+        .into_owned();
+    let text = regex::Regex::new(r#"user-agent: [^\\]*"#)
+        .unwrap()
+        .replace_all(&text, "user-agent: UA");
+    let text = regex::Regex::new(r#"content-length(\\?": ?\\?"|: )\d+"#)
+        .unwrap()
+        .replace_all(&text, "content-length${1}L");
+    let text = regex::Regex::new(r"verification-results/\d+")
+        .unwrap()
+        .replace_all(&text, "verification-results/N");
+    normalise(serde_json::from_str(&text).unwrap())
+}
+
+async fn assert_execution_matches(
+    s: &common::TestServer,
+    receiver_base: &str,
+    r: reqwest::Response,
+    name: &str,
+    status: StatusCode,
+) -> Value {
+    assert_eq!(r.status(), status, "{name}");
+    let got: Value = r.json().await.unwrap();
+    let left = normalise_execution(stable(got.clone()), receiver_base);
+    let right = normalise_execution(
+        stable(fixture(&format!("phase5/{name}"), &s.base_url)),
+        receiver_base,
+    );
+    if left != right
+        && let Ok(dir) = std::env::var("PACTLING_DUMP_DIR")
+    {
+        std::fs::write(
+            format!("{dir}/{name}.got.json"),
+            serde_json::to_string_pretty(&left).unwrap(),
+        )
+        .unwrap();
+        std::fs::write(
+            format!("{dir}/{name}.want.json"),
+            serde_json::to_string_pretty(&right).unwrap(),
+        )
+        .unwrap();
+    }
+    assert_eq!(left, right, "{name}");
+    got
+}
+
+/// The n-th request the Ruby broker sent to its receiver during the capture.
+fn captured_request(n: usize) -> Value {
+    let path = format!(
+        "{}/tests/fixtures/cli/phase5/receiver.jsonl",
+        env!("CARGO_MANIFEST_DIR")
+    );
+    let raw = std::fs::read_to_string(path).unwrap();
+    serde_json::from_str(raw.lines().nth(n).unwrap()).unwrap()
+}
+
+/// Compares a received request with a captured one: method, path, the headers the broker
+/// chose (not host, length or user agent) and the body with hosts normalised.
+fn assert_received_like(got: &common::Received, want: &Value, s: &common::TestServer) {
+    assert_eq!(got.method, want["method"].as_str().unwrap());
+    assert_eq!(got.path, want["path"].as_str().unwrap());
+    let skip = [
+        "host",
+        "content-length",
+        "user-agent",
+        "connection",
+        "accept-encoding",
+    ];
+    let mut got_headers: Vec<(String, String)> = got
+        .headers
+        .iter()
+        .filter(|(k, _)| !skip.contains(&k.as_str()))
+        .cloned()
+        .collect();
+    let mut want_headers: Vec<(String, String)> = want["headers"]
+        .as_object()
+        .unwrap()
+        .iter()
+        .filter(|(k, _)| !skip.contains(&k.as_str()))
+        .map(|(k, v)| (k.clone(), v.as_str().unwrap().to_owned()))
+        .collect();
+    got_headers.sort();
+    want_headers.sort();
+    assert_eq!(got_headers, want_headers, "{}", got.path);
+    let hosts = regex::Regex::new(r"http://(127\.0\.0\.1|localhost):\d+").unwrap();
+    let got_body = hosts
+        .replace_all(&got.body.replace(&s.base_url, "http://HOST"), "http://HOST")
+        .into_owned();
+    let want_body = regex::Regex::new(r"verification-results/\d+")
+        .unwrap()
+        .replace_all(
+            &hosts.replace_all(want["body"].as_str().unwrap(), "http://HOST"),
+            "verification-results/N",
+        )
+        .into_owned();
+    let got_body = regex::Regex::new(r"verification-results/\d+")
+        .unwrap()
+        .replace_all(&got_body, "verification-results/N")
+        .into_owned();
+    assert_eq!(got_body, want_body, "{}", got.path);
+}
+
+#[tokio::test]
+async fn test_execution_matches_the_ruby_broker() {
+    let s = common::start_with(http_config()).await;
+    let receiver = common::receiver().await;
+    seed(&s).await;
+    let body_template: Value =
+        cli_exchange("create-webhook-consumer-provider", "POST").body["request"]["body"].clone();
+    let r = post(&s, "/webhooks/provider/Provider/consumer/Consumer", &json!({
+        "description": "Trigger Provider build", "events": [{"name": "contract_content_changed"}],
+        "request": {"method": "POST", "url": format!("{}/hook/${{pactbroker.consumerName}}", receiver.base_url),
+                    "headers": {"Content-Type": "application/json", "Authorization": "Bearer hook-secret"}, "body": body_template}
+    })).await;
+    assert_eq!(r.status(), StatusCode::CREATED);
+    let cp: Value = r.json().await.unwrap();
+    let r = post(&s, "/webhooks", &json!({"request":{"method":"POST","url":format!("{}/hook/global", receiver.base_url),"username":"hookuser","password":"hookpass","headers":{"X-Token":"abc","Accept":"application/json"},"body":{"template":"${pactbroker.consumerVersionNumber}"}}})).await;
+    let global: Value = r.json().await.unwrap();
+
+    let r = post(
+        &s,
+        &format!("/webhooks/{}/execute", cp["uuid"].as_str().unwrap()),
+        &json!({}),
+    )
+    .await;
+    assert_eq!(r.headers()["content-type"], HAL);
+    assert_execution_matches(
+        &s,
+        &receiver.base_url,
+        r,
+        "POST_webhook_execute.json",
+        StatusCode::OK,
+    )
+    .await;
+    let r = post(
+        &s,
+        &format!("/webhooks/{}/execute", global["uuid"].as_str().unwrap()),
+        &json!({}),
+    )
+    .await;
+    assert_execution_matches(
+        &s,
+        &receiver.base_url,
+        r,
+        "POST_webhook_execute_global.json",
+        StatusCode::OK,
+    )
+    .await;
+    let r = post(&s, "/webhooks/execute", &json!({"consumer":{"name":"Consumer"},"provider":{"name":"Provider"},"request":{"method":"POST","url":format!("{}/hook/unsaved", receiver.base_url),"body":serde_json::to_string(&body_template).unwrap()}})).await;
+    assert_execution_matches(
+        &s,
+        &receiver.base_url,
+        r,
+        "POST_webhooks_execute_unsaved.json",
+        StatusCode::OK,
+    )
+    .await;
+    let r = post(&s, "/webhooks/nope/execute", &json!({})).await;
+    assert_matches(
+        &s,
+        r,
+        "POST_webhooks_execute_unknown.json",
+        StatusCode::NOT_FOUND,
+    )
+    .await;
+    let failing_receiver = common::receiver_answering(500).await;
+    let r = post(
+        &s,
+        "/webhooks/execute",
+        &json!({"request":{"method":"POST","url":format!("{}/hook", failing_receiver.base_url)}}),
+    )
+    .await;
+    let failing = assert_execution_matches(
+        &s,
+        &failing_receiver.base_url,
+        r,
+        "POST_webhook_execute_failing.json",
+        StatusCode::OK,
+    )
+    .await;
+    assert_eq!(failing["success"], false);
+
+    // What the receiver got is what the Ruby broker's receiver got (capture lines 1 to 3
+    // are the saved webhook, the global one and the unsaved one).
+    let got = receiver.wait_for(3, 5).await;
+    assert_eq!(got.len(), 3);
+    assert_received_like(&got[0], &captured_request(1), &s);
+    assert_received_like(&got[1], &captured_request(2), &s);
+    assert_received_like(&got[2], &captured_request(3), &s);
+    let failed = failing_receiver.wait_for(1, 5).await;
+    assert_eq!(failed[0].path, "/hook");
+    assert_eq!(
+        failed[0].body, "null",
+        "no body is sent as the string null, as Net::HTTP does"
+    );
+}

@@ -18,6 +18,7 @@ use crate::http::hal::{Hal, Links, encode};
 use crate::http::method;
 use crate::http::pacts::pact_href;
 use crate::http::versions::pacticipant_href;
+use crate::service::webhook_delivery as delivery;
 use crate::service::webhooks::{self as service, WebhookRequest};
 
 const COLLECTION_ALLOWED: &str = "GET, POST, OPTIONS";
@@ -310,17 +311,113 @@ pub async fn webhook(
     }
 }
 
+/// The execution result document (verified: `WebhookExecutionResultDecorator`).
+fn execution_document(
+    state: &AppState,
+    l: &Links,
+    result: &delivery::ExecutionResult,
+    webhook_uuid: Option<&str>,
+    try_again: &str,
+) -> Value {
+    let show_response = !state.config.webhook_host_whitelist.is_empty();
+    let parse = |body: &str| -> Option<Value> {
+        match serde_json::from_str::<Value>(body) {
+            Ok(Value::Null) => None,
+            Ok(v) => Some(v),
+            Err(_) => Some(json!(body)),
+        }
+    };
+    let mut request = Map::new();
+    request.insert(
+        "headers".into(),
+        Value::Object(
+            delivery::redacted(&result.request.headers)
+                .into_iter()
+                .map(|(k, v)| (k, json!(v)))
+                .collect(),
+        ),
+    );
+    if let Some(b) = parse(&result.request.body) {
+        request.insert("body".into(), b);
+    }
+    let path = reqwest::Url::parse(&result.request.url)
+        .map(|u| {
+            format!(
+                "{}{}",
+                u.path(),
+                u.query().map(|q| format!("?{q}")).unwrap_or_default()
+            )
+        })
+        .unwrap_or_else(|_| result.request.url.clone());
+    request.insert("url".into(), json!(path));
+    let mut doc = Map::new();
+    if show_response && let Some(e) = &result.error {
+        doc.insert("error".into(), json!({ "message": e }));
+    }
+    doc.insert("request".into(), Value::Object(request));
+    if show_response {
+        if let Some(r) = &result.response {
+            let mut response = Map::new();
+            response.insert("status".into(), json!(r.status));
+            response.insert(
+                "headers".into(),
+                Value::Object(
+                    r.headers
+                        .iter()
+                        .map(|(k, v)| (k.clone(), json!(v)))
+                        .collect(),
+                ),
+            );
+            if let Some(b) = parse(&r.body) {
+                response.insert("body".into(), b);
+            }
+            doc.insert("response".into(), Value::Object(response));
+        }
+    } else {
+        doc.insert(
+            "message".into(),
+            json!(delivery::hidden_response_message(&l.href(""))),
+        );
+    }
+    doc.insert("logs".into(), json!(result.logs));
+    doc.insert("success".into(), json!(result.success));
+    let mut links = Map::new();
+    if let Some(u) = webhook_uuid {
+        links.insert("webhook".into(), json!({ "href": webhook_href(l, u) }));
+    }
+    links.insert(
+        "try-again".into(),
+        json!({ "title": "Execute the webhook again", "href": l.href(try_again) }),
+    );
+    doc.insert("_links".into(), Value::Object(links));
+    Value::Object(doc)
+}
+
 /// `POST /webhooks/{uuid}/execute`
 pub async fn execute(
     m: Method,
     State(state): State<AppState>,
     Path(uuid): Path<String>,
-    _l: Links,
+    l: Links,
 ) -> Result<Response> {
     match m {
         Method::POST => {
-            service::find(&state.db, &uuid).await?;
-            Err(Error::NoRoute)
+            let w = service::find(&state.db, &uuid).await?;
+            let result = delivery::test_execution(
+                &state.db,
+                &state.config,
+                &delivery::Template::of_webhook(&w),
+                &l.href(""),
+            )
+            .await?;
+            Ok(Hal(execution_document(
+                &state,
+                &l,
+                &result,
+                Some(&w.uuid),
+                &format!("/webhooks/{}/execute", encode(&w.uuid)),
+            ))
+            .into_response())
         }
         Method::OPTIONS => Ok(method::options(EXECUTE_ALLOWED)),
         _ => Ok(method::method_not_allowed(EXECUTE_ALLOWED)),
@@ -330,12 +427,30 @@ pub async fn execute(
 /// `POST /webhooks/execute` (an unsaved webhook)
 pub async fn execute_unsaved(
     m: Method,
-    State(_state): State<AppState>,
-    _l: Links,
-    _body: Bytes,
+    State(state): State<AppState>,
+    l: Links,
+    body: Bytes,
 ) -> Result<Response> {
     match m {
-        Method::POST => Err(Error::NoRoute),
+        Method::POST => {
+            let json = parse_body(&body)?;
+            let req = WebhookRequest::parse(&json, None, &state.config)?;
+            let result = delivery::test_execution(
+                &state.db,
+                &state.config,
+                &delivery::Template::of_request(&req),
+                &l.href(""),
+            )
+            .await?;
+            Ok(Hal(execution_document(
+                &state,
+                &l,
+                &result,
+                None,
+                "/webhooks/execute",
+            ))
+            .into_response())
+        }
         Method::OPTIONS => Ok(method::options(EXECUTE_ALLOWED)),
         _ => Ok(method::method_not_allowed(EXECUTE_ALLOWED)),
     }
