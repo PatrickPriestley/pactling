@@ -781,7 +781,15 @@ fn ui_matrix_form_query_mapping() {
     let raw = "q[][pacticipant]=P&q[][version]=2&ignore[][pacticipant]=C&ignore[][version]=1&ignore[][pacticipant]=P";
     let (q, unchanged) = matrix_query(raw, "C", "P").unwrap();
     assert_eq!(unchanged, raw);
-    assert_eq!(q.selectors[1].version.as_deref(), Some("2"));
+    assert_eq!(
+        q.selectors
+            .iter()
+            .find(|s| s.pacticipant == "P")
+            .unwrap()
+            .version
+            .as_deref(),
+        Some("2")
+    );
     assert_eq!(
         q.ignore,
         vec![("C".into(), Some("1".into())), ("P".into(), None)]
@@ -826,4 +834,17 @@ async fn ui_matrix_nonempty_considered_and_safe_errors() {
     assert_eq!(status, 400);
     assert!(body.contains("&lt;script&gt;"));
     assert!(!body.contains("<script>"));
+}
+
+#[test]
+fn ui_matrix_canonical_selector_order_is_preserved() {
+    use pactling::{http::ui::query::matrix_query, service::matrix::MatrixQuery};
+    let raw =
+        "q[][pacticipant]=P&q[][version]=2&q[][pacticipant]=C&q[][mainBranch]=true&latestby=cp";
+    let (q, unchanged) = matrix_query(raw, "C", "P").unwrap();
+    assert_eq!(q, MatrixQuery::parse(Some(raw)));
+    assert_eq!(unchanged, raw);
+    let (q, _) = matrix_query("q[][pacticipant]=P&q[][version]=2", "C", "P").unwrap();
+    assert_eq!(q.selectors[0].pacticipant, "P");
+    assert_eq!(q.selectors[1].pacticipant, "C");
 }
