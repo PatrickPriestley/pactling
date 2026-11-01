@@ -588,8 +588,10 @@ async fn ui_matrix_filters_match_api() {
     )
     .await;
     assert_eq!(status, 200);
-    assert!(
-        body.matches("data-consumer-version=").count() > 1,
+    let api: serde_json::Value = s.client.get(format!("{}/matrix?q[][pacticipant]=Checkout&q[][version]=&q[][mainBranch]=true&q[][pacticipant]=Payments",s.base_url)).send().await.unwrap().json().await.unwrap();
+    assert_eq!(
+        body.matches("data-consumer-version=").count(),
+        api["matrix"].as_array().unwrap().len(),
         "canonical empty version must not be silently stripped"
     );
 }
@@ -637,8 +639,8 @@ async fn ui_matrix_validates_pair_and_form_and_methods() {
         .send()
         .await
         .unwrap();
-    assert_eq!(r.status(), 200);
-    assert!(r.text().await.unwrap().contains("No matrix rows"));
+    assert_eq!(r.status(), 400);
+    assert!(r.text().await.unwrap().contains("Unable to load matrix"));
 }
 
 #[tokio::test]

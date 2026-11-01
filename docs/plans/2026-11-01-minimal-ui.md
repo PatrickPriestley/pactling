@@ -135,3 +135,9 @@ existing parser semantics, including empty values. Reject stripping empty values
 all queries or changing `MatrixQuery::parse`. Test each form mode, empty required fields,
 repeated ignores, reserved characters and the main-branch/empty-version regression.
 The UI helper may live in `src/http/ui/query.rs`; no API route or schema changes.
+
+The task-3 baseline probe also verified that a branch selector without `latest=true`
+selects every version on that branch (three seeded rows), whereas adding `latest=true`
+selects its head (one row). UI modes labeled branch/main-branch **head** therefore emit
+both fields, just as the existing resolver requires. An unknown pair returns the existing
+matrix's 400, and explicit empty canonical version values retain its zero-row behavior.
