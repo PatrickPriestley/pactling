@@ -10,7 +10,7 @@ use pactling::{
 use serde_json::{Value, json};
 use std::collections::{HashMap, HashSet};
 
-const HTTP_ELIGIBLE: &[&str] = &[
+const COMPATIBILITY_HTTP_ELIGIBLE: &[&str] = &[
     "provider_side_ignore_wrong_consumer_version",
     "provider_side_ignore_matching_consumer_version",
     "released_versions_ignore_only_success",
@@ -26,6 +26,32 @@ const HTTP_ELIGIBLE: &[&str] = &[
     "latestby_none_consumer_environment",
     "latestby_cvp_ignore_new_provider",
     "latestby_cvp_ignore_old_provider",
+];
+
+const HTTP_ELIGIBLE: &[&str] = &[
+    "provider_side_ignore_wrong_consumer_version",
+    "provider_side_ignore_matching_consumer_version",
+    "released_versions_ignore_only_success",
+    "released_versions_ignore_only_failure",
+    "released_versions_ignore_whole_provider",
+    "single_provider_environment",
+    "to_tag_option_no_environment_warning",
+    "environment_with_unverified_release",
+    "environment_with_unverified_release_ignored",
+    "latestby_cvp_consumer_environment",
+    "latestby_cvp_provider_environment",
+    "latestby_cvpv_consumer_environment",
+    "latestby_cvpv_provider_environment",
+    "latestby_cp_consumer_environment",
+    "latestby_cp_provider_environment",
+    "latestby_none_consumer_environment",
+    "latestby_none_provider_environment",
+    "latestby_cvp_ignore_new_provider",
+    "latestby_cvp_ignore_old_provider",
+    "latestby_cvp_multiple_consumers",
+    "latestby_cvpv_multiple_consumers",
+    "latestby_cp_multiple_consumers",
+    "latestby_none_multiple_consumers",
 ];
 
 fn legacy_projection(doc: &Value) -> Value {
@@ -265,7 +291,8 @@ async fn all_108_captured_decisions_share_one_evaluation_and_original_http_gramm
         );
 
         // Use each original raw query verbatim: integration path selectors are NOT
-        // invented for can-i-deploy, and missing environment/version is NOT repaired.
+        // invented for either HTTP route, and missing targets are NOT repaired.
+        // The extension accepts unpinned matrix selectors; compatibility still requires a pin.
         let compatibility = server
             .client
             .get(format!("{}/can-i-deploy?{raw}", server.base_url))
@@ -281,13 +308,15 @@ async fn all_108_captured_decisions_share_one_evaluation_and_original_http_gramm
             .send()
             .await
             .unwrap();
-        assert_eq!(
-            response.status(),
-            compatibility.status(),
-            "{name}: HTTP status parity"
-        );
-        let status = compatibility.status();
-        let compatibility: Value = compatibility.json().await.unwrap();
+        let status = response.status();
+        let compatibility_status = compatibility.status();
+        let mut compatibility: Value = compatibility.json().await.unwrap();
+        if COMPATIBILITY_HTTP_ELIGIBLE.contains(&name) {
+            assert_eq!(compatibility_status, 200, "{name}: legacy acceptance unchanged");
+            assert_eq!(legacy_projection(&compatibility),case["expected"],"{name}: can-i-deploy oracle");
+        } else {
+            assert_eq!(compatibility_status,400,"{name}: legacy rejection unchanged");
+        }
         let explanation: Value = response.json().await.unwrap();
         if status.is_success() {
             accepted.push(name);
@@ -295,16 +324,12 @@ async fn all_108_captured_decisions_share_one_evaluation_and_original_http_gramm
                 HTTP_ELIGIBLE.contains(&name),
                 "unexpected eligible case {name}"
             );
-            assert_eq!(
-                legacy_projection(&compatibility),
-                case["expected"],
-                "{name}: can-i-deploy oracle"
-            );
             check_explanation(&explanation, &case["expected"], &validator, name);
         } else {
             rejected += 1;
             assert_eq!(status, 400, "{name}");
             assert_eq!(explanation["error"]["code"], "INVALID_QUERY", "{name}");
+            if let Some(errors) = compatibility["errors"].as_object_mut() { errors.remove("version"); }
             assert_eq!(
                 explanation["error"]["details"], compatibility["errors"],
                 "{name}: validation parity"
@@ -321,7 +346,7 @@ async fn all_108_captured_decisions_share_one_evaluation_and_original_http_gramm
     }
     assert_eq!(counts, [39, 51, 18]);
     assert_eq!(accepted, HTTP_ELIGIBLE);
-    assert_eq!(rejected, 93);
+    assert_eq!(rejected, 85);
     eprintln!(
         "Explanation HTTP corpus coverage: {}/108 accepted original queries: {}",
         accepted.len(),
