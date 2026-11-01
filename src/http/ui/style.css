@@ -6,7 +6,7 @@ a:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.3rem; margin-top: 2rem; }
 .table-scroll, pre { overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; text-align: left; }
+table { min-width: 42rem; border-collapse: collapse; width: 100%; text-align: left; }
 th, td { border-bottom: 1px solid #888; padding: .7rem; vertical-align: top; overflow-wrap: anywhere; }
 pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; border: 1px solid #888; border-radius: .25rem; }
 label { display: block; font-weight: 600; margin-top: .75rem; }
