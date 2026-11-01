@@ -121,3 +121,17 @@ evaluation, and existing API fixtures and real clients are unchanged. This plan/
 requires `agent-review plan`; red/green and guard mutations belong to the future build,
 not this docs-only change. Accepted 2026-11-01: the maintainer confirmed the additive `/ui/` namespace. Index search or pagination stays out of the first version;
 revisit it before release if the integration list grows large.
+
+## Build refinement — 2026-11-01
+
+Verified against the baseline binary: `q[][pacticipant]=UiCheckout&q[][mainBranch]=true&environment=ui-test`
+returns unknown for the seeded latest contract; adding an unused `q[][version]=` changes
+that result to blocked. Native HTML forms submit empty text inputs, so sending every
+optional selector field directly would change the user's selection. Before implementing
+the matrix/explanation forms, choose explicit UI-only form fields and a form marker:
+translate only marked submissions into the existing canonical query, including only the
+selected mode and nonempty optional fields. Unmarked API-shaped queries retain the exact
+existing parser semantics, including empty values. Reject stripping empty values from
+all queries or changing `MatrixQuery::parse`. Test each form mode, empty required fields,
+repeated ignores, reserved characters and the main-branch/empty-version regression.
+The UI helper may live in `src/http/ui/query.rs`; no API route or schema changes.
