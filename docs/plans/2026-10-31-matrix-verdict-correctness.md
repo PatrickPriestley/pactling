@@ -88,3 +88,32 @@ pre-existing unpinned-provider reason wording (Ruby says "any version", Pactling
 two-missing-version probes also matched the existing implementation, disproving the
 reviewer's ordering/count assumptions. The missing consumer-branch probe is now
 captured. Formatting passes. No verified important review findings remain.
+
+## Third review (independent, Claude) and fixes
+
+Probed against the pinned Ruby 2.121.2 container and its exact source
+(`lib/pact_broker/matrix/deployment_status_summary.rb`, `resolved_selector.rb`,
+`row_ignorer.rb`), then captured as 21 more cases in `matrix-regressions.json` (70 in all;
+the first 49 recaptured byte-for-byte). Each case failed before its fix.
+
+- Verdict precedence (`deployable?`): a missing specified version is false; otherwise any
+  unknown row is null, even next to a failure; otherwise a failure is false. The service
+  had tested failures before unknowns.
+- Notice order (`reasons`): ignore warnings in request order, then the environment and
+  version-number warnings, then errors. Errors are the missing-version messages in
+  selector order, or else every failure message followed by every unverified message, in
+  row order. The alphabetical sort is gone. The version-number warning follows Ruby's
+  rule (some selector is more than a name and none has a version), and the environment
+  warning is not given when a `to` tag is present.
+- Missing-version wording follows `version_does_not_exist_description`: tag, branch, main
+  branch ("No version of X from the main branch exists"), version, then "No pacts or
+  verifications have been published for X".
+- A tag, branch or main-branch selector without `latest=true` selects every version with
+  that tag or in that branch, so it can no longer widen to any version and approve a
+  deployment Ruby refuses. Every selected version with a verification is a row; when none
+  has one, a single blank row describes the newest selected version ("a version of X with
+  tag T (2)").
+
+Mutation checks: 15 guard mutations, each killed by a captured case; the last survivor
+(the subject-side missing notice for a tag selector) needed the three-selector case
+`tag_without_latest_missing_first_of_two`, which was captured for it.

@@ -69,7 +69,7 @@ def capture(base, output):
         seed("POST", f"/pacticipants/{provider}/versions/{number}/released-versions/environment/{{environment}}", {})
     seed("POST", f"/pacticipants/{consumer}/versions/1/deployed-versions/environment/{{environment}}", {})
 
-    def matrix(name, selectors, ignore=None, environment=False, latest=False, route=None):
+    def matrix(name, selectors, ignore=None, environment=False, latest=False, route=None, tag=None):
         params = []
         for participant, number in selectors:
             params.append(("q[][pacticipant]", participant))
@@ -83,10 +83,12 @@ def capture(base, output):
             params.append(("environment", "matrix-regressions" if environment is True else environment))
         if latest:
             params.append(("latest", "true"))
-        if ignore:
-            params.append(("ignore[][pacticipant]", ignore[0]))
-            if ignore[1] is not None:
-                params.append(("ignore[][version]", ignore[1]))
+        if tag:
+            params.append(("tag", tag))
+        for ignored in ([ignore] if isinstance(ignore, tuple) else ignore or []):
+            params.append(("ignore[][pacticipant]", ignored[0]))
+            if ignored[1] is not None:
+                params.append(("ignore[][version]", ignored[1]))
         path = route or "/matrix?" + urllib.parse.urlencode(params)
         status, response, _ = request("GET", path)
         assert status == 200, (name, status, response)
@@ -161,6 +163,40 @@ def capture(base, output):
     matrix("two_missing_providers", [(consumer, "1"), (provider, "998"), (provider, "999")])
     matrix("two_missing_services", [(consumer, "1"), (provider, "999"), (web, "999")])
     matrix("latest_consumer_branch_missing", [(consumer, {"latest": True, "branch": "absent"}), (provider, "1")])
+    # Review findings on the first capture: verdict precedence, notice order, the
+    # main-branch missing notice and tag/branch selectors without latest=true.
+    oc, oa, ob, tp = "MatrixOrderC", "MatrixOrderA", "MatrixOrderB", "MatrixTagP"
+    order_a, order_b, tag_p = publish(oc, oa), publish(oc, ob), publish(oc, tp)
+    seed("PUT", f"/pacticipants/{oa}/versions/1", {})
+    seed("POST", order_b, {"providerApplicationVersion": "1", "success": False})
+    seed("POST", tag_p, {"providerApplicationVersion": "1", "success": True})
+    seed("PUT", f"/pacticipants/{tp}/versions/2", {})
+    for number in ["1", "2"]:
+        seed("PUT", f"/pacticipants/{tp}/versions/{number}/tags/both", {})
+        seed("PUT", f"/pacticipants/{tp}/branches/main/versions/{number}", {})
+    seed("PUT", f"/pacticipants/{tp}/versions/2/tags/unverified", {})
+    seed("PUT", f"/pacticipants/{oc}/versions/1/tags/ct", {})
+    matrix("unknown_and_failed_is_null", [(oc, "1"), (ob, "1"), (oa, "1")])
+    matrix("unknown_and_failed_single_selector", [(oc, "1")])
+    matrix("missing_selectors_keep_query_order", [(oc, "1"), (ob, "999"), (oa, "999")])
+    matrix("ignore_warnings_keep_query_order", [(oc, "1")], [(ob, "9"), ("NoSuchApp", None)])
+    matrix("main_branch_missing", [(oc, "1"), (oa, {"latest": True, "mainBranch": True})])
+    matrix("main_branch_missing_reverse", [(oa, {"latest": True, "mainBranch": True}), (oc, "1")])
+    matrix("latest_without_versions", [("MatrixUnverifiedConsumer", "1"), ("MatrixUnverifiedProvider", {"latest": True})])
+    matrix("tag_without_latest_missing", [(oc, "1"), (oa, {"tag": "nosuch"})])
+    matrix("tag_without_latest_missing_reverse", [(oa, {"tag": "nosuch"}), (oc, "1")])
+    matrix("tag_without_latest_missing_first_of_two", [(oa, {"tag": "nosuch"}), (ob, "999"), (oc, "1")])
+    matrix("tag_without_latest_verified", [(oc, "1"), (tp, {"tag": "both"})])
+    matrix("tag_without_latest_verified_reverse", [(tp, {"tag": "both"}), (oc, "1")])
+    matrix("tag_without_latest_unverified", [(oc, "1"), (tp, {"tag": "unverified"})])
+    matrix("branch_without_latest", [(oc, "1"), (tp, {"branch": "main"})])
+    matrix("branch_without_latest_missing", [(oc, "1"), (tp, {"branch": "nosuch"})])
+    matrix("main_branch_without_latest", [(oc, "1"), (tp, {"mainBranch": True})])
+    matrix("main_branch_without_latest_missing", [(oc, "1"), (oa, {"mainBranch": True})])
+    matrix("consumer_tag_without_latest", [(oc, {"tag": "ct"}), (tp, "1")])
+    matrix("consumer_tag_without_latest_single", [(oc, {"tag": "ct"})])
+    matrix("two_latest_selectors_warning", [(oc, {"latest": True}), (ob, {"latest": True})])
+    matrix("to_tag_option_no_environment_warning", [(oc, "1")], latest=True, tag="prod")
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps({"brokerVersion": version, "setup": setup, "cases": cases}, indent=2) + "\n")

@@ -100,6 +100,39 @@ impl Db {
         .await
     }
 
+    /// Every version carrying the tag, newest first (a `q[][tag]` selector without `latest`).
+    pub async fn versions_with_tag(
+        &self,
+        pacticipant_id: i64,
+        tag: &str,
+    ) -> sqlx::Result<Vec<Version>> {
+        sqlx::query_as(version_query!(
+            "JOIN tags t ON t.version_id = v.id
+             WHERE v.pacticipant_id = ? AND t.name = ? ORDER BY v.id DESC"
+        ))
+        .bind(pacticipant_id)
+        .bind(tag)
+        .fetch_all(&self.pool)
+        .await
+    }
+
+    /// Every version in the branch, newest first (a `q[][branch]` selector without `latest`).
+    pub async fn versions_in_branch(
+        &self,
+        pacticipant_id: i64,
+        branch: &str,
+    ) -> sqlx::Result<Vec<Version>> {
+        sqlx::query_as(version_query!(
+            "JOIN branch_versions bv ON bv.version_id = v.id
+             JOIN branches b ON b.id = bv.branch_id
+             WHERE v.pacticipant_id = ? AND b.name = ? ORDER BY bv.id DESC"
+        ))
+        .bind(pacticipant_id)
+        .bind(branch)
+        .fetch_all(&self.pool)
+        .await
+    }
+
     pub async fn latest_version_in_branch(
         &self,
         pacticipant_id: i64,

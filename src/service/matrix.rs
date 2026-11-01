@@ -19,6 +19,17 @@ pub struct Selector {
     pub main_branch: bool,
 }
 
+impl Selector {
+    /// Only the pacticipant name was given: "all versions" in Ruby's resolver.
+    pub fn is_name_only(&self) -> bool {
+        self.version.is_none()
+            && !self.latest
+            && self.tag.is_none()
+            && self.branch.is_none()
+            && !self.main_branch
+    }
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct MatrixQuery {
     pub selectors: Vec<Selector>,
@@ -165,10 +176,9 @@ enum Target {
     Latest {
         tag: Option<String>,
     },
-    Pinned {
-        version: Version,
-        description: String,
-    },
+    /// The versions the second selector resolved to, each with its reason wording.
+    /// A single pinned version is the one-element case.
+    Versions(Vec<(Version, String)>),
     Missing {
         description: String,
         notice: String,
@@ -225,8 +235,22 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             }
         }
     }
-    notices.sort_by(|a, b| (a.kind == "error", &a.text).cmp(&(b.kind == "error", &b.text)));
-    notices.dedup_by(|a, b| a.text == b.text);
+    // Verified in Ruby's DeploymentStatusSummary#reasons: warnings (ignore warnings in
+    // request order, then the environment and version-number warnings) precede errors,
+    // and within each kind the request order is kept.
+    if q.selectors.iter().any(|s| !s.is_name_only())
+        && q.selectors.iter().all(|s| s.version.is_none())
+    {
+        notices.push(Notice { kind: "warning", text: "WARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.".into() });
+    }
+    let (warnings, errors): (Vec<Notice>, Vec<Notice>) =
+        notices.into_iter().partition(|n| n.kind == "warning");
+    let mut notices: Vec<Notice> = vec![];
+    for n in warnings.into_iter().chain(errors) {
+        if !notices.iter().any(|seen| seen.text == n.text) {
+            notices.push(n);
+        }
+    }
     // Overlapping selectors can select the same evidence more than once.
     let mut seen = std::collections::HashSet::new();
     rows.retain(|r| {
@@ -321,6 +345,36 @@ async fn resolve_selector(
                 Box::new(move |v: &Version| format!("the latest version of {name} ({})", v.number)),
             )
         }
+    } else if subject_selector.main_branch || subject_selector.branch.is_some() {
+        // Verified: a branch selector without `latest` means every version of the branch.
+        let name = subject.name.clone();
+        let branch = match &subject_selector.branch {
+            Some(b) => Some(b.clone()),
+            None => subject.main_branch.clone(),
+        };
+        let versions = match &branch {
+            Some(b) => db.versions_in_branch(subject.id, b).await?,
+            None => vec![],
+        };
+        let b = branch.unwrap_or_default();
+        let prefix = if versions.len() > 1 {
+            "one of the versions"
+        } else {
+            "the version"
+        };
+        (
+            versions,
+            Box::new(move |v: &Version| {
+                format!("{prefix} of {name} from branch {b} ({})", v.number)
+            }),
+        )
+    } else if let Some(t) = subject_selector.tag.clone() {
+        // Verified: a tag selector without `latest` means every version with the tag.
+        let name = subject.name.clone();
+        (
+            db.versions_with_tag(subject.id, &t).await?,
+            Box::new(move |v: &Version| format!("a version of {name} with tag {t} ({})", v.number)),
+        )
     } else {
         let name = subject.name.clone();
         (
@@ -331,19 +385,22 @@ async fn resolve_selector(
     Ok(resolved)
 }
 
+/// Ruby's `ResolvedSelector#version_does_not_exist_description`, in its order of checks.
 fn missing_selector_notice(subject: &Pacticipant, selector: &Selector) -> String {
-    if let Some(number) = &selector.version {
+    if let Some(tag) = &selector.tag {
+        format!("No version with tag {tag} exists for {}", subject.name)
+    } else if let Some(branch) = &selector.branch {
+        format!("No version of {} from branch {branch} exists", subject.name)
+    } else if selector.main_branch {
+        format!("No version of {} from the main branch exists", subject.name)
+    } else if let Some(number) = &selector.version {
         format!(
             "No pacts or verifications have been published for version {number} of {}",
             subject.name
         )
-    } else if let Some(tag) = &selector.tag {
-        format!("No version with tag {tag} exists for {}", subject.name)
-    } else if let Some(branch) = &selector.branch {
-        format!("No version of {} from branch {branch} exists", subject.name)
     } else {
         format!(
-            "No pacts or verifications have been published for the latest version of {}",
+            "No pacts or verifications have been published for {}",
             subject.name
         )
     }
@@ -380,31 +437,31 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
 
     let (subject_versions, subject_description) =
         resolve_selector(db, subject, subject_selector).await?;
-    if q.selectors.len() == 1 && subject_selector.latest {
-        notices.push(Notice { kind: "warning", text: "WARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.".into() });
-    }
 
     // How the other side is chosen.
     let target = if q.selectors.len() > 1 {
         let other = &pacticipants[1];
         let selector = &q.selectors[1];
-        if selector.version.is_some() || selector.latest {
+        if selector.is_name_only() {
+            Target::Any
+        } else {
             let (versions, describe) = resolve_selector(db, other, selector).await?;
-            match versions.into_iter().next() {
-                Some(version) => {
-                    let description = describe(&version);
-                    Target::Pinned {
-                        version,
-                        description,
-                    }
-                }
-                None => Target::Missing {
+            if versions.is_empty() {
+                Target::Missing {
                     description: format!("a requested version of {}", other.name),
                     notice: missing_selector_notice(other, selector),
-                },
+                }
+            } else {
+                Target::Versions(
+                    versions
+                        .into_iter()
+                        .map(|v| {
+                            let d = describe(&v);
+                            (v, d)
+                        })
+                        .collect(),
+                )
             }
-        } else {
-            Target::Any
         }
     } else if let Some(e) = &environment {
         Target::Environment(e.clone())
@@ -415,7 +472,7 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
     };
     // Verified: one selector without an environment gets the environment warning first;
     // the integration route (two unpinned selectors) gets none.
-    if q.selectors.len() == 1 && environment.is_none() {
+    if q.selectors.len() == 1 && environment.is_none() && q.tag.is_none() {
         notices.insert(0, Notice { kind: "warning", text: "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable.".into() });
     }
 
@@ -423,7 +480,7 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
     if subject_versions.is_empty() {
         // An unconstrained provider may have publications but no provider versions
         // yet. Its opposite direction supplies the unknown row, not a missing pin.
-        if q.selectors.len() == 1 || subject_selector.version.is_some() || subject_selector.latest {
+        if q.selectors.len() == 1 || !subject_selector.is_name_only() {
             notices.push(Notice {
                 kind: "error",
                 text: missing_selector_notice(subject, subject_selector),
@@ -541,28 +598,44 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                         ignored,
                     });
                 }
-                Target::Pinned {
-                    version: pv,
-                    description,
-                } => {
-                    let verification = db
-                        .latest_verification_by_provider_version(pact.pact_version_id, pv.id)
-                        .await?;
-                    rows.push(Row {
-                        consumer: Side {
-                            pacticipant: subject.clone(),
-                            version: Some(sv.clone()),
-                            description: sdesc.clone(),
-                        },
-                        provider: Side {
-                            pacticipant: provider.clone(),
-                            version: verification.as_ref().map(|_| pv.clone()),
-                            description: description.clone(),
-                        },
-                        pact: pact.clone(),
-                        verification,
-                        ignored,
-                    });
+                Target::Versions(versions) => {
+                    // Verified: every selected version with a verification is a row; when
+                    // none has one, a single blank row describes the newest selected version.
+                    let mut verified = vec![];
+                    for (pv, description) in versions {
+                        if let Some(vf) = db
+                            .latest_verification_by_provider_version(pact.pact_version_id, pv.id)
+                            .await?
+                        {
+                            verified.push((pv, description, vf));
+                        }
+                    }
+                    let blank = (versions.first().expect("non-empty").clone(), None);
+                    let selected = if verified.is_empty() {
+                        vec![blank]
+                    } else {
+                        verified
+                            .into_iter()
+                            .map(|(pv, d, vf)| ((pv.clone(), d.clone()), Some(vf)))
+                            .collect()
+                    };
+                    for ((pv, description), verification) in selected {
+                        rows.push(Row {
+                            consumer: Side {
+                                pacticipant: subject.clone(),
+                                version: Some(sv.clone()),
+                                description: sdesc.clone(),
+                            },
+                            provider: Side {
+                                pacticipant: provider.clone(),
+                                version: verification.as_ref().map(|_| pv.clone()),
+                                description,
+                            },
+                            pact: pact.clone(),
+                            verification,
+                            ignored,
+                        });
+                    }
                 }
                 Target::Any => {
                     let verifications = db
@@ -650,7 +723,7 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                             })
                             .collect()
                     }
-                    Target::Pinned { .. } | Target::Missing { .. } => vec![],
+                    Target::Versions(_) | Target::Missing { .. } => vec![],
                     Target::Any => {
                         // Every consumer version with a verification by this provider version.
                         let mut out = vec![];
@@ -737,6 +810,7 @@ fn summarize(mut rows: Vec<Row>, mut notices: Vec<Notice>) -> Matrix {
     });
 
     let (mut success, mut failed, mut unknown, mut ignored) = (0, 0, 0, 0);
+    let (mut failures, mut unknowns) = (vec![], vec![]);
     for r in &rows {
         if r.ignored {
             ignored += 1;
@@ -746,34 +820,39 @@ fn summarize(mut rows: Vec<Row>, mut notices: Vec<Notice>) -> Matrix {
             Some(v) if v.success => success += 1,
             Some(_) => {
                 failed += 1;
-                if !missing_version {
-                    notices.push(Notice {
-                        kind: "error",
-                        text: format!(
-                            "The verification for the pact between {} and {} failed",
-                            r.consumer.description, r.provider.description
-                        ),
-                    });
-                }
+                failures.push(Notice {
+                    kind: "error",
+                    text: format!(
+                        "The verification for the pact between {} and {} failed",
+                        r.consumer.description, r.provider.description
+                    ),
+                });
             }
             None => {
                 unknown += 1;
-                if !missing_version {
-                    notices.push(Notice {
-                        kind: "error",
-                        text: format!(
-                            "There is no verified pact between {} and {}",
-                            r.consumer.description, r.provider.description
-                        ),
-                    });
-                }
+                unknowns.push(Notice {
+                    kind: "error",
+                    text: format!(
+                        "There is no verified pact between {} and {}",
+                        r.consumer.description, r.provider.description
+                    ),
+                });
             }
         }
     }
-    let deployable = if failed > 0 || missing_version {
+    // Verified in Ruby's DeploymentStatusSummary: a missing selector version wins
+    // (false, and only its message); then any unknown row makes the verdict null; then
+    // a failure makes it false. Failure messages precede unverified messages.
+    if !missing_version {
+        notices.extend(failures);
+        notices.extend(unknowns);
+    }
+    let deployable = if missing_version {
         Some(false)
     } else if unknown > 0 {
         None
+    } else if failed > 0 {
+        Some(false)
     } else {
         if success > 0 {
             notices.push(Notice {

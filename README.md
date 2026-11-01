@@ -26,6 +26,10 @@ Known differences from the Ruby broker, all deliberate: an empty `contracts` arr
 rather than a 500; the 409 for changed content omits the Ruby broker's diff notice; bad-JSON
 error messages use serde's wording.
 
+Known gaps still being closed (issue #7, not deliberate): on `/matrix/provider/{p}/consumer/{c}`
+an unpinned provider is described as "version N of X" where the Ruby broker says "any version
+of X", and an environment selector keeps an unverified provider row that the Ruby broker omits.
+
 ## Run
 
 ```bash
