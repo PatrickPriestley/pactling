@@ -813,3 +813,17 @@ async fn ui_matrix_self_integration_keeps_positional_selectors() {
     assert!(q.selectors[1].latest);
     assert!(q.selectors[1].version.is_none());
 }
+
+#[tokio::test]
+async fn ui_matrix_nonempty_considered_and_safe_errors() {
+    let s = start().await;
+    matrix_seed(&s).await;
+    let (_, body) = matrix_html(&s, "").await;
+    assert!(!body.contains("No matrix rows match these selectors."));
+    assert!(body.contains("Considered"));
+    assert!(!body.contains(">Ignored<"));
+    let (status, body) = matrix_html(&s, "environment=%3Cscript%3E").await;
+    assert_eq!(status, 400);
+    assert!(body.contains("&lt;script&gt;"));
+    assert!(!body.contains("<script>"));
+}
