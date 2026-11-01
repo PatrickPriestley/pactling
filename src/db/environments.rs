@@ -93,7 +93,7 @@ impl Db {
         .bind(production)
         .bind(contacts)
         .bind(now())
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await
     }
 
@@ -115,42 +115,42 @@ impl Db {
         .bind(contacts)
         .bind(now())
         .bind(id)
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await
     }
 
     pub async fn find_environment_by_uuid(&self, uuid: &str) -> sqlx::Result<Option<Environment>> {
         sqlx::query_as("SELECT id, uuid, name, display_name, production, contacts, created_at, updated_at FROM environments WHERE uuid = ?")
             .bind(uuid)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
     pub async fn find_environment_by_name(&self, name: &str) -> sqlx::Result<Option<Environment>> {
         sqlx::query_as("SELECT id, uuid, name, display_name, production, contacts, created_at, updated_at FROM environments WHERE name = ?")
             .bind(name)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
     pub async fn find_environment_by_id(&self, id: i64) -> sqlx::Result<Option<Environment>> {
         sqlx::query_as("SELECT id, uuid, name, display_name, production, contacts, created_at, updated_at FROM environments WHERE id = ?")
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
     /// Ordered by name.
     pub async fn list_environments(&self) -> sqlx::Result<Vec<Environment>> {
         sqlx::query_as("SELECT id, uuid, name, display_name, production, contacts, created_at, updated_at FROM environments ORDER BY name")
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await
     }
 
     pub async fn delete_environment(&self, id: i64) -> sqlx::Result<bool> {
         let r = sqlx::query("DELETE FROM environments WHERE id = ?")
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(r.rows_affected() > 0)
     }
@@ -175,7 +175,7 @@ impl Db {
         .bind(version_id)
         .bind(environment_id)
         .bind(application_instance)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await?
         {
             return Ok((existing, false));
@@ -190,7 +190,7 @@ impl Db {
         .bind(environment_id)
         .bind(application_instance)
         .bind(pacticipant_id)
-        .execute(&self.pool)
+        .execute(&self.conn)
         .await?;
         let uuid = uuid::Uuid::new_v4().to_string();
         let id: i64 = sqlx::query_scalar(
@@ -201,7 +201,7 @@ impl Db {
         .bind(environment_id)
         .bind(application_instance)
         .bind(now())
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await?;
         let row = self
             .find_deployed_version_by_id(id)
@@ -213,14 +213,14 @@ impl Db {
     async fn find_deployed_version_by_id(&self, id: i64) -> sqlx::Result<Option<DeployedVersion>> {
         sqlx::query_as(deployed_query!("WHERE dv.id = ?"))
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
     pub async fn find_deployed_version(&self, uuid: &str) -> sqlx::Result<Option<DeployedVersion>> {
         sqlx::query_as(deployed_query!("WHERE dv.uuid = ?"))
             .bind(uuid)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
@@ -228,7 +228,7 @@ impl Db {
         sqlx::query("UPDATE deployed_versions SET currently_deployed = 0, undeployed_at = ? WHERE id = ? AND currently_deployed = 1")
             .bind(now())
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(self.find_deployed_version_by_id(id).await?.expect("exists"))
     }
@@ -246,7 +246,7 @@ impl Db {
         ))
         .bind(environment_id)
         .bind(pacticipant)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -260,7 +260,7 @@ impl Db {
             "WHERE p.id = ? AND dv.currently_deployed = 1 ORDER BY dv.id"
         ))
         .bind(pacticipant_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -273,7 +273,7 @@ impl Db {
             "WHERE p.id = ? AND rv.currently_supported = 1 ORDER BY rv.id"
         ))
         .bind(pacticipant_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -283,7 +283,7 @@ impl Db {
     ) -> sqlx::Result<Vec<DeployedVersion>> {
         sqlx::query_as(deployed_query!("WHERE dv.version_id = ? ORDER BY dv.id"))
             .bind(version_id)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await
     }
 
@@ -299,13 +299,13 @@ impl Db {
         ))
         .bind(version_id)
         .bind(environment_id)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await?
         {
             if !existing.currently_supported {
                 sqlx::query("UPDATE released_versions SET currently_supported = 1, support_ended_at = NULL WHERE id = ?")
                     .bind(existing.id)
-                    .execute(&self.pool)
+                    .execute(&self.conn)
                     .await?;
                 return Ok((
                     self.find_released_version_by_id(existing.id)
@@ -322,7 +322,7 @@ impl Db {
             .bind(version_id)
             .bind(environment_id)
             .bind(now())
-            .fetch_one(&self.pool)
+            .fetch_one(&self.conn)
             .await?;
         Ok((
             self.find_released_version_by_id(id)
@@ -335,14 +335,14 @@ impl Db {
     async fn find_released_version_by_id(&self, id: i64) -> sqlx::Result<Option<ReleasedVersion>> {
         sqlx::query_as(released_query!("WHERE rv.id = ?"))
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
     pub async fn find_released_version(&self, uuid: &str) -> sqlx::Result<Option<ReleasedVersion>> {
         sqlx::query_as(released_query!("WHERE rv.uuid = ?"))
             .bind(uuid)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
@@ -350,7 +350,7 @@ impl Db {
         sqlx::query("UPDATE released_versions SET currently_supported = 0, support_ended_at = ? WHERE id = ? AND currently_supported = 1")
             .bind(now())
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(self.find_released_version_by_id(id).await?.expect("exists"))
     }
@@ -370,14 +370,14 @@ impl Db {
         .bind(environment_id)
         .bind(pacticipant)
         .bind(version)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
     pub async fn releases_of_version(&self, version_id: i64) -> sqlx::Result<Vec<ReleasedVersion>> {
         sqlx::query_as(released_query!("WHERE rv.version_id = ? ORDER BY rv.id"))
             .bind(version_id)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await
     }
 
@@ -392,7 +392,7 @@ impl Db {
              ORDER BY e.name",
         )
         .bind(version_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -411,7 +411,7 @@ impl Db {
         )
         .bind(pacticipant_id)
         .bind(environment_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -430,7 +430,7 @@ impl Db {
                     "SELECT DISTINCT version_id FROM deployed_versions WHERE currently_deployed = 1 AND (?1 IS NULL OR environment_id = ?1)",
                 )
                 .bind(environment_id)
-                .fetch_all(&self.pool)
+                .fetch_all(&self.conn)
                 .await?,
             );
         }
@@ -440,7 +440,7 @@ impl Db {
                     "SELECT DISTINCT version_id FROM released_versions WHERE currently_supported = 1 AND (?1 IS NULL OR environment_id = ?1)",
                 )
                 .bind(environment_id)
-                .fetch_all(&self.pool)
+                .fetch_all(&self.conn)
                 .await?,
             );
         }

@@ -18,7 +18,7 @@ impl Db {
              FROM pacticipants WHERE name = ?",
         )
         .bind(name)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -28,7 +28,7 @@ impl Db {
             "SELECT id, name, display_name, repository_url, main_branch, created_at, updated_at
              FROM pacticipants ORDER BY name COLLATE NOCASE",
         )
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -63,7 +63,7 @@ impl Db {
         .bind(main_branch.is_some())
         .bind(main_branch.flatten())
         .bind(now())
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await?
         .into();
         Ok(row)
@@ -94,7 +94,7 @@ impl Db {
         .bind(main_branch.flatten())
         .bind(now())
         .bind(name)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -102,7 +102,7 @@ impl Db {
     pub async fn delete_pacticipant(&self, name: &str) -> sqlx::Result<bool> {
         let result = sqlx::query("DELETE FROM pacticipants WHERE name = ?")
             .bind(name)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(result.rows_affected() > 0)
     }

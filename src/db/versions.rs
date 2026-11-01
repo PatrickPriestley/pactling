@@ -55,14 +55,14 @@ impl Db {
         sqlx::query_as(version_query!("WHERE p.name = ? AND v.number = ?"))
             .bind(pacticipant)
             .bind(number)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
     pub async fn find_version_by_id(&self, id: i64) -> sqlx::Result<Option<Version>> {
         sqlx::query_as(version_query!("WHERE v.id = ?"))
             .bind(id)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
@@ -72,7 +72,7 @@ impl Db {
             "WHERE v.pacticipant_id = ? ORDER BY v.id DESC"
         ))
         .bind(pacticipant_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -81,7 +81,7 @@ impl Db {
             "WHERE v.pacticipant_id = ? ORDER BY v.id DESC LIMIT 1"
         ))
         .bind(pacticipant_id)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -96,7 +96,7 @@ impl Db {
         ))
         .bind(pacticipant_id)
         .bind(tag)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -112,7 +112,7 @@ impl Db {
         ))
         .bind(pacticipant_id)
         .bind(tag)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -129,7 +129,7 @@ impl Db {
         ))
         .bind(pacticipant_id)
         .bind(branch)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -145,7 +145,7 @@ impl Db {
         ))
         .bind(pacticipant_id)
         .bind(branch)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -163,14 +163,14 @@ impl Db {
         .bind(pacticipant_id)
         .bind(number)
         .bind(now())
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await?;
         let version: Version = sqlx::query_as(version_query!(
             "WHERE v.pacticipant_id = ? AND v.number = ?"
         ))
         .bind(pacticipant_id)
         .bind(number)
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await?;
         Ok((version, inserted.is_some()))
     }
@@ -194,14 +194,14 @@ impl Db {
         .bind(build_url.flatten())
         .bind(now())
         .bind(id)
-        .fetch_one(&self.pool)
+        .fetch_one(&self.conn)
         .await
     }
 
     pub async fn delete_version(&self, id: i64) -> sqlx::Result<bool> {
         let r = sqlx::query("DELETE FROM versions WHERE id = ?")
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(r.rows_affected() > 0)
     }
@@ -216,7 +216,7 @@ impl Db {
         sqlx::query_as("SELECT id, pacticipant_id, name, created_at, updated_at FROM branches WHERE pacticipant_id = ? AND name = ?")
             .bind(pacticipant_id)
             .bind(name)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
@@ -228,7 +228,7 @@ impl Db {
              ORDER BY COALESCE(updated_at, created_at) DESC, name",
         )
             .bind(pacticipant_id)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await
     }
 
@@ -244,7 +244,7 @@ impl Db {
         .bind(pacticipant_id)
         .bind(name)
         .bind(now())
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await?;
         let branch = self
             .find_branch(pacticipant_id, name)
@@ -256,7 +256,7 @@ impl Db {
     pub async fn delete_branch(&self, id: i64) -> sqlx::Result<bool> {
         let r = sqlx::query("DELETE FROM branches WHERE id = ?")
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(r.rows_affected() > 0)
     }
@@ -275,14 +275,14 @@ impl Db {
         .bind(branch_id)
         .bind(version_id)
         .bind(now())
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await?;
         match inserted {
             Some(created_at) => {
                 sqlx::query("UPDATE branches SET updated_at = ? WHERE id = ?")
                     .bind(now())
                     .bind(branch_id)
-                    .execute(&self.pool)
+                    .execute(&self.conn)
                     .await?;
                 Ok((created_at, true))
             }
@@ -292,7 +292,7 @@ impl Db {
                 )
                 .bind(branch_id)
                 .bind(version_id)
-                .fetch_one(&self.pool)
+                .fetch_one(&self.conn)
                 .await?;
                 Ok((created_at, false))
             }
@@ -309,7 +309,7 @@ impl Db {
         )
         .bind(branch_id)
         .bind(version_id)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -321,7 +321,7 @@ impl Db {
         let r = sqlx::query("DELETE FROM branch_versions WHERE branch_id = ? AND version_id = ?")
             .bind(branch_id)
             .bind(version_id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(r.rows_affected() > 0)
     }
@@ -340,7 +340,7 @@ impl Db {
              WHERE bv.version_id = ? ORDER BY bv.id",
         )
         .bind(version_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -350,7 +350,7 @@ impl Db {
         sqlx::query_as("SELECT name, created_at FROM tags WHERE version_id = ? AND name = ?")
             .bind(version_id)
             .bind(name)
-            .fetch_optional(&self.pool)
+            .fetch_optional(&self.conn)
             .await
     }
 
@@ -358,7 +358,7 @@ impl Db {
     pub async fn tags_for_version(&self, version_id: i64) -> sqlx::Result<Vec<Tag>> {
         sqlx::query_as("SELECT name, created_at FROM tags WHERE version_id = ? ORDER BY id")
             .bind(version_id)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.conn)
             .await
     }
 
@@ -374,7 +374,7 @@ impl Db {
         .bind(version_id)
         .bind(name)
         .bind(now())
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await?;
         let tag = self
             .find_tag(version_id, name)
@@ -387,7 +387,7 @@ impl Db {
         let r = sqlx::query("DELETE FROM tags WHERE version_id = ? AND name = ?")
             .bind(version_id)
             .bind(name)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(r.rows_affected() > 0)
     }
@@ -402,7 +402,7 @@ impl Db {
              WHERE pp.consumer_version_id = ? ORDER BY p.name",
         )
         .bind(version_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -418,7 +418,7 @@ impl Db {
         .bind(branch)
         .bind(now())
         .bind(pacticipant_id)
-        .execute(&self.pool)
+        .execute(&self.conn)
         .await?;
         Ok(r.rows_affected() > 0)
     }

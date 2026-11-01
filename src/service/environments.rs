@@ -128,14 +128,17 @@ pub async fn record_deployment(
     environment_uuid: &str,
     application_instance: Option<&str>,
 ) -> Result<(DeployedVersion, Environment, bool)> {
-    let v = db
+    // Lookup, retirement of the previous record and insert are one transaction (#4).
+    let tx = db.begin().await?;
+    let v = tx
         .find_version(pacticipant, version)
         .await?
         .ok_or(Error::NoRoute)?;
-    let e = find(db, environment_uuid).await?;
-    let (dv, created) = db
+    let e = find(&tx, environment_uuid).await?;
+    let (dv, created) = tx
         .record_deployment(v.id, v.pacticipant_id, e.id, application_instance)
         .await?;
+    tx.commit().await?;
     Ok((dv, e, created))
 }
 
@@ -145,12 +148,14 @@ pub async fn record_release(
     version: &str,
     environment_uuid: &str,
 ) -> Result<(ReleasedVersion, Environment, bool)> {
-    let v = db
+    let tx = db.begin().await?;
+    let v = tx
         .find_version(pacticipant, version)
         .await?
         .ok_or(Error::NoRoute)?;
-    let e = find(db, environment_uuid).await?;
-    let (rv, created) = db.record_release(v.id, e.id).await?;
+    let e = find(&tx, environment_uuid).await?;
+    let (rv, created) = tx.record_release(v.id, e.id).await?;
+    tx.commit().await?;
     Ok((rv, e, created))
 }
 

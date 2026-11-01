@@ -41,7 +41,7 @@ impl Db {
             "WHERE pp.consumer_version_id = ? ORDER BY p.name"
         ))
         .bind(consumer_version_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -55,7 +55,7 @@ impl Db {
             "WHERE c.id = ? ORDER BY p.name, v.id DESC"
         ))
         .bind(consumer_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -68,7 +68,7 @@ impl Db {
             "WHERE pp.provider_id = ? ORDER BY c.name, v.id DESC"
         ))
         .bind(provider_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -84,7 +84,7 @@ impl Db {
              WHERE pp.provider_id = ? ORDER BY c.name",
         )
         .bind(provider_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -100,7 +100,7 @@ impl Db {
              WHERE v.pacticipant_id = ? ORDER BY p.name",
         )
         .bind(consumer_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 
@@ -115,7 +115,7 @@ impl Db {
         ))
         .bind(pact_version_id)
         .bind(provider_version_id)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -130,7 +130,7 @@ impl Db {
              ORDER BY pv.id DESC"
         ))
         .bind(pact_version_id)
-        .fetch_all(&self.pool)
+        .fetch_all(&self.conn)
         .await
     }
 

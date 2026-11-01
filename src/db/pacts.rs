@@ -53,7 +53,7 @@ impl Db {
         .bind(sha)
         .bind(content)
         .bind(now())
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await?;
         match inserted {
             Some(id) => Ok(id),
@@ -62,7 +62,7 @@ impl Db {
                     .bind(consumer_id)
                     .bind(provider_id)
                     .bind(sha)
-                    .fetch_one(&self.pool)
+                    .fetch_one(&self.conn)
                     .await
             }
         }
@@ -78,7 +78,7 @@ impl Db {
         ))
         .bind(consumer_version_id)
         .bind(provider_id)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -99,7 +99,7 @@ impl Db {
         .bind(provider_id)
         .bind(pact_version_id)
         .bind(now())
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await?;
         let row = self
             .find_publication(consumer_version_id, provider_id)
@@ -112,7 +112,7 @@ impl Db {
         sqlx::query("UPDATE pact_publications SET updated_at = ? WHERE id = ?")
             .bind(now())
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(())
     }
@@ -120,7 +120,7 @@ impl Db {
     pub async fn delete_publication(&self, id: i64) -> sqlx::Result<bool> {
         let r = sqlx::query("DELETE FROM pact_publications WHERE id = ?")
             .bind(id)
-            .execute(&self.pool)
+            .execute(&self.conn)
             .await?;
         Ok(r.rows_affected() > 0)
     }
@@ -137,7 +137,7 @@ impl Db {
         .bind(provider)
         .bind(consumer)
         .bind(version)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -153,7 +153,7 @@ impl Db {
         .bind(provider)
         .bind(consumer)
         .bind(sha)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -168,7 +168,7 @@ impl Db {
         ))
         .bind(provider)
         .bind(consumer)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -185,7 +185,7 @@ impl Db {
         .bind(provider)
         .bind(consumer)
         .bind(tag)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -201,7 +201,7 @@ impl Db {
         ))
         .bind(provider)
         .bind(consumer)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -226,7 +226,7 @@ impl Db {
         .bind(provider_id)
         .bind(before_version_id)
         .bind(tag)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 
@@ -248,7 +248,7 @@ impl Db {
         .bind(consumer_id)
         .bind(provider_id)
         .bind(before_version_id)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&self.conn)
         .await
     }
 }

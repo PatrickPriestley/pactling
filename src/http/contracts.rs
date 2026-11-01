@@ -33,12 +33,14 @@ pub async fn publish(
             let json: Value = serde_json::from_slice(&body)
                 .map_err(|e| Error::BadRequest(format!("JSON::ParserError - {e}")))?;
             let req = PublishRequest::parse(&json)?;
-            match service::publish_contracts(&state.db, &req).await {
+            // The batch, its metadata and its webhook triggers land together or not at all.
+            let tx = state.db.begin().await?;
+            match service::publish_contracts(&tx, &req).await {
                 Ok(outcome) => {
                     let mut triggered = vec![];
                     for c in &outcome.contracts {
                         let fired = trigger::trigger_publish_events(
-                            &state.db,
+                            &tx,
                             &state.config,
                             &l.href(""),
                             &c.publication,
@@ -46,10 +48,8 @@ pub async fn publish(
                             req.build_url.as_deref(),
                         )
                         .await?;
-                        let configured =
-                            trigger::any_webhook_for(&state.db, &c.publication).await?;
-                        let verified = state
-                            .db
+                        let configured = trigger::any_webhook_for(&tx, &c.publication).await?;
+                        let verified = tx
                             .any_verifications_for_integration(
                                 c.publication.consumer_id,
                                 c.publication.provider_id,
@@ -57,6 +57,7 @@ pub async fn publish(
                             .await?;
                         triggered.push((fired, configured, verified));
                     }
+                    tx.commit().await?;
                     Ok(
                         Hal(document(&state, &l, &req, &outcome, &triggered).await?)
                             .into_response(),
