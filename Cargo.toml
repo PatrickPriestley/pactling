@@ -22,7 +22,7 @@ tower-http = { version = "0.7", features = ["trace", "set-header"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 uuid = { version = "1", features = ["v4", "serde"] }
-
-[dev-dependencies]
 regex = "1.13.1"
 reqwest = { version = "0.13", features = ["json"] }
+
+[dev-dependencies]
