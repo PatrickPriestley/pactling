@@ -1036,3 +1036,140 @@ async fn ui_explanation_validates_query() {
         assert_eq!(r.status(), status);
     }
 }
+
+#[tokio::test]
+async fn ui_explanation_open_codes_and_anchor_targets() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    let mut doc: serde_json::Value = s
+        .client
+        .get(format!(
+            "{}/pactling/v1/can-i-deploy/explanation?pacticipant=Checkout&environment=test",
+            s.base_url
+        ))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    doc["reasons"][0]["code"] = json!("FUTURE_<REASON>");
+    doc["nextActions"][0]["type"] = json!("FUTURE_<ACTION>");
+    doc["nextActions"][0]["target"]["otherHref"] = json!("javascript:alert(1)");
+    doc["resolution"]["selectors"][0]["extra/key~"] = json!([true, 42]);
+    let html = pactling::http::ui::explanation::render_document(&doc).into_string();
+    assert!(html.contains("FUTURE_&lt;REASON&gt;"));
+    assert!(html.contains("FUTURE_&lt;ACTION&gt;"));
+    assert!(!html.contains("<REASON>"));
+    assert!(!html.contains("href=\"javascript:"));
+    assert!(html.contains("true"));
+    assert!(html.contains("42"));
+    let mut ids = std::collections::HashSet::new();
+    for item in html.split(" id=\"").skip(1) {
+        let id = item.split('"').next().unwrap();
+        assert!(!id.is_empty());
+        assert!(ids.insert(id), "duplicate id {id}");
+    }
+    for reason in doc["reasons"].as_array().unwrap() {
+        for pointer in reason["evidenceRefs"].as_array().unwrap() {
+            assert!(
+                ids.contains(pointer.as_str().unwrap()),
+                "missing anchor {pointer}: {html}"
+            );
+        }
+    }
+    assert!(ids.contains("/resolution/selectors/0/extra~1key~0/1"));
+}
+#[tokio::test]
+async fn ui_explanation_canonical_form_values_and_query_encoding() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    for (q, mode, value) in [
+        (
+            "q[][pacticipant]=Checkout&q[][latest]=true&environment=test",
+            "latest",
+            "",
+        ),
+        (
+            "q[][pacticipant]=Checkout&q[][mainBranch]=true&environment=test",
+            "main",
+            "",
+        ),
+        (
+            "q[][pacticipant]=Checkout&q[][branch]=main&environment=test",
+            "branch",
+            "main",
+        ),
+        (
+            "q[][pacticipant]=Checkout&q[][tag]=release&environment=test",
+            "tag",
+            "release",
+        ),
+        (
+            "pacticipant=Checkout&to=prod&ignore[][pacticipant]=Payments&ignore[][version]=1&ignore[][pacticipant]=Absent",
+            "all",
+            "",
+        ),
+    ] {
+        let (status, body) = explanation_html(&s, q).await;
+        assert_eq!(status, 200, "{body}");
+        assert!(
+            body.contains(&format!("option value=\"{mode}\" selected")),
+            "{body}"
+        );
+        assert!(
+            body.contains(&format!("name=\"selector_value\" value=\"{value}\"")),
+            "{body}"
+        );
+        if q.contains("to=prod") {
+            assert!(body.contains("option value=\"tag\" selected"));
+            assert!(body.contains("name=\"target_value\" value=\"prod\""));
+            assert!(body.contains("Payments=1"));
+            assert!(body.contains("Absent"));
+        }
+    }
+    let (raw, expected) = (
+        "ui_form=explanation&pacticipant=A%26B&selector_mode=version&selector_value=v%2F%3D%2B&target_mode=tag&target_value=release%26x&ignore=P%2FQ%3Dv%3D1&ignore=R%26S",
+        ("A&B", "v/=+", "release&x"),
+    );
+    let (q, canonical) = pactling::http::ui::query::explanation_query(raw).unwrap();
+    assert_eq!(q.selectors[0].pacticipant, expected.0);
+    assert_eq!(q.selectors[0].version.as_deref(), Some(expected.1));
+    assert_eq!(q.tag.as_deref(), Some(expected.2));
+    assert_eq!(
+        q.ignore,
+        vec![("P/Q".into(), Some("v=1".into())), ("R&S".into(), None)]
+    );
+    assert_eq!(
+        q,
+        pactling::service::matrix::MatrixQuery::parse(Some(&canonical))
+    );
+    let raw = "q[][pacticipant]=Checkout&q[][version]=&q[][mainBranch]=true&environment=test";
+    let (q, canonical) = pactling::http::ui::query::explanation_query(raw).unwrap();
+    assert_eq!(canonical, raw);
+    assert_eq!(q.selectors[0].version.as_deref(), Some(""));
+}
+#[tokio::test]
+async fn ui_explanation_database_error_is_safe() {
+    let path = std::env::temp_dir().join(format!(
+        "pactling-ui-explanation-{}.db",
+        uuid::Uuid::new_v4()
+    ));
+    let url = format!("sqlite://{}?mode=rwc", path.display());
+    let mut c = pactling::config::Config::in_memory();
+    c.database_url = url.clone();
+    let s = common::start_with(c).await;
+    explanation_seed(&s).await;
+    let pool = sqlx::SqlitePool::connect(&url).await.unwrap();
+    sqlx::query("DROP TABLE pact_publications")
+        .execute(&pool)
+        .await
+        .unwrap();
+    let (status, body) =
+        explanation_html(&s, "pacticipant=Checkout&version=1&environment=test").await;
+    assert_eq!(status, 500);
+    assert!(body.contains("Unable to load explanation."));
+    assert!(!body.contains("pact_publications"));
+    assert!(body.contains("<form"));
+    pool.close().await;
+}
