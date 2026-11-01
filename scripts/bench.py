@@ -64,6 +64,13 @@ def contract(consumer, provider, salt):
             "content": base64.b64encode(json.dumps(content).encode()).decode()}
 
 
+def ok(result, *want):
+    """Aborts the run when a seed write did not succeed, so reads never measure a partial dataset."""
+    status, doc = result
+    assert status in want, (status, doc)
+    return doc
+
+
 def path_of(href):
     return urllib.parse.urlparse(href).path
 
@@ -84,10 +91,10 @@ def seed(base, consumers, providers, versions, verified_tail):
             times["publish"].append(ms)
     for p in ps:
         for v in range(1, versions + 1):
-            request(base, "PUT", f"/pacticipants/{p}/branches/main/versions/{v}", {})
+            ok(request(base, "PUT", f"/pacticipants/{p}/branches/main/versions/{v}", {}), 200, 201)
         for v in range(max(1, versions - verified_tail + 1), versions + 1):
             for c in cs:
-                status, pact = request(base, "GET", f"/pacts/provider/{p}/consumer/{c}/latest")
+                pact = ok(request(base, "GET", f"/pacts/provider/{p}/consumer/{c}/latest"), 200)
                 path = path_of(pact["_links"]["pb:publish-verification-results"]["href"])
                 ms, (status, _) = timed(lambda: request(base, "POST", path, {"providerApplicationVersion": str(v), "success": v % 7 != 0}))
                 assert status == 201, status
@@ -95,10 +102,14 @@ def seed(base, consumers, providers, versions, verified_tail):
         ms, (status, _) = timed(lambda: request(base, "POST", f"/pacticipants/{p}/versions/{versions}/deployed-versions/environment/{env_uuid}", {}))
         assert status in (200, 201), status
         times["deploy"].append(ms)
-        request(base, "POST", f"/pacticipants/{p}/versions/{max(1, versions - 1)}/released-versions/environment/{env_uuid}", {})
+        ok(request(base, "POST", f"/pacticipants/{p}/versions/{max(1, versions - 1)}/released-versions/environment/{env_uuid}", {}), 200, 201)
+        # The deployed provider version also carries the tag the tag query targets, so that
+        # query resolves a verified provider version instead of a missing one.
+        ok(request(base, "PUT", f"/pacticipants/{p}/versions/{versions}/tags/prod", {}), 200, 201)
     for c in cs:
         for instance in ("blue", "green"):
-            ms, _ = timed(lambda: request(base, "POST", f"/pacticipants/{c}/versions/{versions}.0.0/deployed-versions/environment/{env_uuid}", {"applicationInstance": instance}))
+            ms, result = timed(lambda: request(base, "POST", f"/pacticipants/{c}/versions/{versions}.0.0/deployed-versions/environment/{env_uuid}", {"applicationInstance": instance}))
+            ok(result, 200, 201)
             times["deploy"].append(ms)
     return env_uuid, cs, ps, times
 
@@ -133,17 +144,20 @@ def measure_reads(base, cs, ps, versions, rounds):
         out[name] = percentiles(samples)
         if "matrix" in (last or {}):
             out[name]["rows"] = len(last["matrix"])
+            out[name]["rows_with_verification"] = sum(1 for r in last["matrix"] if r.get("verificationResult"))
             out[name]["deployable"] = last["summary"]["deployable"]
     return out
 
 
 def measure_contention(base, cs, ps, versions, workers, seconds):
-    """Publish, verify, deploy and ask can-i-deploy at once; count errors."""
+    """Publish, verify, deploy and ask can-i-deploy at once. An operation is one of the four;
+    a verify operation is two HTTP requests (fetch the pact, publish the result). Throughput
+    is operations per measured second, counted until the last worker stops."""
     status, envs = request(base, "GET", "/environments")
     env_uuid = next(e["uuid"] for e in envs["_embedded"]["environments"] if e["name"] == "bench-test")
     stop = time.perf_counter() + seconds
     latencies = {"publish": [], "verify": [], "deploy": [], "can-i-deploy": []}
-    outcome = {"ok": 0, "error": 0, "statuses": {}}
+    outcome = {"ok": 0, "error": 0, "http": 0, "statuses": {}}
 
     def worker(k):
         n = 0
@@ -157,6 +171,7 @@ def measure_contention(base, cs, ps, versions, workers, seconds):
                 ms, (status, _) = timed(lambda: request(base, "POST", "/contracts/publish", body))
                 want = (200,)
             elif kind == "verify":
+                outcome["http"] += 1
                 _, pact = request(base, "GET", f"/pacts/provider/{p}/consumer/{c}/latest")
                 path = path_of(pact["_links"]["pb:publish-verification-results"]["href"])
                 ms, (status, _) = timed(lambda: request(base, "POST", path, {"providerApplicationVersion": f"{versions}-{k}-{n}", "success": True}))
@@ -168,13 +183,17 @@ def measure_contention(base, cs, ps, versions, workers, seconds):
                 ms, (status, _) = timed(lambda: request(base, "GET", matrix_path([(c, f"{versions}.0.0")], latestby="cvp", environment="bench-test")))
                 want = (200,)
             latencies[kind].append(ms)
+            outcome["http"] += 1
             outcome["statuses"][str(status)] = outcome["statuses"].get(str(status), 0) + 1
             outcome["ok" if status in want else "error"] += 1
 
+    started = time.perf_counter()
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
         list(pool.map(worker, range(workers)))
+    elapsed = time.perf_counter() - started
     total = outcome["ok"] + outcome["error"]
-    return {"workers": workers, "seconds": seconds, "requests": total, "throughput_rps": round(total / seconds, 1),
+    return {"workers": workers, "seconds": round(elapsed, 2), "operations": total, "http_requests": outcome["http"],
+            "operations_per_s": round(total / elapsed, 1), "http_requests_per_s": round(outcome["http"] / elapsed, 1),
             "errors": outcome["error"], "statuses": outcome["statuses"],
             **{f"{k} latency": percentiles(v) for k, v in latencies.items() if v}}
 
