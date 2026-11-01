@@ -28,7 +28,7 @@ pub async fn matrix(
                                 "Matrix",
                                 html! {
                                     p { (&consumer) " → " (&provider) }
-                                    (form(&consumer,&provider))
+                                    (form(&consumer,&provider,raw.as_deref().unwrap_or_default()))
                                     p { "Query: " code { (&canonical) } }
                                     @for notice in &evaluation.matrix().notices { p { (&notice.text) } }
                                     @if rows.is_empty() { p { "No matrix rows match these selectors." } }
@@ -60,25 +60,30 @@ pub async fn matrix(
     }
 }
 
-fn form(consumer: &str, provider: &str) -> Markup {
+fn form(consumer: &str, provider: &str, raw: &str) -> Markup {
+    let mut fields = query::fields(raw);
+    let marked = query::field(&fields, "ui_form") == "matrix";
+    if !marked {
+        fields.clear();
+    }
     html! { form method="get" action=(format!("/ui/matrix/provider/{}/consumer/{}",encode(provider),encode(consumer))) {
+        h2 { @if marked { "Update matrix query" } @else { "New matrix query" } }
         input type="hidden" name="ui_form" value="matrix";
         @for (side,label) in [("consumer","Consumer"),("provider","Provider")] {
             label for=(format!("{side}_mode")) { (label) " selector" }
             select id=(format!("{side}_mode")) name=(format!("{side}_mode")) {
                 @for (value,label) in [("all","All versions"),("version","Exact version"),("latest","Latest version"),("tag","Latest with tag"),("branch","Branch head"),("main","Main branch head")] {
-                    option value=(value) { (label) }
+                    option value=(value) selected[query::field(&fields,&format!("{side}_mode"))==value] { (label) }
                 }
             }
             label for=(format!("{side}_value")) { (label) " version, tag or branch (when selected)" }
-            input id=(format!("{side}_value")) name=(format!("{side}_value"));
+            input id=(format!("{side}_value")) name=(format!("{side}_value")) value=(query::field(&fields,&format!("{side}_value")));
         }
         label for="latestby" { "Grouping" }
         select id="latestby" name="latestby" {
-            option value="none" { "All results" }
-            option value="cvpv" { "Consumer version / provider version" }
-            option value="cvp" { "Consumer version / provider" }
-            option value="cp" { "Consumer / provider" }
+            @for (value,label) in [("none","All results"),("cvpv","Consumer version / provider version"),("cvp","Consumer version / provider"),("cp","Consumer / provider")] {
+                option value=(value) selected[query::field(&fields,"latestby")==value] { (label) }
+            }
         }
         button type="submit" { "Show matrix" }
     } }
