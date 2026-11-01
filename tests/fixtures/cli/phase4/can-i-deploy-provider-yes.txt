@@ -7,8 +7,8 @@ Web      | 1         | Provider | 1         | true     | 2
 
 VERIFICATION RESULTS
 --------------------
-1. http://127.0.0.1:57163/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4w/verification-results/200 (success)
-2. http://127.0.0.1:57163/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTE/verification-results/206 (success)
+1. http://127.0.0.1:58661/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4w/verification-results/200 (success)
+2. http://127.0.0.1:58661/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTE/verification-results/206 (success)
 
 [32mAll required verification results are published and successful[0m
 exit=0

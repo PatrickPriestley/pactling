@@ -2,9 +2,9 @@
     "_embedded": {
         "deployedVersions": [
             {
-                "uuid": "b8cc70e6-cf32-4c56-b038-84f8b623c9c2",
+                "uuid": "d13fd67d-4843-432f-b6ae-56ded94c65df",
                 "currentlyDeployed": true,
-                "createdAt": "2026-11-01T00:42:27+00:00",
+                "createdAt": "2026-11-01T01:52:51+00:00",
                 "_embedded": {
                     "pacticipant": {
                         "name": "Consumer",
@@ -27,14 +27,14 @@
                 },
                 "_links": {
                     "self": {
-                        "href": "http://localhost:9292/deployed-versions/b8cc70e6-cf32-4c56-b038-84f8b623c9c2"
+                        "href": "http://localhost:9292/deployed-versions/d13fd67d-4843-432f-b6ae-56ded94c65df"
                     }
                 }
             },
             {
-                "uuid": "0a3e5614-3a7f-42ee-a2dd-f1a8552feaac",
+                "uuid": "698f8053-76e8-49d8-b7e8-e18db0959050",
                 "currentlyDeployed": true,
-                "createdAt": "2026-11-01T00:41:53+00:00",
+                "createdAt": "2026-11-01T01:52:20+00:00",
                 "_embedded": {
                     "pacticipant": {
                         "name": "Provider",
@@ -57,7 +57,7 @@
                 },
                 "_links": {
                     "self": {
-                        "href": "http://localhost:9292/deployed-versions/0a3e5614-3a7f-42ee-a2dd-f1a8552feaac"
+                        "href": "http://localhost:9292/deployed-versions/698f8053-76e8-49d8-b7e8-e18db0959050"
                     }
                 }
             }
@@ -65,7 +65,7 @@
     },
     "_links": {
         "self": {
-            "href": "http://localhost:9292/environments/9cbb31ef-dde1-450e-b88e-aea7356e136b/deployed-versions/currently-deployed",
+            "href": "http://localhost:9292/environments/6f756006-14c3-4cd4-abbb-da68d7cfe64f/deployed-versions/currently-deployed",
             "title": "Currently deployed versions for Test env"
         }
     }

@@ -1,0 +1,30 @@
+{
+    "summary": {
+        "successful": 0,
+        "failed": 0
+    },
+    "_embedded": {
+        "triggeredWebhooks": []
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/webhooks/status",
+            "title": "Webhooks status"
+        },
+        "pb:error-logs": [],
+        "pb:pact-webhooks": {
+            "title": "Webhooks for the pact between Consumer and Provider",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/webhooks"
+        },
+        "pb:consumer": {
+            "href": "http://localhost:9292/pacticipants/Consumer",
+            "title": "Consumer",
+            "name": "Consumer"
+        },
+        "pb:provider": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Provider",
+            "name": "Provider"
+        }
+    }
+}

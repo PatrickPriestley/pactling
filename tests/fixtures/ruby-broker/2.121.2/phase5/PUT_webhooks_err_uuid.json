@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "uuid": [
+            "The UUID can only contain the characters A-Z, a-z, 0-9, _ and -, and must be 16 or more characters."
+        ]
+    }
+}

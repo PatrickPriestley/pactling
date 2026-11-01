@@ -1,0 +1,38 @@
+{
+    "uuid": "UYJpOaXO_0lRMdRp4nAKrg",
+    "description": "POST host.docker.internal",
+    "enabled": true,
+    "request": {
+        "method": "POST",
+        "url": "http://host.docker.internal:18100/hook/global",
+        "headers": {
+            "x-token": "**********",
+            "accept": "application/json"
+        },
+        "body": {
+            "template": "${pactbroker.consumerVersionNumber}"
+        },
+        "username": "hookuser",
+        "password": "**********"
+    },
+    "events": [
+        {
+            "name": "contract_content_changed"
+        }
+    ],
+    "createdAt": "2026-11-01T01:53:10+00:00",
+    "_links": {
+        "self": {
+            "title": "POST host.docker.internal",
+            "href": "http://localhost:9292/webhooks/UYJpOaXO_0lRMdRp4nAKrg"
+        },
+        "pb:execute": {
+            "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+            "href": "http://localhost:9292/webhooks/UYJpOaXO_0lRMdRp4nAKrg/execute"
+        },
+        "pb:webhooks": {
+            "title": "All webhooks",
+            "href": "http://localhost:9292/webhooks"
+        }
+    }
+}

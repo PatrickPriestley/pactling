@@ -1,2 +1,2 @@
-[31mConsumer version 9.9.9 not found (Error making request to http://127.0.0.1:57073/pacticipants/Consumer/versions/9.9.9 status=404 {"error":"The requested document was not found on this server."})[0m
+[31mConsumer version 9.9.9 not found (Error making request to http://127.0.0.1:58576/pacticipants/Consumer/versions/9.9.9 status=404 {"error":"The requested document was not found on this server."})[0m
 exit=1

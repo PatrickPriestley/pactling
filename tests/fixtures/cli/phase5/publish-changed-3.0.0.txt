@@ -1,0 +1,19 @@
+Created Consumer version 3.0.0 with branch main and tags dev
+[32mPact successfully published for Consumer version 3.0.0 and provider Provider.[0m
+  View the published pact at [35mhttp://127.0.0.1:59048/pacts/provider/Provider/consumer/Consumer/version/3.0.0[0m
+  Events detected: contract_published, contract_requiring_verification_published, contract_content_changed (pact content has changed since the last consumer version tagged with dev)
+  Webhook I-uF14z2_5kibhBkLEyFPg triggered for event contract_published.
+    View logs at [35mhttp://127.0.0.1:59048/triggered-webhooks/2499dbd7-7284-44ee-b393-d2c8f7c842c3/logs[0m
+  Webhook "Updated" triggered for event contract_published.
+    View logs at [35mhttp://127.0.0.1:59048/triggered-webhooks/458dec8c-1c49-49e8-8298-474a193346c3/logs[0m
+  Webhook I-uF14z2_5kibhBkLEyFPg triggered for event contract_requiring_verification_published.
+    View logs at [35mhttp://127.0.0.1:59048/triggered-webhooks/fa106815-3dbc-4b0b-8a09-7b8699cf694f/logs[0m
+  Webhook I-uF14z2_5kibhBkLEyFPg triggered for event contract_requiring_verification_published.
+    View logs at [35mhttp://127.0.0.1:59048/triggered-webhooks/798e6f0f-6a84-4131-9727-5acd61d545f4/logs[0m
+  Webhook "Trigger Provider build" triggered for event contract_content_changed.
+    View logs at [35mhttp://127.0.0.1:59048/triggered-webhooks/41e303ab-7f6c-4121-8cab-4d0374619079/logs[0m
+  Webhook I-uF14z2_5kibhBkLEyFPg triggered for event contract_content_changed.
+    View logs at [35mhttp://127.0.0.1:59048/triggered-webhooks/088e98da-2563-4b63-afd8-c0d3c7dff716/logs[0m
+  Webhook UYJpOaXO_0lRMdRp4nAKrg triggered for event contract_content_changed.
+    View logs at [35mhttp://127.0.0.1:59048/triggered-webhooks/dbe45c64-6aa9-4a64-84a1-ad457c97ed34/logs[0m
+exit=0

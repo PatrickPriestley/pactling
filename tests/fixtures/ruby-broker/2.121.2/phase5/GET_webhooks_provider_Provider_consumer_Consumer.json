@@ -1,0 +1,31 @@
+{
+    "_links": {
+        "self": {
+            "title": "Webhooks",
+            "href": "http://localhost:9292/webhooks/provider/Provider/consumer/Consumer"
+        },
+        "pb:create": {
+            "title": "POST to create a webhook",
+            "href": "http://localhost:9292/webhooks/provider/Provider/consumer/Consumer"
+        },
+        "pb:webhooks": [
+            {
+                "title": "A webhook for the pact between Consumer and Provider",
+                "name": "Trigger Provider build",
+                "href": "http://localhost:9292/webhooks/m_pKUiCrFHhhaeYtoC6rRA"
+            },
+            {
+                "title": "A webhook for the pact between Consumer and Provider",
+                "name": "Updated",
+                "href": "http://localhost:9292/webhooks/pactling-capture-webhook-1"
+            }
+        ],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/webhooks-{rel}",
+                "templated": true
+            }
+        ]
+    }
+}

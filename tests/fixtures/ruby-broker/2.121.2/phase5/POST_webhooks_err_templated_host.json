@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "request.url": [
+            "cannot have a template parameter in the host"
+        ]
+    }
+}

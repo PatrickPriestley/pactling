@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "request.url": [
+            "scheme must be http. See /doc/webhooks#whitelist for more information."
+        ]
+    }
+}

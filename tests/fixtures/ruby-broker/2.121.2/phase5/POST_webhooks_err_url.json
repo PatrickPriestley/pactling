@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "request.url": [
+            "is not a valid URL eg. http://example.org"
+        ]
+    }
+}

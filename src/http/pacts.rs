@@ -157,6 +157,16 @@ pub async fn pact_by_version(
                 .map_err(|e| Error::BadRequest(format!("JSON::ParserError - {e}")))?;
             let (p, created) =
                 publish::put_pact(&state.db, &provider, &consumer, &version, json).await?;
+            let (events, _) = publish::events_for_publication(&state.db, &p, created).await?;
+            crate::service::webhook_trigger::trigger_publish_events(
+                &state.db,
+                &state.config,
+                &l.href(""),
+                &p,
+                &events,
+                None,
+            )
+            .await?;
             let mut res = render_pact(&headers, pact_document(&l, &p, None));
             if created {
                 *res.status_mut() = StatusCode::CREATED;

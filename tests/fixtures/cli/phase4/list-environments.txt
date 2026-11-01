@@ -1,5 +1,5 @@
 UUID                                 | NAME       | DISPLAY NAME | PRODUCTION
 -------------------------------------|------------|--------------|-----------
-615e1a8e-c4cf-4377-afd3-1889a2478027 | production | Production   | true      
-9cbb31ef-dde1-450e-b88e-aea7356e136b | test       | Test         | false     
+ad4d4d29-5e55-4507-a2b4-9d283c4181b4 | production | Production   | true      
+6f756006-14c3-4cd4-abbb-da68d7cfe64f | test       | Test         | false     
 exit=0

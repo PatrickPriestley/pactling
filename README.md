@@ -15,21 +15,34 @@ Verified against Ruby broker **2.121.2** and `@pact-foundation/pact-cli` **16.1.
 
 ## Status
 
-Phases 1 to 4 of the [implementation plan](docs/plans/2026-10-30-pact-broker-implementation.md):
+Phases 1 to 5 of the [implementation plan](docs/plans/2026-10-30-pact-broker-implementation.md):
 HAL index, basic auth, pacticipants, versions, branches, tags, publishing (both
 `pb:publish-contracts` and the legacy `PUT`), every pact retrieval document,
 pacts-for-verification with consumer version selectors and pending, verification
-results, environments, deployments and releases, the matrix and can-i-deploy. A pact-js 13
-consumer test, the `pact-broker` CLI (publish, environments, deployments, can-i-deploy)
-and a pact-js 13 provider verification run against the binary in `e2e/`. Every matrix
-verdict, notice and reason string is replayed from Ruby broker 2.121.2 captures
-(`tests/fixtures/ruby-broker/2.121.2/phase4/`, 73 can-i-deploy cases in
-`matrix-regressions.json`). Webhooks follow. See the
-[design](docs/plans/2026-10-30-pact-broker-design.md).
+results, environments, deployments and releases, the matrix and can-i-deploy, and
+webhooks (every event, template parameter, test execution, the delivery queue with the
+Ruby broker's schedule and retries, execution logs and status). A pact-js 13 consumer
+test, the `pact-broker` CLI (publish, environments, deployments, can-i-deploy, webhooks)
+and a pact-js 13 provider verification run against the binary in `e2e/`, with a local
+webhook receiver checking what the broker sends. Every document, verdict and notice is
+replayed from Ruby broker 2.121.2 captures under `tests/fixtures/`. Phase 6 (release
+packaging) follows. See the [design](docs/plans/2026-10-30-pact-broker-design.md).
 
 Known differences from the Ruby broker, all deliberate: an empty `contracts` array is a 400
 rather than a 500; the 409 for changed content omits the Ruby broker's diff notice; bad-JSON
-error messages use serde's wording.
+error messages use serde's wording; webhook requests carry `User-Agent: Pactling/<version>`
+rather than `Pact Broker v2.121.2`; the webhook host whitelist takes host names and
+`/regex/` entries but not CIDR ranges; label-scoped webhooks are stored but never fire
+(pactling has no labels); `/pacts/provider/{p}/consumer/{c}/latest/verification-results/latest`
+is not served (use the `version/{v}` form).
+
+Webhook settings use the Ruby broker's variable names and defaults:
+`PACT_BROKER_WEBHOOK_SCHEME_WHITELIST` (default `https`), `PACT_BROKER_WEBHOOK_HOST_WHITELIST`
+(empty: any host, response details hidden from logs), `PACT_BROKER_WEBHOOK_HTTP_METHOD_WHITELIST`
+(`POST`), `PACT_BROKER_WEBHOOK_HTTP_CODE_SUCCESS` (`200 201 202 203 204 205 206`) and
+`PACT_BROKER_WEBHOOK_RETRY_SCHEDULE` (`10 60 120 300 600 1200` seconds); lists are
+space-separated. `PACTLING_WEBHOOK_INITIAL_DELAY` and `PACTLING_WEBHOOK_DELAY_STEP` (5 and 3
+seconds, the Ruby broker's `5 + 3i`) set when the i-th webhook fired by one request runs.
 
 ## Run
 

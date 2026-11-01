@@ -1,0 +1,7 @@
+{
+    "errors": {
+        "consumer.label": [
+            "name and label cannot be provided at the same time"
+        ]
+    }
+}

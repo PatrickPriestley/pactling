@@ -1,0 +1,27 @@
+{
+    "eventName": "provider_verification_failed",
+    "consumerName": "Consumer",
+    "providerName": "Provider",
+    "executions": [
+        {
+            "success": true,
+            "logs": "[2026-11-01T01:54:29Z] DEBUG: Webhook context {\"base_url\":\"http://localhost:9292\",\"build_url\":null,\"pending\":\"true\",\"provider_version_tags\":[],\"event_name\":\"provider_verification_failed\",\"consumer_version_number\":\"3.0.1\",\"consumer_version_tags\":[]}\n[2026-11-01T01:54:29Z] INFO: HTTP/1.1 POST http://host.docker.internal:18100/hook/all\n[2026-11-01T01:54:29Z] INFO: accept: */*\n[2026-11-01T01:54:29Z] INFO: user-agent: Pact Broker v2.121.2\n[2026-11-01T01:54:29Z] INFO: content-type: application/json\n[2026-11-01T01:54:29Z] INFO: host: host.docker.internal:18100\n[2026-11-01T01:54:29Z] INFO: content-length: 731\n[2026-11-01T01:54:29Z] INFO: {\"event\":\"provider_verification_failed\",\"consumer\":\"Consumer\",\"provider\":\"Provider\",\"consumerVersion\":\"3.0.1\",\"consumerBranch\":\"main\",\"consumerTags\":\"\",\"providerVersion\":\"2\",\"providerBranch\":\"main\",\"providerTags\":\"\",\"providerVersionDescriptions\":\"\",\"pactUrl\":\"http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/dd51adb22100816c65c0df957d62f0c5315b559e/metadata/Y3ZuPTMuMC4xJnc9dHJ1ZQ\",\"verificationResultUrl\":\"http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/dd51adb22100816c65c0df957d62f0c5315b559e/verification-results/202\",\"github\":\"failure\",\"bitbucket\":\"FAILED\",\"azure\":\"failed\",\"gitlab\":\"failed\",\"buildUrl\":\"\",\"consumerLabels\":\"\",\"providerLabels\":\"\",\"deployedProvider\":\"\"}\n[2026-11-01T01:54:29Z] INFO: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See http://localhost:9292/doc/webhooks#whitelist for more information.\n[2026-11-01T01:54:29Z] INFO: Successfully executed webhook\n",
+            "createdAt": "2026-11-01T01:54:29+00:00"
+        }
+    ],
+    "_embedded": {
+        "triggeredWebhook": {
+            "uuid": "bc4c013c-1d6a-49ac-898c-124465557aca"
+        }
+    },
+    "_links": {
+        "self": {
+            "title": "Triggered webhook logs",
+            "href": "http://localhost:9292/triggered-webhooks/bc4c013c-1d6a-49ac-898c-124465557aca/logs"
+        },
+        "pb:webhook": {
+            "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg",
+            "title": "Webhook"
+        }
+    }
+}

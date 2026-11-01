@@ -6,6 +6,7 @@ pub mod pacticipants;
 pub mod pacts;
 pub mod verifications;
 pub mod versions;
+pub mod webhooks;
 
 use sqlx::sqlite::{SqlitePool, SqlitePoolOptions};
 

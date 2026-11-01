@@ -1,0 +1,11 @@
+{
+    "_embedded": {
+        "triggeredWebhooks": []
+    },
+    "_links": {
+        "self": {
+            "title": "Webhooks triggered by the publication of the pact between Consumer (1.0.0) and Provider",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/1.0.0/triggered-webhooks"
+        }
+    }
+}

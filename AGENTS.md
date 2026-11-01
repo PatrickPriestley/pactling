@@ -22,6 +22,12 @@ how to get at that evidence quickly.
   `e2e/node_modules/.bin/pact-broker`.
 - **Deliberate differences** from the Ruby broker are listed in `README.md`. Add to that
   list rather than silently diverging.
+- **Webhook captures** (phase 5) start two `e2e/receiver.js` receivers on the host and let
+  the broker call them over plain http (`PACT_BROKER_WEBHOOK_SCHEME_WHITELIST=http` in the
+  probe compose). The broker reaches the host as `host.docker.internal`; on Linux map it
+  with `extra_hosts`. Deliveries are scheduled 5 + 3i seconds out, so the capture waits
+  30 s before reading triggered webhooks; `tests/fixtures/cli/phase5/receiver*.jsonl` is
+  what the Ruby broker actually sent.
 
 ## Layout
 
@@ -49,6 +55,12 @@ how to get at that evidence quickly.
   (`src/service/content.rs`).
 - `pending` is always reported; the rule is in `src/service/verification.rs`.
 - Verification result links carry base64 metadata; only `cv=` is read back.
+- Webhook uuids are 22 url-safe base64 characters; a missing body is sent as the string
+  `null`; without a content-type header the request is `application/x-www-form-urlencoded`.
+- Publish notices: every trigger is listed; with webhooks but none for the detected
+  events, "No enabled webhooks found for the detected events"; the "Add Pact verification
+  tests" step appears until the integration has a verification, the webhook step until a
+  webhook covers the pact.
 
 ## Verifying a change
 

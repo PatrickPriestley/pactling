@@ -1,0 +1,75 @@
+{
+    "uuid": "m_pKUiCrFHhhaeYtoC6rRA",
+    "description": "Trigger Provider build",
+    "consumer": {
+        "name": "Consumer"
+    },
+    "provider": {
+        "name": "Provider"
+    },
+    "enabled": true,
+    "request": {
+        "method": "POST",
+        "url": "http://host.docker.internal:18100/hook/${pactbroker.consumerName}",
+        "headers": {
+            "content-type": "application/json",
+            "authorization": "**********"
+        },
+        "body": {
+            "event": "${pactbroker.eventName}",
+            "consumer": "${pactbroker.consumerName}",
+            "provider": "${pactbroker.providerName}",
+            "consumerVersion": "${pactbroker.consumerVersionNumber}",
+            "consumerBranch": "${pactbroker.consumerVersionBranch}",
+            "consumerTags": "${pactbroker.consumerVersionTags}",
+            "providerVersion": "${pactbroker.providerVersionNumber}",
+            "providerBranch": "${pactbroker.providerVersionBranch}",
+            "providerTags": "${pactbroker.providerVersionTags}",
+            "providerVersionDescriptions": "${pactbroker.providerVersionDescriptions}",
+            "pactUrl": "${pactbroker.pactUrl}",
+            "verificationResultUrl": "${pactbroker.verificationResultUrl}",
+            "github": "${pactbroker.githubVerificationStatus}",
+            "bitbucket": "${pactbroker.bitbucketVerificationStatus}",
+            "azure": "${pactbroker.azureDevOpsVerificationStatus}",
+            "gitlab": "${pactbroker.gitlabVerificationStatus}",
+            "buildUrl": "${pactbroker.buildUrl}",
+            "consumerLabels": "${pactbroker.consumerLabels}",
+            "providerLabels": "${pactbroker.providerLabels}",
+            "deployedProvider": "${pactbroker.currentlyDeployedProviderVersionNumber}"
+        }
+    },
+    "events": [
+        {
+            "name": "contract_content_changed"
+        }
+    ],
+    "createdAt": "2026-11-01T01:53:05+00:00",
+    "_links": {
+        "self": {
+            "title": "Trigger Provider build",
+            "href": "http://localhost:9292/webhooks/m_pKUiCrFHhhaeYtoC6rRA"
+        },
+        "pb:execute": {
+            "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+            "href": "http://localhost:9292/webhooks/m_pKUiCrFHhhaeYtoC6rRA/execute"
+        },
+        "pb:consumer": {
+            "title": "Consumer",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        },
+        "pb:provider": {
+            "title": "Provider",
+            "name": "Provider",
+            "href": "http://localhost:9292/pacticipants/Provider"
+        },
+        "pb:pact-webhooks": {
+            "title": "All webhooks for consumer Consumer and provider Provider",
+            "href": "http://localhost:9292/webhooks/provider/Provider/consumer/Consumer"
+        },
+        "pb:webhooks": {
+            "title": "All webhooks",
+            "href": "http://localhost:9292/webhooks"
+        }
+    }
+}

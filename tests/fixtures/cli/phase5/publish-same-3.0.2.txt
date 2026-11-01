@@ -1,0 +1,13 @@
+Created Consumer version 3.0.2 with branch main
+[32mPact successfully published for Consumer version 3.0.2 and provider Provider.[0m
+  View the published pact at [35mhttp://127.0.0.1:59339/pacts/provider/Provider/consumer/Consumer/version/3.0.2[0m
+  Events detected: contract_published (pact content is the same as previous versions with tags  and no new tags were applied), contract_requiring_verification_published (pact content is the same as previous versions with tags  and no new tags were applied)
+  Webhook I-uF14z2_5kibhBkLEyFPg triggered for event contract_published.
+    View logs at [35mhttp://127.0.0.1:59339/triggered-webhooks/8529b39c-a14a-4718-bcec-0476180d81b0/logs[0m
+  Webhook "Updated" triggered for event contract_published.
+    View logs at [35mhttp://127.0.0.1:59339/triggered-webhooks/c66de26a-fece-45f4-983c-36adfe9fc0f0/logs[0m
+  Webhook G_-Yh66f7zPXVOjW3TxuKA triggered for event contract_published.
+    View logs at [35mhttp://127.0.0.1:59339/triggered-webhooks/14302a57-46b3-482e-a2f4-73de6078a687/logs[0m
+  Webhook I-uF14z2_5kibhBkLEyFPg triggered for event contract_requiring_verification_published.
+    View logs at [35mhttp://127.0.0.1:59339/triggered-webhooks/3380409f-524c-420e-9f00-5ae0c4dfc5e0/logs[0m
+exit=0

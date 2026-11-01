@@ -1,55 +1,55 @@
 TAP version 13
-# (node:60058) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+# (node:63554) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
 # (Use `node --trace-deprecation ...` to show where the warning was created)
-# [20:41:31.861] WARN (60058): pact@13.2.0: no state handler found for state: ""
-# [20:41:32.756] WARN (60058): pact@13.2.0: no state handler found for state: ""
-# [20:41:33.623] WARN (60058): pact@13.2.0: no state handler found for state: ""
-# 2026-11-01T00:41:33.894802Z  WARN ThreadId(09) pact_matching::metrics: 
+# [21:51:58.431] WARN (63554): pact@13.2.0: no state handler found for state: ""
+# [21:51:59.320] WARN (63554): pact@13.2.0: no state handler found for state: ""
+# [21:52:00.240] WARN (63554): pact@13.2.0: no state handler found for state: ""
+# 2026-11-01T01:52:00.539714Z  WARN ThreadId(09) pact_matching::metrics: 
 # Please note:
 # We are tracking events anonymously to gather important usage statistics like Pact version and operating system. To disable tracking, set the 'PACT_DO_NOT_TRACK' environment variable to 'true'.
-# The pact at http://127.0.0.1:56848/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer version matching the following criterion:
+# The pact at http://127.0.0.1:58352/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer version matching the following criterion:
 #     * latest version from the main branch 'main' (1.0.0)
 # This pact has previously been successfully verified by a version of Provider from branch 'feat'. If this verification fails, it will fail the build. Read more at https://docs.pact.io/go/pending
 # Verifying a pact between [1mConsumer[0m and [1mProvider[0m
-#   a request for an order (212ms loading, 383ms verification)
+#   a request for an order (196ms loading, 362ms verification)
 #      Given an order exists
 #     returns a response which
 #       has status code [1m200[0m ([32mOK[0m)
 #       includes headers
 #         "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
-#   a request for a missing order (212ms loading, 364ms verification)
+#   a request for a missing order (196ms loading, 364ms verification)
 #     returns a response which
 #       has status code [1m404[0m ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
-# The pact at http://127.0.0.1:56848/pacts/provider/Provider/consumer/Consumer/pact-version/8664f311b5c69dd7c5fffb7d22bf1215bc48da29 is being verified because the pact content belongs to the consumer version matching the following criterion:
+# The pact at http://127.0.0.1:58352/pacts/provider/Provider/consumer/Consumer/pact-version/8664f311b5c69dd7c5fffb7d22bf1215bc48da29 is being verified because the pact content belongs to the consumer version matching the following criterion:
 #     * latest version from branch 'feat' (2.0.0)
 # This pact is in pending state for this version of Provider because a successful verification result for a version of Provider from branch 'feat' has not yet been published. If this verification fails, it will not cause the overall build to fail. Read more at https://docs.pact.io/go/pending
 # Verifying a pact between [1mConsumer[0m and [1mProvider[0m
-#   a request for an order (212ms loading, 357ms verification)
+#   a request for an order (196ms loading, 362ms verification)
 #      Given an order exists
 #     returns a response which
 #       has status code [1m200[0m ([32mOK[0m)
 #       includes headers
 #         "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
 #       has a matching body ([31mFAILED[0m)
-#   a request for a missing order (212ms loading, 358ms verification)
+#   a request for a missing order (196ms loading, 366ms verification)
 #     returns a response which
 #       has status code [1m404[0m ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
 # This pact is still in pending state for any version of Provider from branch 'feat' as a successful verification result has not yet been published
-# The pact at http://127.0.0.1:56848/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer version matching the following criterion:
+# The pact at http://127.0.0.1:58352/pacts/provider/Provider/consumer/Web/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485 is being verified because the pact content belongs to the consumer version matching the following criterion:
 #     * latest version from the main branch 'main' (1)
 # This pact has previously been successfully verified by a version of Provider from branch 'feat'. If this verification fails, it will fail the build. Read more at https://docs.pact.io/go/pending
 # Verifying a pact between [1mWeb[0m and [1mProvider[0m
-#   a request for an order (212ms loading, 357ms verification)
+#   a request for an order (196ms loading, 388ms verification)
 #      Given an order exists
 #     returns a response which
 #       has status code [1m200[0m ([32mOK[0m)
 #       includes headers
 #         "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
-#   a request for a missing order (212ms loading, 348ms verification)
+#   a request for a missing order (196ms loading, 368ms verification)
 #     returns a response which
 #       has status code [1m404[0m ([32mOK[0m)
 #       has a matching body ([32mOK[0m)
@@ -61,7 +61,7 @@ TAP version 13
 # Subtest: provider verifies the pacts the broker selects and publishes results
 ok 1 - provider verifies the pacts the broker selects and publishes results
   ---
-  duration_ms: 3013.054708
+  duration_ms: 3049.6515
   type: 'test'
   ...
 1..1
@@ -72,5 +72,5 @@ ok 1 - provider verifies the pacts the broker selects and publishes results
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 3196.847208
+# duration_ms 3237.036791
 exit=0

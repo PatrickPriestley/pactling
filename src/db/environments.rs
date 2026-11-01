@@ -251,6 +251,32 @@ impl Db {
     }
 
     /// Every deployment record of a version, oldest first.
+    /// Every version of a pacticipant currently deployed anywhere, oldest record first.
+    pub async fn currently_deployed_for_pacticipant(
+        &self,
+        pacticipant_id: i64,
+    ) -> sqlx::Result<Vec<DeployedVersion>> {
+        sqlx::query_as(deployed_query!(
+            "WHERE p.id = ? AND dv.currently_deployed = 1 ORDER BY dv.id"
+        ))
+        .bind(pacticipant_id)
+        .fetch_all(&self.pool)
+        .await
+    }
+
+    /// Every version of a pacticipant currently released and supported, oldest first.
+    pub async fn currently_supported_for_pacticipant(
+        &self,
+        pacticipant_id: i64,
+    ) -> sqlx::Result<Vec<ReleasedVersion>> {
+        sqlx::query_as(released_query!(
+            "WHERE p.id = ? AND rv.currently_supported = 1 ORDER BY rv.id"
+        ))
+        .bind(pacticipant_id)
+        .fetch_all(&self.pool)
+        .await
+    }
+
     pub async fn deployments_of_version(
         &self,
         version_id: i64,

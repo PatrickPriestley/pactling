@@ -3,7 +3,7 @@ use axum::{
     Router,
     http::{HeaderName, HeaderValue},
     middleware,
-    routing::{any, get},
+    routing::any,
 };
 use tower_http::set_header::SetResponseHeaderLayer;
 
@@ -17,6 +17,7 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
     let db = Db::connect(&config.database_url).await?;
     db.migrate().await?;
     let creds = Credentials::from_config(&config)?;
+    crate::service::webhook_trigger::spawn_delivery_loop(db.clone(), config.clone());
     let state = AppState { db, config };
     Ok(Router::new()
         .route("/", any(http::index::index))
@@ -66,7 +67,18 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
         .route("/pacticipants/{name}/versions/{version}/released-versions/environment/{uuid}", any(http::environments::record_release))
         .route("/deployed-versions/{uuid}", any(http::environments::deployed_version))
         .route("/released-versions/{uuid}", any(http::environments::released_version))
-        .route("/webhooks", get(http::webhooks::list))
+        .route("/webhooks", any(http::webhooks::collection))
+        .route("/webhooks/execute", any(http::webhooks::execute_unsaved))
+        .route("/webhooks/provider/{provider}/consumer/{consumer}", any(http::webhooks::consumer_provider_collection))
+        .route("/webhooks/provider/{provider}", any(http::webhooks::provider_collection))
+        .route("/webhooks/consumer/{consumer}", any(http::webhooks::consumer_collection))
+        .route("/webhooks/{uuid}", any(http::webhooks::webhook))
+        .route("/webhooks/{uuid}/execute", any(http::webhooks::execute))
+        .route("/pacts/provider/{provider}/consumer/{consumer}/webhooks", any(http::webhooks::pact_collection))
+        .route("/pacts/provider/{provider}/consumer/{consumer}/webhooks/status", any(http::webhooks::pact_webhooks_status))
+        .route("/pacts/provider/{provider}/consumer/{consumer}/version/{version}/triggered-webhooks", any(http::webhooks::pact_triggered_webhooks))
+        .route("/pacts/provider/{provider}/consumer/{consumer}/pact-version/{sha}/verification-results/{number}/triggered-webhooks", any(http::webhooks::verification_triggered_webhooks))
+        .route("/triggered-webhooks/{uuid}/logs", any(http::webhooks::triggered_webhook_logs))
         .route("/integrations", any(http::pact_lists::integrations))
         .route("/contracts/publish", any(http::contracts::publish))
         .route("/pacts/latest", any(http::pact_lists::latest))

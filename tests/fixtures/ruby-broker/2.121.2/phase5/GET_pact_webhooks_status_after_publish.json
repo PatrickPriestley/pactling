@@ -1,0 +1,192 @@
+{
+    "summary": {
+        "successful": 6,
+        "failed": 0
+    },
+    "_embedded": {
+        "triggeredWebhooks": [
+            {
+                "name": "POST host.docker.internal",
+                "status": "success",
+                "attemptsMade": 1,
+                "attemptsRemaining": 0,
+                "triggerType": "resource_creation",
+                "eventName": "contract_published",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
+                "_links": {
+                    "pb:logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/2499dbd7-7284-44ee-b393-d2c8f7c842c3/logs",
+                        "title": "Webhook execution logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/2499dbd7-7284-44ee-b393-d2c8f7c842c3/logs",
+                        "title": "DEPRECATED - Use pb:logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "pb:webhook": {
+                        "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg",
+                        "title": "Webhook",
+                        "name": "POST host.docker.internal"
+                    }
+                }
+            },
+            {
+                "name": "POST host.docker.internal",
+                "status": "success",
+                "attemptsMade": 1,
+                "attemptsRemaining": 0,
+                "triggerType": "resource_creation",
+                "eventName": "contract_published",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
+                "_links": {
+                    "pb:logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/458dec8c-1c49-49e8-8298-474a193346c3/logs",
+                        "title": "Webhook execution logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/458dec8c-1c49-49e8-8298-474a193346c3/logs",
+                        "title": "DEPRECATED - Use pb:logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "pb:webhook": {
+                        "href": "http://localhost:9292/webhooks/pactling-capture-webhook-1",
+                        "title": "Webhook",
+                        "name": "POST host.docker.internal"
+                    }
+                }
+            },
+            {
+                "name": "POST host.docker.internal",
+                "status": "success",
+                "attemptsMade": 1,
+                "attemptsRemaining": 0,
+                "triggerType": "resource_creation",
+                "eventName": "contract_requiring_verification_published",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
+                "_links": {
+                    "pb:logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/798e6f0f-6a84-4131-9727-5acd61d545f4/logs",
+                        "title": "Webhook execution logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/798e6f0f-6a84-4131-9727-5acd61d545f4/logs",
+                        "title": "DEPRECATED - Use pb:logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "pb:webhook": {
+                        "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg",
+                        "title": "Webhook",
+                        "name": "POST host.docker.internal"
+                    }
+                }
+            },
+            {
+                "name": "POST host.docker.internal",
+                "status": "success",
+                "attemptsMade": 1,
+                "attemptsRemaining": 0,
+                "triggerType": "resource_creation",
+                "eventName": "contract_content_changed",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
+                "_links": {
+                    "pb:logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/41e303ab-7f6c-4121-8cab-4d0374619079/logs",
+                        "title": "Webhook execution logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/41e303ab-7f6c-4121-8cab-4d0374619079/logs",
+                        "title": "DEPRECATED - Use pb:logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "pb:webhook": {
+                        "href": "http://localhost:9292/webhooks/m_pKUiCrFHhhaeYtoC6rRA",
+                        "title": "Webhook",
+                        "name": "POST host.docker.internal"
+                    }
+                }
+            },
+            {
+                "name": "POST host.docker.internal",
+                "status": "success",
+                "attemptsMade": 1,
+                "attemptsRemaining": 0,
+                "triggerType": "resource_creation",
+                "eventName": "contract_content_changed",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
+                "_links": {
+                    "pb:logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/088e98da-2563-4b63-afd8-c0d3c7dff716/logs",
+                        "title": "Webhook execution logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/088e98da-2563-4b63-afd8-c0d3c7dff716/logs",
+                        "title": "DEPRECATED - Use pb:logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "pb:webhook": {
+                        "href": "http://localhost:9292/webhooks/I-uF14z2_5kibhBkLEyFPg",
+                        "title": "Webhook",
+                        "name": "POST host.docker.internal"
+                    }
+                }
+            },
+            {
+                "name": "POST host.docker.internal",
+                "status": "success",
+                "attemptsMade": 1,
+                "attemptsRemaining": 0,
+                "triggerType": "resource_creation",
+                "eventName": "contract_content_changed",
+                "triggeredAt": "2026-11-01T01:53:13+00:00",
+                "_links": {
+                    "pb:logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/dbe45c64-6aa9-4a64-84a1-ad457c97ed34/logs",
+                        "title": "Webhook execution logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "logs": {
+                        "href": "http://localhost:9292/triggered-webhooks/dbe45c64-6aa9-4a64-84a1-ad457c97ed34/logs",
+                        "title": "DEPRECATED - Use pb:logs",
+                        "name": "POST host.docker.internal"
+                    },
+                    "pb:webhook": {
+                        "href": "http://localhost:9292/webhooks/UYJpOaXO_0lRMdRp4nAKrg",
+                        "title": "Webhook",
+                        "name": "POST host.docker.internal"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/webhooks/status",
+            "title": "Webhooks status"
+        },
+        "pb:error-logs": [],
+        "pb:pact-webhooks": {
+            "title": "Webhooks for the pact between Consumer and Provider",
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/webhooks"
+        },
+        "pb:pact-version": {
+            "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/3.0.0",
+            "title": "Pact",
+            "name": "Pact between Consumer (3.0.0) and Provider"
+        },
+        "pb:consumer": {
+            "href": "http://localhost:9292/pacticipants/Consumer",
+            "title": "Consumer",
+            "name": "Consumer"
+        },
+        "pb:provider": {
+            "href": "http://localhost:9292/pacticipants/Provider",
+            "title": "Provider",
+            "name": "Provider"
+        }
+    }
+}

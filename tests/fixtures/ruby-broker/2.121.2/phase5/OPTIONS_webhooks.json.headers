@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+vary: Accept
+cache-control: no-cache
+access-control-allow-methods: GET, POST, OPTIONS
+date: Sun, 01 Nov 2026 01:53:11 GMT
+server: Webmachine-Ruby/2.0.1 Rack/3.2
+x-pact-broker-version: 2.121.2
+x-content-type-options: nosniff
+content-length: 0
+

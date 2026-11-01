@@ -1,0 +1,20 @@
+{
+    "_links": {
+        "self": {
+            "title": "Webhooks",
+            "href": "http://localhost:9292/webhooks/consumer/Consumer"
+        },
+        "pb:create": {
+            "title": "POST to create a webhook",
+            "href": "http://localhost:9292/webhooks/consumer/Consumer"
+        },
+        "pb:webhooks": [],
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:9292/doc/webhooks-{rel}",
+                "templated": true
+            }
+        ]
+    }
+}

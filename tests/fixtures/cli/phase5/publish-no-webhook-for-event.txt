@@ -1,0 +1,8 @@
+Created Other version 2 with branch main
+[32mPact successfully published for Other version 2 and provider OtherP.[0m
+  View the published pact at [35mhttp://127.0.0.1:59425/pacts/provider/OtherP/consumer/Other/version/2[0m
+  Events detected: contract_published (pact content is the same as previous versions with tags  and no new tags were applied)
+  No enabled webhooks found for the detected events
+[33m  Next steps:[0m
+[33m    * Add Pact verification tests to the OtherP build. See [35mhttps://docs.pact.io/go/provider_verification[0m[0m
+exit=0

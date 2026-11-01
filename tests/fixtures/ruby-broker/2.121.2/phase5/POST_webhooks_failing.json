@@ -1,0 +1,49 @@
+{
+    "uuid": "G_-Yh66f7zPXVOjW3TxuKA",
+    "description": "POST host.docker.internal",
+    "consumer": {
+        "name": "Consumer"
+    },
+    "provider": {
+        "name": "Provider"
+    },
+    "enabled": true,
+    "request": {
+        "method": "POST",
+        "url": "http://host.docker.internal:18101/hook"
+    },
+    "events": [
+        {
+            "name": "contract_published"
+        }
+    ],
+    "createdAt": "2026-11-01T01:55:25+00:00",
+    "_links": {
+        "self": {
+            "title": "POST host.docker.internal",
+            "href": "http://localhost:9292/webhooks/G_-Yh66f7zPXVOjW3TxuKA"
+        },
+        "pb:execute": {
+            "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+            "href": "http://localhost:9292/webhooks/G_-Yh66f7zPXVOjW3TxuKA/execute"
+        },
+        "pb:consumer": {
+            "title": "Consumer",
+            "name": "Consumer",
+            "href": "http://localhost:9292/pacticipants/Consumer"
+        },
+        "pb:provider": {
+            "title": "Provider",
+            "name": "Provider",
+            "href": "http://localhost:9292/pacticipants/Provider"
+        },
+        "pb:pact-webhooks": {
+            "title": "All webhooks for consumer Consumer and provider Provider",
+            "href": "http://localhost:9292/webhooks/provider/Provider/consumer/Consumer"
+        },
+        "pb:webhooks": {
+            "title": "All webhooks",
+            "href": "http://localhost:9292/webhooks"
+        }
+    }
+}

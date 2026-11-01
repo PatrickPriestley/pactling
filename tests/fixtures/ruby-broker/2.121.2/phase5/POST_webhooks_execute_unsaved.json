@@ -1,0 +1,43 @@
+{
+    "request": {
+        "headers": {
+            "accept": "*/*",
+            "user-agent": "Pact Broker v2.121.2",
+            "host": "host.docker.internal:18100",
+            "content-length": "736",
+            "content-type": "application/x-www-form-urlencoded"
+        },
+        "body": {
+            "event": "test",
+            "consumer": "Consumer",
+            "provider": "Provider",
+            "consumerVersion": "1.0.0",
+            "consumerBranch": "main",
+            "consumerTags": "dev",
+            "providerVersion": "1",
+            "providerBranch": "main",
+            "providerTags": "",
+            "providerVersionDescriptions": "",
+            "pactUrl": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4wJmN2dCU1QiU1RD1kZXYmdz10cnVl",
+            "verificationResultUrl": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/verification-results/200",
+            "github": "success",
+            "bitbucket": "SUCCESSFUL",
+            "azure": "succeeded",
+            "gitlab": "success",
+            "buildUrl": "",
+            "consumerLabels": "",
+            "providerLabels": "",
+            "deployedProvider": ""
+        },
+        "url": "/hook/unsaved"
+    },
+    "message": "For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See http://localhost:9292/doc/webhooks#whitelist for more information.",
+    "logs": "[2026-11-01T01:53:12Z] DEBUG: Webhook context {\"base_url\":\"http://localhost:9292\",\"event_name\":\"test\"}\n[2026-11-01T01:53:12Z] INFO: HTTP/1.1 POST http://host.docker.internal:18100/hook/unsaved\n[2026-11-01T01:53:12Z] INFO: accept: */*\n[2026-11-01T01:53:12Z] INFO: user-agent: Pact Broker v2.121.2\n[2026-11-01T01:53:12Z] INFO: host: host.docker.internal:18100\n[2026-11-01T01:53:12Z] INFO: content-length: 736\n[2026-11-01T01:53:12Z] INFO: content-type: application/x-www-form-urlencoded\n[2026-11-01T01:53:12Z] INFO: {\"event\":\"test\",\"consumer\":\"Consumer\",\"provider\":\"Provider\",\"consumerVersion\":\"1.0.0\",\"consumerBranch\":\"main\",\"consumerTags\":\"dev\",\"providerVersion\":\"1\",\"providerBranch\":\"main\",\"providerTags\":\"\",\"providerVersionDescriptions\":\"\",\"pactUrl\":\"http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/metadata/Y3ZuPTEuMC4wJmN2dCU1QiU1RD1kZXYmdz10cnVl\",\"verificationResultUrl\":\"http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/0350e2d94a510324ee31cd7375bf1660e5d8c485/verification-results/200\",\"github\":\"success\",\"bitbucket\":\"SUCCESSFUL\",\"azure\":\"succeeded\",\"gitlab\":\"success\",\"buildUrl\":\"\",\"consumerLabels\":\"\",\"providerLabels\":\"\",\"deployedProvider\":\"\"}\n[2026-11-01T01:53:12Z] INFO: For security purposes, the response details are not logged. To enable response logging, configure the webhook_host_whitelist property. See http://localhost:9292/doc/webhooks#whitelist for more information.\n",
+    "success": true,
+    "_links": {
+        "try-again": {
+            "title": "Execute the webhook again",
+            "href": "http://localhost:9292/webhooks/execute"
+        }
+    }
+}
