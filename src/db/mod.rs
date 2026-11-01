@@ -295,6 +295,10 @@ impl Db {
     /// The raw pool, for tests and migrations only; application code goes through the
     /// methods on `Db`.
     pub fn pool(&self) -> &SqlitePool {
+        assert!(
+            !matches!(self.conn, Conn::Read(_)),
+            "read snapshot cannot expose its backing pool"
+        );
         &self.pool
     }
 
@@ -371,6 +375,11 @@ impl Db {
     }
 
     pub async fn migrate(&self) -> sqlx::Result<()> {
+        if matches!(self.conn, Conn::Read(_)) {
+            return Err(sqlx::Error::Protocol(
+                "cannot migrate through a read snapshot".into(),
+            ));
+        }
         sqlx::migrate!("./migrations")
             .run(&self.pool)
             .await
