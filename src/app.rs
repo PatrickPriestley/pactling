@@ -21,6 +21,8 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
     let state = AppState { db, config };
     Ok(Router::new()
         .route("/", any(http::index::index))
+        .route("/ui/", any(http::ui::index::index))
+        .route("/ui/style.css", any(http::ui::style))
         .route("/pacticipants", any(http::pacticipants::collection))
         .route("/pacticipants/{name}", any(http::pacticipants::resource))
         .route(
