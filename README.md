@@ -36,6 +36,12 @@ rather than `Pact Broker v2.121.2`; the webhook host whitelist takes host names 
 (pactling has no labels); `/pacts/provider/{p}/consumer/{c}/latest/verification-results/latest`
 is not served (use the `version/{v}` form).
 
+The read-only extension `GET /pactling/v1/can-i-deploy/explanation` accepts the existing
+can-i-deploy query and explains its same verdict with evidence and suggested next actions.
+See the [deployment explanation API](docs/api/deployment-explanations.md) for its versioned
+schema, open reason/action codes and snapshot limits. Existing Ruby-compatible routes and
+documents are unchanged.
+
 Webhook settings use the Ruby broker's variable names and defaults:
 `PACT_BROKER_WEBHOOK_SCHEME_WHITELIST` (default `https`), `PACT_BROKER_WEBHOOK_HOST_WHITELIST`
 (empty: any host, response details hidden from logs), `PACT_BROKER_WEBHOOK_HTTP_METHOD_WHITELIST`
