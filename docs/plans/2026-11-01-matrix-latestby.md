@@ -26,3 +26,27 @@ Checks: fresh Ruby capture and recapture comparison; regression replay and all f
 tests; mutation of each new guard; fmt, clippy, cargo test and full real-client e2e;
 non-Codex completed independent review before push and a PR closing #23. Stop the
 probe broker when finished. No main merge.
+
+## Evidence and validation
+
+- Fresh real Ruby capture: 108 cases, including 35 additions; the original 73
+  expected projections are unchanged. Fresh recapture comparison: zero differences.
+- Before service changes, 16 new cvp/cp cases failed on row/summary assertions;
+  cvpv and absent-option controls already passed. Regression replay is now green.
+- Grouping executes once after overlapping-selector deduplication and before ignore
+  flags/verdict computation. Provider IDs are creation order; versions 99 then 2 in
+  the capture prove this is not lexical/semantic version sorting.
+- Mutations killed: each of the three grouping modes, collapsing an absent option,
+  replacing a null-first row, selecting the oldest provider, retaining the first
+  equal-order row, omitting consumer identity, and omitting provider identity.
+  Removing query ordering initially survived. Added real Ruby split-selector cases;
+  the removal now fails, and the ordering was restored.
+- Exact-source follow-up: MatrixRow's misleading provider_version_created_at alias
+  comes from LatestVerificationIdForPactVersionAndProviderVersion.created_at, populated
+  with verification.created_at (verifications/repository.rb:39-47). Consumer-side
+  cache uses consumer_version.created_at (pacts/repository.rb:89-97). Added a pure
+  service regression with distinct dates, red before correcting that field mapping.
+  This date-specific assertion is source-supported, not a captured HTTP scenario.
+- Additional cases use isolated MatrixLatest* participants so all setup can be replayed
+  before queries. Provider-side cases verify each selected provider/consumer pair to
+  isolate grouping from unrelated unknown-row/description behavior.

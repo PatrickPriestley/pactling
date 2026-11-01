@@ -276,6 +276,7 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             r.provider.description.clone(),
         ))
     });
+    let mut rows = apply_latestby(rows, q.latestby.as_deref());
     for row in &mut rows {
         row.ignored |= is_ignored(
             q,
@@ -291,6 +292,70 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
     // The Ruby document includes ignored=0 when an ignore was requested.
     result.has_ignores = !q.ignore.is_empty();
     Ok(result)
+}
+
+/// Ruby Matrix::Repository#apply_latestby runs after selection and before ignores.
+fn apply_latestby(mut rows: Vec<Row>, latestby: Option<&str>) -> Vec<Row> {
+    let (by_consumer_version, by_provider_version) = match latestby {
+        Some("cvpv") => (true, true),
+        Some("cvp") => (true, false),
+        Some("cp") => (false, false),
+        _ => return rows,
+    };
+    // Reproduce Ruby's query order before grouping: it determines the first null
+    // row and, for equal provider orders, the last row in the stable sort.
+    rows.sort_by(|a, b| matrix_query_order(b).cmp(&matrix_query_order(a)));
+    let mut groups = std::collections::HashMap::new();
+    let mut selected: Vec<Row> = vec![];
+    for row in rows {
+        let key = (
+            row.consumer.pacticipant.id,
+            by_consumer_version
+                .then(|| row.consumer.version.as_ref().map(|v| v.id))
+                .flatten(),
+            row.provider.pacticipant.id,
+            by_provider_version
+                .then(|| row.provider.version.as_ref().map(|v| v.id))
+                .flatten(),
+        );
+        match groups.entry(key) {
+            std::collections::hash_map::Entry::Vacant(entry) => {
+                entry.insert(selected.len());
+                selected.push(row);
+            }
+            std::collections::hash_map::Entry::Occupied(entry) => {
+                let previous = &mut selected[*entry.get()];
+                // A group's first null provider row is retained. Otherwise Ruby's
+                // stable sort takes the last maximum provider creation order.
+                if previous.provider.version.is_some()
+                    && row.provider.version.as_ref().map(|v| v.id)
+                        >= previous.provider.version.as_ref().map(|v| v.id)
+                {
+                    *previous = row;
+                }
+            }
+        }
+    }
+    selected
+}
+
+fn matrix_query_order(row: &Row) -> (&str, i64, Option<i64>) {
+    let consumer_created = row
+        .consumer
+        .version
+        .as_ref()
+        .map_or("", |v| v.created_at.as_str());
+    // Ruby's provider_version_created_at query alias comes from the latest
+    // verification cache, whose created_at is the verification's timestamp.
+    let verification_created = row
+        .verification
+        .as_ref()
+        .map_or("", |v| v.created_at.as_str());
+    (
+        consumer_created.max(verification_created),
+        row.pact.id,
+        row.verification.as_ref().map(|v| v.id),
+    )
 }
 
 fn is_ignored(q: &MatrixQuery, name: &str, version: Option<&Version>) -> bool {
@@ -923,6 +988,102 @@ fn summarize(mut rows: Vec<Row>, mut notices: Vec<Notice>) -> Matrix {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn latestby_ties_use_verification_recency_not_provider_creation() {
+        let participant = Pacticipant {
+            id: 1,
+            name: "C".into(),
+            display_name: None,
+            repository_url: None,
+            main_branch: None,
+            created_at: "2026-01-01T00:00:00+00:00".into(),
+            updated_at: None,
+        };
+        let consumer = Side {
+            pacticipant: participant.clone(),
+            version: Some(Version {
+                id: 1,
+                pacticipant_id: 1,
+                pacticipant_name: "C".into(),
+                number: "1".into(),
+                build_url: None,
+                created_at: "2026-01-01T00:00:00+00:00".into(),
+                updated_at: None,
+            }),
+            description: "C1".into(),
+        };
+        let provider = Side {
+            pacticipant: Pacticipant {
+                id: 2,
+                name: "P".into(),
+                ..participant
+            },
+            version: Some(Version {
+                id: 10,
+                pacticipant_id: 2,
+                pacticipant_name: "P".into(),
+                number: "1".into(),
+                build_url: None,
+                created_at: "2025-01-01T00:00:00+00:00".into(),
+                updated_at: None,
+            }),
+            description: "P1".into(),
+        };
+        let first = Row {
+            consumer,
+            provider,
+            ignored: false,
+            pact: PactPublication {
+                id: 1,
+                consumer_id: 1,
+                consumer_name: "C".into(),
+                consumer_version_id: 1,
+                consumer_version_number: "1".into(),
+                consumer_main_branch: None,
+                provider_id: 2,
+                provider_name: "P".into(),
+                pact_version_id: 1,
+                sha: "first".into(),
+                content: "{}".into(),
+                created_at: "2026-01-01T00:00:00+00:00".into(),
+                updated_at: None,
+            },
+            verification: Some(Verification {
+                id: 2,
+                number: 2,
+                pact_version_id: 1,
+                provider_version_id: 10,
+                provider_name: "P".into(),
+                provider_version_number: "1".into(),
+                consumer_version_id: None,
+                success: false,
+                test_results: None,
+                verified_by: None,
+                build_url: None,
+                created_at: "2026-02-02T00:00:00+00:00".into(),
+            }),
+        };
+        let mut second = first.clone();
+        second.consumer.version.as_mut().unwrap().id = 2;
+        second.consumer.version.as_mut().unwrap().number = "2".into();
+        second.consumer.version.as_mut().unwrap().created_at = "2026-01-02T00:00:00+00:00".into();
+        second.pact.id = 2;
+        second.pact.consumer_version_id = 2;
+        second.pact.consumer_version_number = "2".into();
+        second.pact.pact_version_id = 2;
+        let verification = second.verification.as_mut().unwrap();
+        verification.id = 1;
+        verification.pact_version_id = 2;
+        verification.success = true;
+        verification.created_at = "2026-02-01T00:00:00+00:00".into();
+        // Ruby orders the newer verification first, then a stable provider-order
+        // sort keeps the last row on the tie, even though its consumer is newer.
+        assert_eq!(
+            apply_latestby(vec![first, second.clone()], Some("cp")),
+            vec![second]
+        );
+    }
 
     #[test]
     fn parses_the_cli_query_grammar() {

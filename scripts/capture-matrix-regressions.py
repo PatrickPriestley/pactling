@@ -237,6 +237,15 @@ def capture(base, output):
         suffix = mode or "none"
         matrix(f"latestby_{suffix}_multiple_consumers", [(lc, None)], environment="matrix-latestby-multiple", latestby=mode)
         matrix(f"latestby_{suffix}_all_two_selectors", [(lc, None), (lp, None)], latestby=mode)
+    # Explicit consumer selectors in opposite orders must not change cp tie-breaking.
+    for mode in ["cvp", "cp"]:
+        matrix(f"latestby_{mode}_split_consumer_selectors", [(lc, "1"), (lp, None), (lc, "2")], latestby=mode)
+        matrix(f"latestby_{mode}_split_consumer_selectors_reverse", [(lc, "2"), (lp, None), (lc, "1")], latestby=mode)
+    split = "MatrixLatestSplitConsumer"
+    for name, success in [("MatrixLatestSplitA", True), ("MatrixLatestSplitB", False)]:
+        verification = publish(split, name)
+        seed("POST", verification, {"providerApplicationVersion": "1", "success": success})
+    matrix("latestby_cp_keeps_distinct_providers", [(split, "1")], latest=True, latestby="cp")
     # A new, unverified publication sorts before the older verified publications.
     lc = "MatrixLatestUnknownConsumer"
     result = publish(lc, lp)
