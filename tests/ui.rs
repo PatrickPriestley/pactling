@@ -693,3 +693,97 @@ async fn ui_matrix_escapes_names_and_database_error() {
     assert!(body.contains("Unable to load matrix"));
     assert!(!body.contains("no such table"));
 }
+
+#[tokio::test]
+async fn ui_matrix_reports_empty_and_errors() {
+    let s = start().await;
+    matrix_seed(&s).await;
+    let (status, body) = matrix_html(&s, "q[][pacticipant]=Checkout&q[][version]=absent").await;
+    assert_eq!(status, 200);
+    assert!(body.contains("No matrix rows match these selectors."));
+    let (_, body) = matrix_html(&s, "q[][pacticipant]=Other").await;
+    assert!(body.contains("Selectors must belong to this consumer/provider pair."));
+    let (_, body) = matrix_html(&s, "environment=missing").await;
+    assert!(body.contains("Environment with name"));
+    assert!(body.contains("missing"));
+}
+
+#[test]
+fn ui_matrix_form_query_mapping() {
+    use pactling::http::ui::query::{encode_fields, field, fields, matrix_query, selector_fields};
+    let repeated = fields("x=a%26b+c&x=%3Ctag%3E&empty=");
+    assert_eq!(
+        repeated,
+        vec![
+            ("x".into(), "a&b c".into()),
+            ("x".into(), "<tag>".into()),
+            ("empty".into(), "".into())
+        ]
+    );
+    assert_eq!(field(&repeated, "x"), "a&b c");
+    assert_eq!(field(&repeated, "absent"), "");
+    assert_eq!(fields(&encode_fields(&repeated)), repeated);
+    for (mode, value, expected) in [
+        ("all", "", vec![]),
+        ("latest", "unused", vec![("q[][latest]", "true")]),
+        (
+            "main",
+            "unused",
+            vec![("q[][latest]", "true"), ("q[][mainBranch]", "true")],
+        ),
+        ("version", "<&+", vec![("q[][version]", "<&+")]),
+        (
+            "branch",
+            "main",
+            vec![("q[][latest]", "true"), ("q[][branch]", "main")],
+        ),
+        (
+            "tag",
+            "release",
+            vec![("q[][latest]", "true"), ("q[][tag]", "release")],
+        ),
+    ] {
+        let actual = selector_fields("A &<+", mode, value).unwrap();
+        let expected: Vec<(String, String)> = std::iter::once(("q[][pacticipant]", "A &<+"))
+            .chain(expected)
+            .map(|(k, v)| (k.into(), v.into()))
+            .collect();
+        assert_eq!(actual, expected);
+        assert_eq!(fields(&encode_fields(&actual)), actual);
+    }
+    for mode in ["version", "branch", "tag", "invalid", ""] {
+        assert!(selector_fields("C", mode, "").is_err());
+    }
+    for grouping in ["none", "cvp", "cp", "cvpv"] {
+        let (q, raw) = matrix_query(
+            &format!("ui_form=matrix&consumer_mode=all&provider_mode=all&latestby={grouping}"),
+            "C",
+            "P",
+        )
+        .unwrap();
+        assert_eq!(
+            q.latestby.as_deref(),
+            if grouping == "none" {
+                None
+            } else {
+                Some(grouping)
+            }
+        );
+        assert!(raw.contains("q%5B%5D%5Bpacticipant%5D=C"));
+        assert_eq!(
+            q.selectors
+                .iter()
+                .map(|s| s.pacticipant.as_str())
+                .collect::<Vec<_>>(),
+            vec!["C", "P"]
+        );
+    }
+    let raw = "q[][pacticipant]=P&q[][version]=2&ignore[][pacticipant]=C&ignore[][version]=1&ignore[][pacticipant]=P";
+    let (q, unchanged) = matrix_query(raw, "C", "P").unwrap();
+    assert_eq!(unchanged, raw);
+    assert_eq!(q.selectors[1].version.as_deref(), Some("2"));
+    assert_eq!(
+        q.ignore,
+        vec![("C".into(), Some("1".into())), ("P".into(), None)]
+    );
+}
