@@ -1054,7 +1054,10 @@ async fn ui_explanation_open_codes_and_anchor_targets() {
         .await
         .unwrap();
     doc["reasons"][0]["code"] = json!("FUTURE_<REASON>");
-    doc["reasons"][0]["evidenceRefs"].as_array_mut().unwrap().push(json!("/rows/0/contract/href"));
+    doc["reasons"][0]["evidenceRefs"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!("/rows/0/contract/href"));
     doc["nextActions"][0]["type"] = json!("FUTURE_<ACTION>");
     doc["nextActions"][0]["target"]["otherHref"] = json!("javascript:alert(1)");
     doc["resolution"]["selectors"][0]["extra/key~"] = json!([true, 42]);
@@ -1173,4 +1176,85 @@ async fn ui_explanation_database_error_is_safe() {
     assert!(!body.contains("pact_publications"));
     assert!(body.contains("<form"));
     pool.close().await;
+}
+
+#[tokio::test]
+async fn ui_explanation_guard_regressions() {
+    let s = start().await;
+    explanation_seed(&s).await;
+    let r = s
+        .client
+        .get(format!("{}/ui/deployment-explanation", s.base_url))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 200);
+    assert!(!r.text().await.unwrap().contains("data-decision="));
+    for (q, detail) in [
+        (
+            "ui_form=explanation&pacticipant=&selector_mode=version&selector_value=1&target_mode=environment&target_value=test",
+            "Pacticipant and target are required.",
+        ),
+        (
+            "ui_form=explanation&pacticipant=Checkout&selector_mode=version&selector_value=1&target_mode=environment&target_value=",
+            "Pacticipant and target are required.",
+        ),
+        (
+            "pacticipant=Checkout&version=1",
+            "Must specify either an environment or a",
+        ),
+        ("environment=test", "is missing"),
+        (
+            "ui_form=explanation&pacticipant=Checkout&selector_mode=version&selector_value=&target_mode=environment&target_value=test",
+            "The selected filter requires a value.",
+        ),
+    ] {
+        let (status, body) = explanation_html(&s, q).await;
+        assert_eq!(status, 400);
+        assert!(body.contains(detail), "{q}: {body}");
+    }
+    let (_, body) = explanation_html(
+        &s,
+        "pacticipant=Checkout&version=1&environment=test&ignore[][pacticipant]=Absent",
+    )
+    .await;
+    assert!(body.contains("option value=\"version\" selected"));
+    assert!(body.contains("name=\"target_value\" value=\"test\""));
+    assert!(body.contains("name=\"ignore\" value=\"Absent\""));
+    for (version, label) in [("1", "Successful"), ("2", "Failed"), ("3", "Unknown")] {
+        let (_, body) = explanation_html(
+            &s,
+            &format!("pacticipant=Checkout&version={version}&environment=test"),
+        )
+        .await;
+        assert!(body.contains(&format!("<td>{label}</td>")), "{body}");
+        if version != "3" {
+            assert!(body.contains(">Verification API</a>"));
+            assert!(body.contains(&format!(
+                "data-consumer-version=\"{version}\" data-provider-version=\"1\""
+            )));
+        }
+    }
+    let mut doc:serde_json::Value=s.client.get(format!("{}/pactling/v1/can-i-deploy/explanation?pacticipant=Checkout&version=2&environment=test",s.base_url)).send().await.unwrap().json().await.unwrap();
+    doc["resolution"]["extra"] = json!("<script>unsafe</script>");
+    doc["nextActions"][0]["target"]["futureHref"] = json!("https://evidence.example/unique");
+    let html = pactling::http::ui::explanation::render_document(&doc).into_string();
+    assert!(html.contains("&lt;script&gt;unsafe&lt;/script&gt;"));
+    assert!(!html.contains("<script>unsafe</script>"));
+    assert!(html.contains("Not recorded (null)"));
+    assert!(html.contains("href=\"https://evidence.example/unique\" rel=\"noopener noreferrer\">https://evidence.example/unique</a>"));
+    assert!(html.contains("<dl><dt>consumer</dt>"));
+    assert!(html.contains("<ol><li>"));
+    for href in [
+        doc["rows"][0]["contract"]["href"].as_str().unwrap(),
+        doc["nextActions"][0]["target"]["verificationHref"]
+            .as_str()
+            .unwrap(),
+    ] {
+        let needle = format!("href=\"{href}\" rel=\"noopener noreferrer\">{href}</a>");
+        assert!(
+            html.contains(&needle),
+            "missing actual evidence link {needle}"
+        );
+    }
 }
