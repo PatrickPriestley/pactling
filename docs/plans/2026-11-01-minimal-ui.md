@@ -141,3 +141,10 @@ selects every version on that branch (three seeded rows), whereas adding `latest
 selects its head (one row). UI modes labeled branch/main-branch **head** therefore emit
 both fields, just as the existing resolver requires. An unknown pair returns the existing
 matrix's 400, and explicit empty canonical version values retain its zero-row behavior.
+
+For explanation queries opened directly in API grammar, the native single-pacticipant
+form is labeled **New explanation**, with supported values prefilled for convenience.
+The exact evaluated canonical query is shown separately: multiple selectors and branch
+queries without `latest=true` cannot be faithfully represented by the small head-selector
+form. Marked native submissions retain their fields. Reject silently claiming that the
+prefilled form fully represents every API query, or expanding v1 into a general query editor.
