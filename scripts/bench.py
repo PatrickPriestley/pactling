@@ -64,10 +64,20 @@ def contract(consumer, provider, salt):
             "content": base64.b64encode(json.dumps(content).encode()).decode()}
 
 
+class SeedFailed(Exception):
+    pass
+
+
+def check(condition, detail):
+    """Explicit, so validation survives `python3 -O` (assert statements do not)."""
+    if not condition:
+        raise SeedFailed(repr(detail))
+
+
 def ok(result, *want):
     """Aborts the run when a seed write did not succeed, so reads never measure a partial dataset."""
     status, doc = result
-    assert status in want, (status, doc)
+    check(status in want, (status, doc))
     return doc
 
 
@@ -78,7 +88,7 @@ def path_of(href):
 def seed(base, consumers, providers, versions, verified_tail):
     times = {"publish": [], "verify": [], "deploy": []}
     status, env = request(base, "POST", "/environments", {"name": "bench-test", "production": False})
-    assert status in (200, 201), (status, env)
+    check(status in (200, 201), (status, env))
     env_uuid = env["uuid"]
     cs = [f"BenchConsumer{i:03d}" for i in range(consumers)]
     ps = [f"BenchProvider{j:03d}" for j in range(providers)]
@@ -87,7 +97,7 @@ def seed(base, consumers, providers, versions, verified_tail):
             body = {"pacticipantName": c, "pacticipantVersionNumber": f"{v}.0.0", "branch": "main",
                     "tags": ["prod"] if v == versions else [], "contracts": [contract(c, p, v // 5) for p in ps]}
             ms, (status, _) = timed(lambda: request(base, "POST", "/contracts/publish", body))
-            assert status == 200, status
+            check(status == 200, status)
             times["publish"].append(ms)
     for p in ps:
         for v in range(1, versions + 1):
@@ -97,10 +107,10 @@ def seed(base, consumers, providers, versions, verified_tail):
                 pact = ok(request(base, "GET", f"/pacts/provider/{p}/consumer/{c}/latest"), 200)
                 path = path_of(pact["_links"]["pb:publish-verification-results"]["href"])
                 ms, (status, _) = timed(lambda: request(base, "POST", path, {"providerApplicationVersion": str(v), "success": v % 7 != 0}))
-                assert status == 201, status
+                check(status == 201, status)
                 times["verify"].append(ms)
         ms, (status, _) = timed(lambda: request(base, "POST", f"/pacticipants/{p}/versions/{versions}/deployed-versions/environment/{env_uuid}", {}))
-        assert status in (200, 201), status
+        check(status in (200, 201), status)
         times["deploy"].append(ms)
         ok(request(base, "POST", f"/pacticipants/{p}/versions/{max(1, versions - 1)}/released-versions/environment/{env_uuid}", {}), 200, 201)
         # The deployed provider version also carries the tag the tag query targets, so that
@@ -138,7 +148,7 @@ def measure_reads(base, cs, ps, versions, rounds):
         samples, last = [], None
         for i in range(rounds):
             ms, (status, doc) = timed(lambda: request(base, "GET", path(i)))
-            assert status == 200, (name, status, doc)
+            check(status == 200, (name, status, doc))
             samples.append(ms)
             last = doc
         out[name] = percentiles(samples)
@@ -211,7 +221,7 @@ def main():
     ap.add_argument("--out")
     a = ap.parse_args()
     base = a.base.rstrip("/")
-    assert request(base, "GET", "/")[0] == 200
+    check(request(base, "GET", "/")[0] == 200, 'request failed')
     t0 = time.perf_counter()
     _, cs, ps, seed_times = seed(base, a.consumers, a.providers, a.versions, a.verified_tail)
     result = {
