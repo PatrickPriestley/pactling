@@ -150,6 +150,14 @@ impl Server {
             .error_for_status()
             .unwrap();
         self.put("/pacticipants/P/versions/2", json!({})).await;
+        self.client
+            .put(format!("{}/pacticipants/P/versions/2/tags/dev", self.base))
+            .json(&json!({}))
+            .send()
+            .await
+            .unwrap()
+            .error_for_status()
+            .unwrap();
         let env = self
             .post("/environments", json!({"name":"test","production":false}))
             .await;
@@ -261,6 +269,10 @@ async fn real_binary_explains_all_verdicts_and_preserves_endpoint_json_bytes() {
                 "{text}"
             );
             assert!(text.contains("P") && text.contains("2"), "{text}");
+            assert!(
+                text.contains(document["rows"][0]["contract"]["href"].as_str().unwrap()),
+                "action evidence must include its contract link: {text}"
+            );
             if let Some(href) = action["target"]["verificationHref"].as_str() {
                 assert!(text.contains(href), "{text}");
             }
@@ -284,15 +296,18 @@ async fn real_binary_supports_unpinned_selectors_and_auth_environment() {
         vec!["--branch", "main"],
         vec!["--main-branch"],
     ] {
-        let mut args = vec!["--pacticipant", "C"];
-        args.extend(selector);
-        args.extend(["--to-environment", "test", "--output", "json"]);
-        let output = explain("", &args, &basic).await;
-        assert_code(&output, 0);
-        assert_eq!(
-            serde_json::from_slice::<Value>(&output.stdout).unwrap()["decision"],
-            "allowed"
-        );
+        for target in [["--to-environment", "test"], ["--to", "dev"]] {
+            let mut args = vec!["--pacticipant", "C"];
+            args.extend(selector.iter().copied());
+            args.extend(target);
+            args.extend(["--output", "json"]);
+            let output = explain("", &args, &basic).await;
+            assert_code(&output, 0);
+            assert_eq!(
+                serde_json::from_slice::<Value>(&output.stdout).unwrap()["decision"],
+                "allowed"
+            );
+        }
     }
     let token = [
         ("PACT_BROKER_BASE_URL", server.base.as_str()),
@@ -409,4 +424,101 @@ async fn real_binary_returns_three_for_usage_http_and_network_errors() {
         &explain(&format!("http://127.0.0.1:{}", free_port()), PIN, &[]).await,
         3,
     );
+}
+
+#[tokio::test]
+async fn real_binary_preserves_name_and_version_specific_ignore_semantics() {
+    for success in [Some(false), None] {
+        let server = Server::start(false, true).await;
+        server.seed(success).await;
+        for (ignore, code, ignored) in [
+            ("P", 0, 1),
+            (
+                "P=2",
+                if success.is_none() { 2 } else { 0 },
+                if success.is_none() { 0 } else { 1 },
+            ),
+        ] {
+            let mut args = PIN.to_vec();
+            args.extend(["--ignore", ignore, "--output", "json"]);
+            let output = explain(&server.base, &args, &[]).await;
+            assert_code(&output, code);
+            let doc: Value = serde_json::from_slice(&output.stdout).unwrap();
+            assert_eq!(doc["compatibility"]["ignored"], ignored);
+        }
+        let mut args = PIN.to_vec();
+        args.extend(["--ignore", "P=99", "--ignore", "P", "--output", "json"]);
+        let output = explain(&server.base, &args, &[]).await;
+        assert_code(&output, 0);
+        let doc: Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(doc["resolution"]["ignores"][0]["version"], "99");
+        assert_eq!(doc["resolution"]["ignores"][1]["version"], Value::Null);
+    }
+}
+
+#[tokio::test]
+async fn real_binary_rejects_empty_conflicting_and_repeated_options() {
+    let server = Server::start(false, true).await;
+    server.seed(Some(true)).await;
+    for extra in [
+        vec!["--ignore", ""],
+        vec!["--ignore", "P="],
+        vec!["--pacticipant", "Other"],
+        vec![
+            "--broker-token",
+            "token-test",
+            "--broker-username",
+            "u",
+            "--broker-password",
+            "p",
+        ],
+        vec!["--unknown-option"],
+    ] {
+        let mut args = PIN.to_vec();
+        args.extend(extra);
+        assert_code(&explain(&server.base, &args, &[]).await, 3);
+    }
+    for (key, value) in [
+        ("--version", ""),
+        ("--pacticipant", ""),
+        ("--to-environment", ""),
+    ] {
+        let mut args = PIN.to_vec();
+        let index = args.iter().position(|a| *a == key).unwrap();
+        args[index + 1] = value;
+        assert_code(&explain(&server.base, &args, &[]).await, 3);
+    }
+}
+
+/// Controlled responses exercise protocol rejection; verdict behavior above uses the real broker.
+#[tokio::test]
+async fn client_never_approves_malformed_or_inconsistent_protocol_responses() {
+    let valid: Value =
+        serde_json::from_str(include_str!("fixtures/pactling/explanations/allowed.json")).unwrap();
+    let mut mismatched = valid.clone();
+    mismatched["compatibility"]["deployable"] = Value::Null;
+    let mut invalid_decision = valid.clone();
+    invalid_decision["decision"] = json!("maybe");
+    let mut unsupported = valid.clone();
+    unsupported["schemaVersion"] = json!("2.0");
+    let mut missing = valid.clone();
+    missing.as_object_mut().unwrap().remove("decision");
+    for (status,body) in [
+        (200,"not JSON".to_owned()),
+        (200,"{}".to_owned()),
+        (200,mismatched.to_string()),
+        (200,invalid_decision.to_string()),
+        (200,unsupported.to_string()),
+        (200,missing.to_string()),
+        (401,valid.to_string()),
+        (400,json!({"schemaVersion":"1.0","error":{"code":"INVALID_QUERY","details":{"version":["is missing"]}}}).to_string()),
+        (500,valid.to_string()),
+    ] {
+        let router=axum::Router::new().fallback(move || {let body=body.clone();async move {(axum::http::StatusCode::from_u16(status).unwrap(),[("content-type","application/json")],body)}});
+        let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base=format!("http://{}",listener.local_addr().unwrap());
+        let task=tokio::spawn(async move {axum::serve(listener,router).await.unwrap()});
+        let output=explain(&base,PIN,&[]).await;task.abort();
+        assert_code(&output,3);
+    }
 }
