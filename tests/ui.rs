@@ -950,7 +950,7 @@ async fn ui_explanation_matches_shared_evaluation() {
     assert!(body.contains("data-provider-version=\"\""));
     assert!(body.contains("data-candidate-version=\"1\""));
     let (_, body) = explanation_html(&s, "pacticipant=Checkout&environment=test").await;
-    assert!(body.contains("data-decision=\"blocked\""));
+    assert!(body.contains("data-decision=\"unknown\""));
     assert!(body.contains("VERIFICATION_FAILED"));
     assert!(body.contains("VERIFICATION_MISSING"));
 }
@@ -964,7 +964,7 @@ async fn ui_explanation_form_modes_and_ignores() {
         ("main", "", "unknown"),
         ("branch", "main", "unknown"),
         ("tag", "release", "allowed"),
-        ("all", "", "blocked"),
+        ("all", "", "unknown"),
     ] {
         let q = format!(
             "ui_form=explanation&pacticipant=Checkout&selector_mode={mode}&selector_value={value}&target_mode=environment&target_value=test&ignore=&ignore="
