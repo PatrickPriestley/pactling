@@ -1054,6 +1054,7 @@ async fn ui_explanation_open_codes_and_anchor_targets() {
         .await
         .unwrap();
     doc["reasons"][0]["code"] = json!("FUTURE_<REASON>");
+    doc["reasons"][0]["evidenceRefs"].as_array_mut().unwrap().push(json!("/rows/0/contract/href"));
     doc["nextActions"][0]["type"] = json!("FUTURE_<ACTION>");
     doc["nextActions"][0]["target"]["otherHref"] = json!("javascript:alert(1)");
     doc["resolution"]["selectors"][0]["extra/key~"] = json!([true, 42]);
