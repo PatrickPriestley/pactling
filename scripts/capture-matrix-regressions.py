@@ -102,14 +102,8 @@ def capture(base, output):
                 "success": (row["verificationResult"] or {}).get("success"),
                 "ignored": row.get("ignored", False),
             })
-        # The integration-route control tests directionality, not the pre-existing
-        # unpinned-provider reason wording difference tracked with phase-4 fidelity.
-        summary = response["summary"].copy()
-        if route:
-            summary.pop("reason")
         cases.append({"name": name, "request": {"method": "GET", "path": path},
-                      "status": status, "compareReason": route is None,
-                      "expected": {"summary": summary, "rows": rows}})
+                      "status": status, "expected": {"summary": response["summary"], "rows": rows}})
 
     pair = [(consumer, "1"), (provider, "1")]
     matrix("failed_consumer_first", pair)
@@ -186,6 +180,7 @@ def capture(base, output):
     matrix("tag_without_latest_missing", [(oc, "1"), (oa, {"tag": "nosuch"})])
     matrix("tag_without_latest_missing_reverse", [(oa, {"tag": "nosuch"}), (oc, "1")])
     matrix("tag_without_latest_missing_first_of_two", [(oa, {"tag": "nosuch"}), (ob, "999"), (oc, "1")])
+    matrix("missing_selector_without_integration_keeps_order", [(oc, "1"), (web, "999"), (oa, "999")])
     matrix("tag_without_latest_verified", [(oc, "1"), (tp, {"tag": "both"})])
     matrix("tag_without_latest_verified_reverse", [(tp, {"tag": "both"}), (oc, "1")])
     matrix("tag_without_latest_unverified", [(oc, "1"), (tp, {"tag": "unverified"})])
@@ -197,6 +192,12 @@ def capture(base, output):
     matrix("consumer_tag_without_latest_single", [(oc, {"tag": "ct"})])
     matrix("two_latest_selectors_warning", [(oc, {"latest": True}), (ob, {"latest": True})])
     matrix("to_tag_option_no_environment_warning", [(oc, "1")], latest=True, tag="prod")
+    # Environment selection with two released provider versions of which one is verified.
+    seed("POST", "/environments", {"name": "matrix-partial", "production": False}, "partialEnvironment")
+    for number in ["1", "2"]:
+        seed("POST", f"/pacticipants/{tp}/versions/{number}/released-versions/environment/{{partialEnvironment}}", {})
+    matrix("environment_with_unverified_release", [(oc, "1")], environment="matrix-partial")
+    matrix("environment_with_unverified_release_ignored", [(oc, "1")], (tp, "2"), environment="matrix-partial")
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps({"brokerVersion": version, "setup": setup, "cases": cases}, indent=2) + "\n")

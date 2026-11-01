@@ -248,6 +248,25 @@
       "method": "PUT",
       "path": "/pacticipants/MatrixOrderC/versions/1/tags/ct",
       "body": {}
+    },
+    {
+      "method": "POST",
+      "path": "/environments",
+      "body": {
+        "name": "matrix-partial",
+        "production": false
+      },
+      "saveUuid": "partialEnvironment"
+    },
+    {
+      "method": "POST",
+      "path": "/pacticipants/MatrixTagP/versions/1/released-versions/environment/{partialEnvironment}",
+      "body": {}
+    },
+    {
+      "method": "POST",
+      "path": "/pacticipants/MatrixTagP/versions/2/released-versions/environment/{partialEnvironment}",
+      "body": {}
     }
   ],
   "cases": [
@@ -258,7 +277,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -286,7 +304,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -314,7 +331,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -350,7 +366,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -386,7 +401,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -422,7 +436,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -458,7 +471,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -494,7 +506,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -530,7 +541,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=999&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -558,7 +568,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=999&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -586,7 +595,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=999"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -615,7 +623,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=2"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -644,7 +651,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=1"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -673,7 +679,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -702,7 +707,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixConsumer&ignore%5B%5D%5Bversion%5D=999"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -731,7 +735,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixConsumer&ignore%5B%5D%5Bversion%5D=1"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -760,7 +763,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=2"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -797,7 +799,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=1"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -834,7 +835,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-regressions&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -871,7 +871,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedConsumer&q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedProvider&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -899,7 +898,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedProvider&q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedConsumer&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -927,7 +925,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=2&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -955,7 +952,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -983,7 +979,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=2&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1011,7 +1006,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-single"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1039,7 +1033,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=2&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=2"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -1068,7 +1061,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv&latest=true&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=2"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -1097,7 +1089,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixProvider&ignore%5B%5D%5Bversion%5D=1"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1134,7 +1125,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=999&latestby=cvpv&latest=true"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1153,7 +1143,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=999&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1181,7 +1170,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=NoSuchApp"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1210,7 +1198,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=NoSuchApp&ignore%5B%5D%5Bversion%5D=1"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1239,7 +1226,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -1267,7 +1253,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1295,7 +1280,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1323,7 +1307,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=nosuch&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1351,7 +1334,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=prod&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1379,7 +1361,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=prod&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1407,7 +1388,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bbranch%5D=main&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1435,7 +1415,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bbranch%5D=main&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1463,7 +1442,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1491,7 +1469,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1519,7 +1496,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bbranch%5D=nosuch&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1547,7 +1523,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Blatest%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -1575,10 +1550,10 @@
         "path": "/matrix/provider/MatrixDuplexB/consumer/MatrixDuplexA?latestby=cvpv"
       },
       "status": 200,
-      "compareReason": false,
       "expected": {
         "summary": {
           "deployable": false,
+          "reason": "The verification for the pact between any version of MatrixDuplexB and any version of MatrixDuplexA failed",
           "success": 1,
           "failed": 1,
           "unknown": 0
@@ -1610,7 +1585,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixDuplexA&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixDuplexB&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1646,7 +1620,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=998&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=999&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1674,7 +1647,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=999&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=999&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1702,7 +1674,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixConsumer&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bbranch%5D=absent&q%5B%5D%5Bpacticipant%5D=MatrixProvider&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1721,7 +1692,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixOrderB&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -1757,7 +1727,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -1801,7 +1770,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixOrderB&q%5B%5D%5Bversion%5D=999&q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5Bversion%5D=999&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1837,7 +1805,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv&ignore%5B%5D%5Bpacticipant%5D=MatrixOrderB&ignore%5B%5D%5Bversion%5D=9&ignore%5B%5D%5Bpacticipant%5D=NoSuchApp"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -1882,7 +1849,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1910,7 +1876,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1938,7 +1903,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedConsumer&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixUnverifiedProvider&q%5B%5D%5Blatest%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1966,7 +1930,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5Btag%5D=nosuch&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -1994,7 +1957,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5Btag%5D=nosuch&q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -2022,7 +1984,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5Btag%5D=nosuch&q%5B%5D%5Bpacticipant%5D=MatrixOrderB&q%5B%5D%5Bversion%5D=999&q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -2052,13 +2013,39 @@
       }
     },
     {
+      "name": "missing_selector_without_integration_keeps_order",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixWeb&q%5B%5D%5Bversion%5D=999&q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5Bversion%5D=999&latestby=cvpv"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": false,
+          "reason": "No pacts or verifications have been published for version 999 of MatrixWeb\nNo pacts or verifications have been published for version 999 of MatrixOrderA",
+          "success": 0,
+          "failed": 0,
+          "unknown": 1
+        },
+        "rows": [
+          {
+            "consumer": "MatrixOrderC",
+            "consumerVersion": "1",
+            "provider": "MatrixOrderA",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
       "name": "tag_without_latest_verified",
       "request": {
         "method": "GET",
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixTagP&q%5B%5D%5Btag%5D=both&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -2086,7 +2073,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixTagP&q%5B%5D%5Btag%5D=both&q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -2114,7 +2100,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixTagP&q%5B%5D%5Btag%5D=unverified&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -2142,7 +2127,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixTagP&q%5B%5D%5Bbranch%5D=main&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -2170,7 +2154,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixTagP&q%5B%5D%5Bbranch%5D=nosuch&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -2198,7 +2181,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixTagP&q%5B%5D%5BmainBranch%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -2226,7 +2208,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&q%5B%5D%5Bpacticipant%5D=MatrixOrderA&q%5B%5D%5BmainBranch%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -2254,7 +2235,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Btag%5D=ct&q%5B%5D%5Bpacticipant%5D=MatrixTagP&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": true,
@@ -2282,7 +2262,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Btag%5D=ct&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -2326,7 +2305,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bpacticipant%5D=MatrixOrderB&q%5B%5D%5Blatest%5D=true&latestby=cvpv"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": false,
@@ -2354,7 +2332,6 @@
         "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv&latest=true&tag=prod"
       },
       "status": 200,
-      "compareReason": true,
       "expected": {
         "summary": {
           "deployable": null,
@@ -2386,6 +2363,93 @@
             "provider": "MatrixTagP",
             "providerVersion": null,
             "success": null,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "environment_with_unverified_release",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-partial"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": null,
+          "reason": "There is no verified pact between version 1 of MatrixOrderC and a version of MatrixOrderA currently in matrix-partial (no version is currently recorded as deployed/released in this environment)\nThere is no verified pact between version 1 of MatrixOrderC and a version of MatrixOrderB currently in matrix-partial (no version is currently recorded as deployed/released in this environment)",
+          "success": 1,
+          "failed": 0,
+          "unknown": 2
+        },
+        "rows": [
+          {
+            "consumer": "MatrixOrderC",
+            "consumerVersion": "1",
+            "provider": "MatrixOrderA",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixOrderC",
+            "consumerVersion": "1",
+            "provider": "MatrixOrderB",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixOrderC",
+            "consumerVersion": "1",
+            "provider": "MatrixTagP",
+            "providerVersion": "1",
+            "success": true,
+            "ignored": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "environment_with_unverified_release_ignored",
+      "request": {
+        "method": "GET",
+        "path": "/matrix?q%5B%5D%5Bpacticipant%5D=MatrixOrderC&q%5B%5D%5Bversion%5D=1&latestby=cvpv&environment=matrix-partial&ignore%5B%5D%5Bpacticipant%5D=MatrixTagP&ignore%5B%5D%5Bversion%5D=2"
+      },
+      "status": 200,
+      "expected": {
+        "summary": {
+          "deployable": null,
+          "reason": "There is no verified pact between version 1 of MatrixOrderC and a version of MatrixOrderA currently in matrix-partial (no version is currently recorded as deployed/released in this environment)\nThere is no verified pact between version 1 of MatrixOrderC and a version of MatrixOrderB currently in matrix-partial (no version is currently recorded as deployed/released in this environment)",
+          "success": 1,
+          "failed": 0,
+          "unknown": 2,
+          "ignored": 0
+        },
+        "rows": [
+          {
+            "consumer": "MatrixOrderC",
+            "consumerVersion": "1",
+            "provider": "MatrixOrderA",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixOrderC",
+            "consumerVersion": "1",
+            "provider": "MatrixOrderB",
+            "providerVersion": null,
+            "success": null,
+            "ignored": false
+          },
+          {
+            "consumer": "MatrixOrderC",
+            "consumerVersion": "1",
+            "provider": "MatrixTagP",
+            "providerVersion": "1",
+            "success": true,
             "ignored": false
           }
         ]

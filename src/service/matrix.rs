@@ -214,6 +214,22 @@ pub async fn matrix(db: &Db, q: &MatrixQuery) -> Result<Matrix> {
             });
         }
     }
+    // Verified: Ruby reports every specified selector whose version does not exist, in
+    // selector order, whether or not an integration pairs it with another selector.
+    for s in &q.selectors {
+        if s.is_name_only() {
+            continue;
+        }
+        let Some(p) = db.find_pacticipant(&s.pacticipant).await? else {
+            continue; // matrix_pair answers 400 for an unknown pacticipant
+        };
+        if resolve_selector(db, &p, s).await?.0.is_empty() {
+            notices.push(Notice {
+                kind: "error",
+                text: missing_selector_notice(&p, s),
+            });
+        }
+    }
     let mut rows = vec![];
     if q.selectors.len() < 2 {
         let result = matrix_pair(db, q).await?;
@@ -517,11 +533,23 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                     } else {
                         "the version"
                     };
-                    for id in ids {
-                        let pv = db.find_version_by_id(id).await?.expect("exists");
+                    // Verified: only the versions in the environment that verified the pact
+                    // are rows; when none did, a single blank row names the newest one.
+                    let mut selected = vec![];
+                    for id in &ids {
+                        let pv = db.find_version_by_id(*id).await?.expect("exists");
                         let verification = db
                             .latest_verification_by_provider_version(pact.pact_version_id, pv.id)
                             .await?;
+                        if verification.is_some() {
+                            selected.push((pv, verification));
+                        }
+                    }
+                    if selected.is_empty() && !ids.is_empty() {
+                        let pv = db.find_version_by_id(ids[0]).await?.expect("exists");
+                        selected.push((pv, None));
+                    }
+                    for (pv, verification) in selected {
                         rows.push(Row {
                             consumer: Side {
                                 pacticipant: subject.clone(),
@@ -658,6 +686,19 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                             ignored,
                         });
                     }
+                    // Verified: Ruby describes every row with the provider's one resolved
+                    // selector: "any version of P" when the query names the provider, else
+                    // the inferred selector, which is its latest version.
+                    let any_description = if q.selectors.len() > 1 {
+                        format!("any version of {}", provider.name)
+                    } else {
+                        match db.latest_version(provider.id).await? {
+                            Some(latest) => {
+                                format!("version {} of {}", latest.number, provider.name)
+                            }
+                            None => format!("any version of {}", provider.name),
+                        }
+                    };
                     for vf in verifications {
                         let pv = db
                             .find_version_by_id(vf.provider_version_id)
@@ -672,7 +713,7 @@ async fn matrix_pair(db: &Db, q: &MatrixQuery) -> Result<SelectedRows> {
                             provider: Side {
                                 pacticipant: provider.clone(),
                                 version: Some(pv.clone()),
-                                description: format!("version {} of {}", pv.number, provider.name),
+                                description: any_description.clone(),
                             },
                             pact: pact.clone(),
                             verification: Some(vf),

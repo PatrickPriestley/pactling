@@ -181,13 +181,7 @@ async fn captured_matrix_regressions_match_ruby() {
             "provider":r["provider"]["name"], "providerVersion":r["provider"]["version"]["number"],
             "success":r["verificationResult"]["success"], "ignored":r.get("ignored").cloned().unwrap_or(json!(false))
         })).collect();
-        let mut summary = body["summary"].clone();
-        // This explicitly scoped control establishes that Ruby's integration route
-        // is bidirectional. Existing unpinned reason wording is outside this fix.
-        if case["compareReason"] == false {
-            summary.as_object_mut().unwrap().shift_remove("reason");
-        }
-        let actual = json!({"summary":summary,"rows":rows});
+        let actual = json!({"summary":body["summary"],"rows":rows});
         if actual != case["expected"] {
             mismatches.push(format!(
                 "{}: actual {} expected {}",
