@@ -15,7 +15,7 @@ Valid allowed, blocked and unknown decisions all return HTTP 200, `Content-Type:
 Missing required fields and unknown participants or environments are request errors, not unknown deployment decisions. HTTP 400 preserves the existing validation details in this extension envelope:
 
 ```json
-{"schemaVersion":"1.0","error":{"code":"INVALID_QUERY","details":{"errors":["Validation message from can-i-deploy"]}}}
+{"schemaVersion":"1.0","error":{"code":"INVALID_QUERY","details":{"pacticipant":["is missing"],"version":["is missing"],"":["Must specify either an environment or a 'to' tag."]}}}
 ```
 
 Internal failures return HTTP 500 without a decision or internal details. Clients must check status and envelope before using a decision. Error responses do not imply allowed deployment.
@@ -26,7 +26,7 @@ The [JSON Schema](deployment-explanations-v1.schema.json) defines required field
 
 `decision` maps directly from `compatibility.deployable`: true → allowed, false → blocked, null → unknown. Compatibility counts come from the same immutable evaluation as the compatibility document. Reasons and actions are projections of its trace, never another evaluation. Missing selector errors take precedence over unknown rows; unknown rows take precedence over failed rows. Ignored and excluded rows cannot block. `ignored` is always present here, including zero.
 
-`resolution` preserves selectors in request order, resolved versions, typed requested selectors, target constraints, ignore requests and exact candidate identities. Environment candidates retain deployment/release source UUIDs, timestamps, application instances and navigation links. Multiple records can select one candidate. Compatibility rows preserve Ruby's null versions: an unverified row may have `providerVersion: null` while its `candidateRefs` identify an exact known version. Null alone therefore does not mean the target is unresolved.
+`resolution` preserves selectors in request order, resolved versions, typed requested selectors, target constraints, ignore requests and exact candidate identities. Environment candidates retain deployment/release source UUIDs, timestamps, application instances and navigation links. Multiple records can select one candidate. Compatibility rows preserve Ruby's null versions: an unverified row may have `providerVersion: null` while its `candidateRefs` identify an exact known version. Null alone therefore does not mean the target is unresolved. Candidates are counterpart versions: in provider-side queries they can identify consumers. Action construction uses the retained row’s preserved provider identity; it does not assume every candidate reference identifies a provider.
 
 `rows` retain compatibility order. Each has a local ID, disposition, contract SHA-1 and links, and a selected verification or explicit null. `resolution.excluded` contains entries with `kind` (`latestby`, `duplicate`, or `unverified_candidate`), complete `evidence` rows with disposition `excluded`, candidate references, selector indices and a nullable `selectedRowRef`. These are provenance only and do not contribute to counts. Reasons reference selected and excluded evidence without reviving excluded verification work.
 
