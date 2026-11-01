@@ -20,3 +20,5 @@ pub async fn style(method: Method) -> Response {
         _ => super::method::method_not_allowed(ALLOWED),
     }
 }
+
+pub mod links;
