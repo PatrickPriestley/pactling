@@ -1,2 +1,2 @@
-[32mCreated test environment in the Pact Broker with UUID 9ce2bb2b-b78a-48ab-96df-672119a79d72[0m
+[32mCreated test environment in the Pact Broker with UUID 9cbb31ef-dde1-450e-b88e-aea7356e136b[0m
 exit=0

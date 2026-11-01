@@ -100,11 +100,23 @@ async fn assert_matches(
 ) -> Value {
     assert_eq!(r.status(), status, "{name}");
     let got: Value = r.json().await.unwrap();
-    assert_eq!(
-        normalise(stable(got.clone())),
-        phase4(name, &s.base_url),
-        "{name}"
-    );
+    let (left, right) = (normalise(stable(got.clone())), phase4(name, &s.base_url));
+    // PACTLING_DUMP_DIR=/some/dir writes both documents of a mismatch for diffing.
+    if left != right
+        && let Ok(dir) = std::env::var("PACTLING_DUMP_DIR")
+    {
+        std::fs::write(
+            format!("{dir}/{name}.got.json"),
+            serde_json::to_string_pretty(&left).unwrap(),
+        )
+        .unwrap();
+        std::fs::write(
+            format!("{dir}/{name}.want.json"),
+            serde_json::to_string_pretty(&right).unwrap(),
+        )
+        .unwrap();
+    }
+    assert_eq!(left, right, "{name}");
     got
 }
 
@@ -298,7 +310,6 @@ async fn environment_documents_match_the_ruby_broker() {
 }
 
 #[tokio::test]
-#[ignore = "Phase 4 in progress: replay does not yet reproduce the capture state; see docs/plans Task 4.4"]
 async fn deployment_documents_match_the_ruby_broker() {
     let s = common::start().await;
     let env = seed(&s).await;
@@ -418,6 +429,20 @@ async fn deployment_documents_match_the_ruby_broker() {
             "{path}"
         );
     }
+
+    // The capture published Consumer 2.0.0 on main (the can-i-deploy section) before
+    // recording releases, so 1.0.0 is no longer the branch head from here on.
+    publish(
+        &s,
+        "Consumer",
+        "2.0.0",
+        "main",
+        vec![],
+        &pact("Consumer", |p| {
+            p["interactions"][0]["response"]["body"]["status"] = json!("closed")
+        }),
+    )
+    .await;
 
     // Releases and support ended.
     let r = post(
@@ -588,7 +613,6 @@ const Q_CONSUMER_1: &str =
     "q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=1.0.0&latestby=cvp&environment=test";
 
 #[tokio::test]
-#[ignore = "Phase 4 in progress: replay does not yet reproduce the capture state; see docs/plans Task 4.4"]
 async fn matrix_documents_match_the_ruby_broker() {
     let s = common::start().await;
     seed_for_matrix(&s).await;
@@ -615,9 +639,13 @@ async fn matrix_documents_match_the_ruby_broker() {
         StatusCode::OK,
     )
     .await;
-    // Provider 2 on main fails everything it verifies (the capture's second verifier run).
+    // Provider 2 on main fails everything it verifies (the capture's second verifier run);
+    // then provider 1 verifies the latest pacts from branch main: Consumer 2.0.0 fails
+    // (its answers fit 1.0.0 only) and Web 1 passes again.
     verify(&s, "2", "main", "Consumer/version/2.0.0", false).await;
     verify(&s, "2", "main", "Web/version/1", false).await;
+    verify(&s, "1", "main", "Consumer/version/2.0.0", false).await;
+    verify(&s, "1", "main", "Web/version/1", true).await;
     let r = get(&s, "/matrix?q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=2.0.0&latestby=cvp&environment=test").await;
     assert_matches(
         &s,

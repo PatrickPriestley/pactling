@@ -1,8 +1,8 @@
 {
     "number": "8.0.0",
     "buildUrl": "https://ci/8",
-    "updatedAt": "2026-10-31T12:04:56+00:00",
-    "createdAt": "2026-10-31T12:04:56+00:00",
+    "updatedAt": "2026-11-01T00:40:56+00:00",
+    "createdAt": "2026-11-01T00:40:56+00:00",
     "_embedded": {
         "branchVersions": [],
         "tags": []

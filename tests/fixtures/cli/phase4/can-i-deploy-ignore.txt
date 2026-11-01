@@ -1,8 +1,12 @@
 [32mComputer says yes \o/ [0m
 
-CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS?      | RESULT#
----------|-----------|----------|-----------|---------------|--------
-Consumer | 2.0.0     | Provider | ???       | ??? [ignored] |        
+CONSUMER | C.VERSION | PROVIDER | P.VERSION | SUCCESS?        | RESULT#
+---------|-----------|----------|-----------|-----------------|--------
+Consumer | 2.0.0     | Provider | 1         | false [ignored] | 1      
+
+VERIFICATION RESULTS
+--------------------
+1. http://127.0.0.1:57228/pacts/provider/Provider/consumer/Consumer/pact-version/8664f311b5c69dd7c5fffb7d22bf1215bc48da29/metadata/Y3ZuPTIuMC4w/verification-results/205 (failure)
 
 [32mThere are no missing dependencies[0m
 exit=0

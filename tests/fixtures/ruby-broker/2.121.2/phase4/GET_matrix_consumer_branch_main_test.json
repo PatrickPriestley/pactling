@@ -1,10 +1,10 @@
 {
     "summary": {
-        "deployable": null,
-        "reason": "WARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.\nThere is no verified pact between the latest version of Consumer from branch main (2.0.0) and the version of Provider currently in test (1)",
+        "deployable": false,
+        "reason": "WARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.\nThe verification for the pact between the latest version of Consumer from branch main (2.0.0) and the version of Provider currently in test (1) failed",
         "success": 0,
-        "failed": 0,
-        "unknown": 1
+        "failed": 1,
+        "unknown": 0
     },
     "notices": [
         {
@@ -13,7 +13,7 @@
         },
         {
             "type": "error",
-            "text": "There is no verified pact between the latest version of Consumer from branch main (2.0.0) and the version of Provider currently in test (1)"
+            "text": "The verification for the pact between the latest version of Consumer from branch main (2.0.0) and the version of Provider currently in test (1) failed"
         }
     ],
     "matrix": [
@@ -65,7 +65,59 @@
             },
             "provider": {
                 "name": "Provider",
-                "version": null,
+                "version": {
+                    "number": "1",
+                    "branch": "main",
+                    "branches": [
+                        {
+                            "name": "main",
+                            "latest": false,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "main",
+                                    "href": "http://localhost:9292/pacticipants/Provider/branches/main/versions/1"
+                                }
+                            }
+                        }
+                    ],
+                    "branchVersions": [
+                        {
+                            "name": "main",
+                            "latest": false,
+                            "_links": {
+                                "self": {
+                                    "title": "Branch version",
+                                    "name": "main",
+                                    "href": "http://localhost:9292/pacticipants/Provider/branches/main/versions/1"
+                                }
+                            }
+                        }
+                    ],
+                    "environments": [
+                        {
+                            "uuid": "9cbb31ef-dde1-450e-b88e-aea7356e136b",
+                            "name": "test",
+                            "displayName": "Test env",
+                            "production": false,
+                            "updatedAt": "2026-11-01T00:41:52+00:00",
+                            "createdAt": "2026-11-01T00:41:47+00:00",
+                            "_links": {
+                                "self": {
+                                    "title": "Environment",
+                                    "name": "test",
+                                    "href": "http://localhost:9292/environments/9cbb31ef-dde1-450e-b88e-aea7356e136b"
+                                }
+                            }
+                        }
+                    ],
+                    "_links": {
+                        "self": {
+                            "href": "http://localhost:9292/pacticipants/Provider/versions/1"
+                        }
+                    },
+                    "tags": []
+                },
                 "_links": {
                     "self": {
                         "href": "http://localhost:9292/pacticipants/Provider"
@@ -73,14 +125,22 @@
                 }
             },
             "pact": {
-                "createdAt": "2026-10-31T13:05:21+00:00",
+                "createdAt": "2026-11-01T00:41:59+00:00",
                 "_links": {
                     "self": {
                         "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/version/2.0.0"
                     }
                 }
             },
-            "verificationResult": null
+            "verificationResult": {
+                "success": false,
+                "verifiedAt": "2026-11-01T00:42:05+00:00",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:9292/pacts/provider/Provider/consumer/Consumer/pact-version/8664f311b5c69dd7c5fffb7d22bf1215bc48da29/metadata/Y3ZuPTIuMC4w/verification-results/205"
+                    }
+                }
+            }
         }
     ]
 }

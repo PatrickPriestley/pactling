@@ -474,7 +474,7 @@ cli4 can-i-deploy-unverified can-i-deploy --pacticipant Consumer --version 2.0.0
 matrix4 consumer_2.0.0_test_unverified 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=2.0.0&latestby=cvp&environment=test'
 # provider v2 on main fails everything it verifies; then provider v1 verifies 2.0.0 and fails (its answers fit 1.0.0 only)
 BROKER=$B PROVIDER_VERSION=2 PROVIDER_BRANCH=main FAIL=true node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
-BROKER=$B PROVIDER_VERSION=1 PROVIDER_BRANCH=main 'SELECTORS=[{"branch":"main"}]' node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
+BROKER=$B PROVIDER_VERSION=1 PROVIDER_BRANCH=main SELECTORS='[{"branch":"main"}]' node --test "$ROOT/e2e/provider.test.js" >/dev/null 2>&1 || true
 cli4 can-i-deploy-failed can-i-deploy --pacticipant Consumer --version 2.0.0 --to-environment test
 matrix4 consumer_2.0.0_test_failed 'q%5B%5D%5Bpacticipant%5D=Consumer&q%5B%5D%5Bversion%5D=2.0.0&latestby=cvp&environment=test'
 cli4 can-i-deploy-provider-yes can-i-deploy --pacticipant Provider --version 1 --to-environment test
