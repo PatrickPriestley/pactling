@@ -431,3 +431,263 @@ async fn ui_pact_optional_interactions_and_empty_notice() {
     assert!(body.contains("No interactions are recorded."));
     assert!(body.contains("Full contract"));
 }
+
+async fn matrix_seed(s: &TestServer) {
+    for (version, success) in [("1", Some(true)), ("2", Some(false)), ("3", None)] {
+        let r: serde_json::Value = s.client.put(format!("{}/pacts/provider/Payments/consumer/Checkout/version/{version}",s.base_url))
+            .json(&json!({"consumer":{"name":"Checkout"},"provider":{"name":"Payments"},"interactions":[{"description":version,"request":{"method":"GET","path":"/"},"response":{"status":200}}]}))
+            .send().await.unwrap().json().await.unwrap();
+        if let Some(success) = success {
+            let result = s
+                .client
+                .post(
+                    r["_links"]["pb:publish-verification-results"]["href"]
+                        .as_str()
+                        .unwrap(),
+                )
+                .json(&json!({"providerApplicationVersion":"1","success":success}))
+                .send()
+                .await
+                .unwrap();
+            assert!(result.status().is_success());
+        }
+        let r = s
+            .client
+            .put(format!(
+                "{}/pacticipants/Checkout/branches/main/versions/{version}",
+                s.base_url
+            ))
+            .json(&json!({}))
+            .send()
+            .await
+            .unwrap();
+        assert!(r.status().is_success());
+    }
+}
+
+async fn matrix_html(s: &TestServer, query: &str) -> (u16, String) {
+    let r = s
+        .client
+        .get(format!(
+            "{}/ui/matrix/provider/Payments/consumer/Checkout?{query}",
+            s.base_url
+        ))
+        .send()
+        .await
+        .unwrap();
+    let status = r.status().as_u16();
+    (status, r.text().await.unwrap())
+}
+
+#[tokio::test]
+async fn ui_matrix_preserves_rows_and_nulls() {
+    let s = start().await;
+    matrix_seed(&s).await;
+    let (status, body) = matrix_html(&s, "").await;
+    assert_eq!(status, 200);
+    assert!(body.contains("<h1>Matrix</h1>"));
+    assert!(body.contains("Unknown"));
+    assert!(body.contains("Failed"));
+    assert!(body.contains("Successful"));
+    let api: serde_json::Value = s
+        .client
+        .get(format!(
+            "{}/matrix/provider/Payments/consumer/Checkout",
+            s.base_url
+        ))
+        .send()
+        .await
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    let expected: Vec<_> = api["matrix"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|r| {
+            format!(
+                "data-consumer-version=\"{}\" data-provider-version=\"{}\"",
+                r["consumer"]["version"]["number"].as_str().unwrap_or(""),
+                r["provider"]["version"]["number"].as_str().unwrap_or("")
+            )
+        })
+        .collect();
+    let mut offset = 0;
+    for row in expected {
+        let found = body[offset..]
+            .find(&row)
+            .unwrap_or_else(|| panic!("missing row {row}: {body}"));
+        offset += found + row.len();
+    }
+    assert_eq!(
+        body.matches("data-consumer-version=").count(),
+        api["matrix"].as_array().unwrap().len()
+    );
+    let (_, ignored) = matrix_html(&s, "ignore[][pacticipant]=Payments").await;
+    assert!(ignored.contains("Ignored"));
+    assert!(body.contains("name=\"ui_form\" value=\"matrix\""));
+}
+
+#[tokio::test]
+async fn ui_matrix_filters_match_api() {
+    let s = start().await;
+    matrix_seed(&s).await;
+    for (mode, value, expected) in [
+        ("version", "1", "1"),
+        ("latest", "", "3"),
+        ("branch", "main", "3"),
+        ("main", "", "3"),
+    ] {
+        let q = format!(
+            "ui_form=matrix&consumer_mode={mode}&consumer_value={value}&provider_mode=all&provider_value=&latestby=cvpv"
+        );
+        let (status, body) = matrix_html(&s, &q).await;
+        assert_eq!(status, 200, "{q}: {body}");
+        assert!(
+            body.contains(&format!("data-consumer-version=\"{expected}\"")),
+            "{q}: {body}"
+        );
+        assert_eq!(body.matches("data-consumer-version=").count(), 1, "{q}");
+    }
+    let r = s
+        .client
+        .put(format!(
+            "{}/pacticipants/Checkout/versions/1/tags/release",
+            s.base_url
+        ))
+        .json(&json!({}))
+        .send()
+        .await
+        .unwrap();
+    assert!(r.status().is_success());
+    let(status,body)=matrix_html(&s,"ui_form=matrix&consumer_mode=tag&consumer_value=release&provider_mode=version&provider_value=1&latestby=none").await;
+    assert_eq!(status, 200);
+    assert!(body.contains("data-consumer-version=\"1\""));
+    for group in ["cp", "cvp", "cvpv"] {
+        let q = format!("q[][pacticipant]=Checkout&q[][pacticipant]=Payments&latestby={group}");
+        let api: serde_json::Value = s
+            .client
+            .get(format!("{}/matrix?{q}", s.base_url))
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+        let (status, body) = matrix_html(&s, &q).await;
+        assert_eq!(status, 200);
+        assert_eq!(
+            body.matches("data-consumer-version=").count(),
+            api["matrix"].as_array().unwrap().len()
+        );
+    }
+    let (status, body) = matrix_html(
+        &s,
+        "q[][pacticipant]=Checkout&q[][version]=&q[][mainBranch]=true",
+    )
+    .await;
+    assert_eq!(status, 200);
+    assert!(
+        body.matches("data-consumer-version=").count() > 1,
+        "canonical empty version must not be silently stripped"
+    );
+}
+
+#[tokio::test]
+async fn ui_matrix_validates_pair_and_form_and_methods() {
+    let s = start().await;
+    matrix_seed(&s).await;
+    for q in [
+        "q[][pacticipant]=Other",
+        "q[][pacticipant]=Checkout&q[][pacticipant]=Checkout",
+        "ui_form=matrix&consumer_mode=bad",
+        "ui_form=matrix&consumer_mode=version&consumer_value=",
+        "ui_form=matrix&consumer_mode=all&provider_mode=all&latestby=bad",
+        "environment=missing",
+    ] {
+        let (status, body) = matrix_html(&s, q).await;
+        assert_eq!(status, 400, "{q}: {body}");
+        assert!(body.contains("<html"));
+    }
+    for (method, status) in [
+        (reqwest::Method::POST, 405),
+        (reqwest::Method::OPTIONS, 200),
+    ] {
+        let r = s
+            .client
+            .request(
+                method,
+                format!(
+                    "{}/ui/matrix/provider/Payments/consumer/Checkout",
+                    s.base_url
+                ),
+            )
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(r.status(), status);
+    }
+    let r = s
+        .client
+        .get(format!(
+            "{}/ui/matrix/provider/Missing/consumer/Missing",
+            s.base_url
+        ))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 200);
+    assert!(r.text().await.unwrap().contains("No matrix rows"));
+}
+
+#[tokio::test]
+async fn ui_matrix_escapes_names_and_database_error() {
+    let s = start().await;
+    let provider = "Pay <&";
+    let consumer = "Check <&";
+    let enc = pactling::http::hal::encode;
+    let r = s
+        .client
+        .put(format!(
+            "{}/pacts/provider/{}/consumer/{}/version/1",
+            s.base_url,
+            enc(provider),
+            enc(consumer)
+        ))
+        .json(&json!({"consumer":{"name":consumer},"provider":{"name":provider},"interactions":[]}))
+        .send()
+        .await
+        .unwrap();
+    assert!(r.status().is_success());
+    let r = s
+        .client
+        .get(format!(
+            "{}/ui/matrix/provider/{}/consumer/{}",
+            s.base_url,
+            enc(provider),
+            enc(consumer)
+        ))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(r.status(), 200);
+    let body = r.text().await.unwrap();
+    assert!(body.contains("Pay &lt;&amp;"));
+    assert!(!body.contains("Pay <&"));
+    assert!(body.contains("Pay%20%3C%26"));
+    let path = std::env::temp_dir().join(format!("ui-matrix-{}.db", uuid::Uuid::new_v4()));
+    let url = format!("sqlite://{}?mode=rwc", path.display());
+    let mut config = pactling::config::Config::in_memory();
+    config.database_url = url.clone();
+    let s = common::start_with(config).await;
+    let pool = sqlx::SqlitePool::connect(&url).await.unwrap();
+    sqlx::query("DROP TABLE pacticipants")
+        .execute(&pool)
+        .await
+        .unwrap();
+    let (status, body) = matrix_html(&s, "").await;
+    assert_eq!(status, 500);
+    assert!(body.contains("Unable to load matrix"));
+    assert!(!body.contains("no such table"));
+}
