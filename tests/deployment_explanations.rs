@@ -151,7 +151,9 @@ async fn explanation_validation_envelope_preserves_remaining_required_fields() {
         assert_eq!(legacy.status(), 400);
         let mut legacy: Value = legacy.json().await.unwrap();
         // The explanation no longer requires a pin; the compatibility route still does.
-        if let Some(errors) = legacy["errors"].as_object_mut() { errors.remove("version"); }
+        if let Some(errors) = legacy["errors"].as_object_mut() {
+            errors.remove("version");
+        }
         let r = s
             .client
             .get(format!("{}{ROUTE}?{query}", s.base_url))
@@ -293,38 +295,113 @@ async fn internal_errors_have_no_decision_or_database_details() {
 async fn unpinned_main_branch_explanation_matches_matrix_without_changing_can_i_deploy() {
     let s = common::start().await;
     seed(&s, &s.client, Some(true)).await;
-    s.client.put(format!("{}/pacticipants/C/versions/1/tags/main", s.base_url))
-        .json(&json!({})).send().await.unwrap().error_for_status().unwrap();
-    let query = "q[][pacticipant]=C&q[][latest]=true&q[][mainBranch]=true&latestby=cvp&environment=test";
-    let matrix: Value = s.client.get(format!("{}/matrix?{query}",s.base_url))
-        .send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
-    assert_eq!(matrix["summary"]["deployable"],true);
-    let old = s.client.get(format!("{}/can-i-deploy?{query}",s.base_url)).send().await.unwrap();
-    assert_eq!(old.status(),400);
-    assert_eq!(old.json::<Value>().await.unwrap()["errors"],json!({"version":["is missing"]}));
-    let response=s.client.get(format!("{}{ROUTE}?{query}",s.base_url)).send().await.unwrap();
-    assert_eq!(response.status(),200,"real CLI main-branch query must be accepted by explanation only");
-    let explanation: Value=response.json().await.unwrap();
-    assert_eq!(explanation["decision"],"allowed");
-    assert_eq!(explanation["compatibility"]["deployable"],matrix["summary"]["deployable"]);
-    assert_eq!(explanation["request"]["query"],query);
+    s.client
+        .put(format!(
+            "{}/pacticipants/C/versions/1/tags/main",
+            s.base_url
+        ))
+        .json(&json!({}))
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap();
+    let query =
+        "q[][pacticipant]=C&q[][latest]=true&q[][mainBranch]=true&latestby=cvp&environment=test";
+    let matrix: Value = s
+        .client
+        .get(format!("{}/matrix?{query}", s.base_url))
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap()
+        .json()
+        .await
+        .unwrap();
+    assert_eq!(matrix["summary"]["deployable"], true);
+    let old = s
+        .client
+        .get(format!("{}/can-i-deploy?{query}", s.base_url))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(old.status(), 400);
+    assert_eq!(
+        old.json::<Value>().await.unwrap()["errors"],
+        json!({"version":["is missing"]})
+    );
+    let response = s
+        .client
+        .get(format!("{}{ROUTE}?{query}", s.base_url))
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(
+        response.status(),
+        200,
+        "real CLI main-branch query must be accepted by explanation only"
+    );
+    let explanation: Value = response.json().await.unwrap();
+    assert_eq!(explanation["decision"], "allowed");
+    assert_eq!(
+        explanation["compatibility"]["deployable"],
+        matrix["summary"]["deployable"]
+    );
+    assert_eq!(explanation["request"]["query"], query);
 }
 
 #[tokio::test]
 async fn explanation_accepts_all_matrix_selector_forms_with_required_target() {
-    let s=common::start().await;
-    seed(&s,&s.client,Some(true)).await;
-    s.client.put(format!("{}/pacticipants/C/versions/1/tags/main",s.base_url))
-        .json(&json!({})).send().await.unwrap().error_for_status().unwrap();
-    for selector in ["", "&q[][version]=1", "&q[][latest]=true", "&q[][latest]=true&q[][tag]=main", "&q[][latest]=true&q[][branch]=main", "&q[][latest]=true&q[][mainBranch]=true"] {
-        for target in ["environment=test","latest=true&tag=main","to=main"] {
-            let query=format!("q[][pacticipant]=C{selector}&latestby=cvp&{target}");
-            let matrix:Value=s.client.get(format!("{}/matrix?{query}",s.base_url)).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
-            let response=s.client.get(format!("{}{ROUTE}?{query}",s.base_url)).send().await.unwrap();
-            assert_eq!(response.status(),200,"{query}");
-            let explanation:Value=response.json().await.unwrap();
-            for key in ["deployable","success","failed","unknown"] {assert_eq!(explanation["compatibility"][key],matrix["summary"][key],"{query}: {key}");}
-            assert_eq!(explanation["request"]["query"],query);
+    let s = common::start().await;
+    seed(&s, &s.client, Some(true)).await;
+    s.client
+        .put(format!(
+            "{}/pacticipants/C/versions/1/tags/main",
+            s.base_url
+        ))
+        .json(&json!({}))
+        .send()
+        .await
+        .unwrap()
+        .error_for_status()
+        .unwrap();
+    for selector in [
+        "",
+        "&q[][version]=1",
+        "&q[][latest]=true",
+        "&q[][latest]=true&q[][tag]=main",
+        "&q[][latest]=true&q[][branch]=main",
+        "&q[][latest]=true&q[][mainBranch]=true",
+    ] {
+        for target in ["environment=test", "latest=true&tag=main", "to=main"] {
+            let query = format!("q[][pacticipant]=C{selector}&latestby=cvp&{target}");
+            let matrix: Value = s
+                .client
+                .get(format!("{}/matrix?{query}", s.base_url))
+                .send()
+                .await
+                .unwrap()
+                .error_for_status()
+                .unwrap()
+                .json()
+                .await
+                .unwrap();
+            let response = s
+                .client
+                .get(format!("{}{ROUTE}?{query}", s.base_url))
+                .send()
+                .await
+                .unwrap();
+            assert_eq!(response.status(), 200, "{query}");
+            let explanation: Value = response.json().await.unwrap();
+            for key in ["deployable", "success", "failed", "unknown"] {
+                assert_eq!(
+                    explanation["compatibility"][key], matrix["summary"][key],
+                    "{query}: {key}"
+                );
+            }
+            assert_eq!(explanation["request"]["query"], query);
         }
     }
 }

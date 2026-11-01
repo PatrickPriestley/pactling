@@ -312,10 +312,20 @@ async fn all_108_captured_decisions_share_one_evaluation_and_original_http_gramm
         let compatibility_status = compatibility.status();
         let mut compatibility: Value = compatibility.json().await.unwrap();
         if COMPATIBILITY_HTTP_ELIGIBLE.contains(&name) {
-            assert_eq!(compatibility_status, 200, "{name}: legacy acceptance unchanged");
-            assert_eq!(legacy_projection(&compatibility),case["expected"],"{name}: can-i-deploy oracle");
+            assert_eq!(
+                compatibility_status, 200,
+                "{name}: legacy acceptance unchanged"
+            );
+            assert_eq!(
+                legacy_projection(&compatibility),
+                case["expected"],
+                "{name}: can-i-deploy oracle"
+            );
         } else {
-            assert_eq!(compatibility_status,400,"{name}: legacy rejection unchanged");
+            assert_eq!(
+                compatibility_status, 400,
+                "{name}: legacy rejection unchanged"
+            );
         }
         let explanation: Value = response.json().await.unwrap();
         if status.is_success() {
@@ -329,7 +339,9 @@ async fn all_108_captured_decisions_share_one_evaluation_and_original_http_gramm
             rejected += 1;
             assert_eq!(status, 400, "{name}");
             assert_eq!(explanation["error"]["code"], "INVALID_QUERY", "{name}");
-            if let Some(errors) = compatibility["errors"].as_object_mut() { errors.remove("version"); }
+            if let Some(errors) = compatibility["errors"].as_object_mut() {
+                errors.remove("version");
+            }
             assert_eq!(
                 explanation["error"]["details"], compatibility["errors"],
                 "{name}: validation parity"

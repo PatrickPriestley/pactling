@@ -35,7 +35,7 @@ pub async fn explanation(
     let mut response = match m {
         Method::GET => {
             let q = MatrixQuery::parse(query.as_deref());
-            match super::matrix::validate_can_i_deploy(&q) {
+            match validate_explanation_query(&q) {
                 Err(e) => error_response(e),
                 Ok(()) => match matrix::decision(&state.db, &q).await {
                     Ok(evaluation) => Json(document(
@@ -55,6 +55,25 @@ pub async fn explanation(
         .headers_mut()
         .insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
     response
+}
+
+/// The extension accepts matrix selectors, but requires a deployment target.
+/// Compatibility can-i-deploy keeps its separate required version-number check.
+fn validate_explanation_query(q: &MatrixQuery) -> crate::error::Result<()> {
+    let mut errors = serde_json::Map::new();
+    if q.selectors.is_empty() {
+        errors.insert("pacticipant".into(), json!(["is missing"]));
+    }
+    if q.environment.is_none() && q.tag.is_none() {
+        errors.insert(
+            "".into(),
+            json!(["Must specify either an environment or a 'to' tag."]),
+        );
+    }
+    if !errors.is_empty() {
+        return Err(Error::Validation(Value::Object(errors)));
+    }
+    Ok(())
 }
 
 fn error_response(error: Error) -> Response {

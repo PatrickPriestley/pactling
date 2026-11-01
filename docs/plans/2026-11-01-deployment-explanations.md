@@ -8,14 +8,34 @@ divergences: []
 
 # Plan: evidence-backed deployment explanations (#10)
 
-This plan was accepted by the maintainer on 2026-11-01; PR A is being built from it. It proposes item 6 of
+This plan was accepted by the maintainer on 2026-11-01 and implemented in PR A (#29)
+and PR B (#31). The amendment below updates its query contract. It covers item 6 of
 the requested roadmap work, scoped to [#10](https://github.com/PatrickPriestley/pactling/issues/10).
 [#5](https://github.com/PatrickPriestley/pactling/issues/5),
 [#11](https://github.com/PatrickPriestley/pactling/issues/11), and
 [#17](https://github.com/PatrickPriestley/pactling/issues/17) are context, not approved
-implementation scope. No production code, migrations, or compatibility fixtures change
-in this PR. There is no embedded LLM, mutation execution, system-context index, UI,
+implementation scope. The original planning PR changed no production code, migrations,
+or compatibility fixtures. There is no embedded LLM, mutation execution, system-context index, UI,
 MCP interface, or claim about live traffic, health, or unrecorded dependencies.
+
+## Maintainer amendment — 2026-11-01: CLI selector queries before v1 release
+
+The accepted v1 query contract is widened before release. A probe of the real
+`pact-broker` CLI 1.77.0 through `e2e/proxy.js` showed that `can-i-deploy` sends
+unpinned latest, latest-with-tag, branch and main-branch selectors to `/matrix`,
+not `/can-i-deploy`. Replaying those exact queries against the original explanation
+route returned 400 (`version` is missing). The maintainer approved accepting any
+selector `/matrix` accepts, plus an environment or to-tag target, at the explanation
+route only. This supersedes the original requirement to reuse can-i-deploy's pin check.
+
+Keep `MatrixQuery::parse`, the existing 400 envelope and one shared
+`DecisionEvaluation`; do not resolve a version in the CLI and re-query it separately.
+`/matrix`, `/can-i-deploy`, their validation/documents, and captured Ruby fixture bytes
+remain unchanged. The response schema already permits unpinned requested selectors,
+so this amendment changes query acceptance without changing response structure.
+The captured HTTP eligibility set expands from 15 to 23 original queries; all 108
+still run through the shared projection, and the original 15 can-i-deploy successes
+remain pinned separately. Additional tests cover each real CLI selector form.
 
 ## Problem
 
@@ -178,9 +198,9 @@ routes, response bodies, content types, links, notices and index documents remai
 A matrix explanation route is possible later work, not a v1 endpoint or explicit-mode option.
 Document the extension in README's deliberate differences and a dedicated API doc.
 
-Use the same `MatrixQuery::parse` and required-field validation as `/can-i-deploy`:
-participant and version plus an environment or to-tag. Preserve all query options the
-existing route accepts, including latestby and ignores, ordered selectors and duplicates;
+Use `MatrixQuery::parse` and accept any selector `/matrix` accepts, plus an environment
+or to-tag. Pinned, latest, latest-with-tag, branch, main-branch and name-only selectors
+are accepted. Preserve query options including latestby and ignores, ordered selectors and duplicates;
 do not add defaults or stricter validation. `to` retains its latest-tag meaning.
 Unsupported keys retain the existing parser behavior. No extra policy parameters or
 JSON request body are introduced. Record the original query in the response. For example:
@@ -335,10 +355,11 @@ targets are mandatory where data exists; null is explicit when it does not.
 | `RESOLUTION_EXCLUDED` | Existing resolution omits an unverified candidate because verified candidates exist, or overlapping selectors collapse duplicate evidence. Record subtype `unverified_candidate` or `duplicate`. Advisory; not a missing-verification blocker. | None. |
 | `IGNORE_TARGET_NOT_FOUND` | Existing warning for unknown ignored participant or specified version. Distinguish kind in the referenced ignore request. | `CORRECT_IGNORE_REQUEST` for that request; never silently broaden it. |
 
-The existing unpinned-selector and unspecified-environment warnings remain in the
-compatibility engine, but cannot occur after can-i-deploy required-field validation;
-they need no public v1 reason/action codes. Service-level matrix parity still preserves
-their legacy notices.
+The existing warnings remain in the compatibility engine, and service-level matrix
+parity preserves their legacy notices. Unpinned selectors can now reach the explanation
+route: the requested selector and resolved versions record their meaning, and documented
+currentness limits still apply. No new public reason/action code is required for this
+query amendment. The required environment or to-tag prevents an unspecified-target query.
 
 No `CONTRACT_MISSING` code is inferred from an empty row set: the existing query cannot
 prove that a service should have published a contract for an unrecorded integration.
@@ -407,11 +428,12 @@ cases even when their queries would not pass can-i-deploy HTTP validation. Do no
 HTTP bypass, change a captured query to make it eligible, or expose a matrix route.
 
 Separately, keep the existing `/matrix` capture replay and full HAL fixture tests.
-For captured queries that satisfy `/can-i-deploy` validation, compare that route and the
-sole explanation route against the capture on a quiescent database. Record the eligible
-case set, require every eligible case to run, and add explicit flat-query/validation tests.
-Queries outside that set must receive the matching validation error from both can-i-deploy
-routes, not a decision. Sequential HTTP comparisons do not prove shared snapshots;
+For the 23 captured queries that satisfy explanation validation, compare the sole
+explanation route against the original matrix capture on a quiescent database. Keep the
+15 queries accepted by `/can-i-deploy` pinned independently and preserve its other 93
+rejections. Record the eligible sets and add explicit flat-query/validation tests. The 85
+queries without an explanation target/selector remain errors, not decisions; the
+explanation no longer adds a missing-version error. Sequential HTTP comparisons do not prove shared snapshots;
 the single-evaluation service tests and concurrent WAL probe establish those contracts.
 
 Additional tests cover known-but-unverified candidate provenance; missing pins; ignored
@@ -529,8 +551,8 @@ broader #5 batching/performance work outside these two PRs. Do not merge automat
    (including actions/candidate/exclusion pointers), `timestamps_are_preserved_without_age_policy`,
    `same_evaluation_has_deterministic_explanation`, `one_evaluation_feeds_both_projections`.
 4. **Add the sole v1 route.** Files: `src/app.rs`, `src/http/mod.rs`, new
-   `src/http/deployment_explanations.rs`; reuse can-i-deploy validation in
-   `src/http/matrix.rs` without changing compatibility errors. Tests:
+   `src/http/deployment_explanations.rs`; validate the amended matrix-selector plus
+   target contract independently, leaving `src/http/matrix.rs` and compatibility errors unchanged. Tests:
    `extension_maps_allowed_blocked_unknown`, `can_i_deploy_validation_matches_compatibility`,
    `can_i_deploy_query_options_and_order_are_preserved`,
    `extension_is_read_only_and_auth_protected`, `methods_and_no_store_headers`,

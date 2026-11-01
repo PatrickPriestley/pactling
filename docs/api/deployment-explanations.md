@@ -1,10 +1,10 @@
 # Deployment explanations (v1)
 
-`GET /pactling/v1/can-i-deploy/explanation` is a read-only pactling extension. It explains the same decision as `/can-i-deploy`; it does not introduce a deployment policy. Existing Ruby-compatible resources, HAL links and documents are unchanged. There is no matrix explanation endpoint in v1.
+`GET /pactling/v1/can-i-deploy/explanation` is a read-only pactling extension. It explains the shared matrix decision (also used by `/can-i-deploy`); it does not introduce a deployment policy. Existing Ruby-compatible resources, HAL links and documents are unchanged. There is no matrix explanation endpoint in v1.
 
 ## Request and transport
 
-Use the existing can-i-deploy query: a pacticipant and version, plus an environment or `to` tag. Ordered selectors, duplicate selectors, `latestby`, ignores and other accepted query options retain their existing parsing and validation. `to` means latest in that tag. Unsupported keys retain the existing parser behavior. There is no request body or age-budget parameter.
+Use the existing matrix query grammar: one or more pacticipant selectors, plus an environment or `to` tag. A selector may pin a version, request latest (optionally with a tag), branch or main branch, or use the name-only form accepted by `/matrix`. Ordered selectors, duplicate selectors, `latestby`, ignores and other accepted query options retain their existing parsing. The explanation does not require a pinned version; `/can-i-deploy` keeps that compatibility requirement. `to` means latest in that tag. Unsupported keys retain the existing parser behavior. There is no request body or age-budget parameter.
 
 ```http
 GET /pactling/v1/can-i-deploy/explanation?pacticipant=Checkout&version=1&environment=production&latestby=cvp
@@ -15,8 +15,10 @@ Valid allowed, blocked and unknown decisions all return HTTP 200, `Content-Type:
 Missing required fields and unknown participants or environments are request errors, not unknown deployment decisions. HTTP 400 preserves the existing validation details in this extension envelope:
 
 ```json
-{"schemaVersion":"1.0","error":{"code":"INVALID_QUERY","details":{"pacticipant":["is missing"],"version":["is missing"],"":["Must specify either an environment or a 'to' tag."]}}}
+{"schemaVersion":"1.0","error":{"code":"INVALID_QUERY","details":{"pacticipant":["is missing"],"":["Must specify either an environment or a 'to' tag."]}}}
 ```
+
+This query contract was widened by maintainer decision on 2026-11-01 before v1 release, after probing the real `pact-broker` CLI 1.77.0: it sends unpinned selectors to `/matrix`. The explanation accepts those queries directly; it does not resolve a pin with a separate request. The response schema is unchanged.
 
 Internal failures return HTTP 500 without a decision or internal details. Clients must check status and envelope before using a decision. Error responses do not imply allowed deployment.
 
