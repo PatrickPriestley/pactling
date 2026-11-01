@@ -12,3 +12,5 @@ pub mod pacts;
 pub mod verification;
 pub mod versions;
 pub mod webhooks;
+
+pub mod deployment_explanations;
