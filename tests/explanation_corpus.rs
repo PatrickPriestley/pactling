@@ -277,9 +277,17 @@ async fn all_108_captured_decisions_share_one_evaluation_and_original_http_gramm
             explanation["rows"].as_array().unwrap().len(),
             "{name}: HTML rows"
         );
-        for item in explanation["reasons"].as_array().unwrap().iter().chain(explanation["nextActions"].as_array().unwrap()) {
+        for item in explanation["reasons"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .chain(explanation["nextActions"].as_array().unwrap())
+        {
             for pointer in item["evidenceRefs"].as_array().unwrap() {
-                assert!(html.contains(&format!("id=\"{}\"",pointer.as_str().unwrap())), "{name}: absent HTML evidence anchor {pointer}");
+                assert!(
+                    html.contains(&format!("id=\"{}\"", pointer.as_str().unwrap())),
+                    "{name}: absent HTML evidence anchor {pointer}"
+                );
             }
         }
         let mut offset = 0;
