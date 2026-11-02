@@ -1,0 +1,7 @@
+{"type":"thread.started","thread_id":"01a19a38-f39c-7382-beea-5b5ae13d84af"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll call `pactling_list_integrations` once with `{}` and report its error code.\n"}}
+{"type":"item.started","item":{"id":"item_1","type":"mcp_tool_call","server":"pactling","tool":"pactling_list_integrations","arguments":{},"result":null,"error":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_1","type":"mcp_tool_call","server":"pactling","tool":"pactling_list_integrations","arguments":{},"result":{"content":[{"type":"text","text":"{\"adapterSchemaVersion\":\"1.0\",\"error\":{\"code\":\"BROKER_UNAVAILABLE\",\"message\":\"Broker is unavailable.\",\"retryable\":true}}"}],"structured_content":{"adapterSchemaVersion":"1.0","error":{"code":"BROKER_UNAVAILABLE","message":"Broker is unavailable.","retryable":true}}},"error":null,"status":"failed"}}
+{"type":"item.completed","item":{"id":"item_2","type":"agent_message","text":"Actual error code: `BROKER_UNAVAILABLE`."}}
+{"type":"turn.completed","usage":{"input_tokens":39787,"cached_input_tokens":32000,"cache_write_input_tokens":0,"output_tokens":126,"reasoning_output_tokens":0}}

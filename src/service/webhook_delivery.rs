@@ -430,6 +430,9 @@ pub async fn execute(
     }
     line("INFO", &built.body);
     let client = reqwest::Client::builder()
+        // MCP enables these optional codecs; retain the webhook transport contract.
+        .no_gzip()
+        .no_deflate()
         .user_agent(USER_AGENT)
         .redirect(reqwest::redirect::Policy::none())
         .connect_timeout(std::time::Duration::from_secs(15))

@@ -3,7 +3,8 @@ WORKDIR /build
 COPY Cargo.toml Cargo.lock rust-toolchain.toml build.rs ./
 COPY src ./src
 COPY migrations ./migrations
-RUN cargo build --locked --release && mkdir /data && chown 65532:65532 /data
+COPY docs/api/mcp ./docs/api/mcp
+RUN cargo build --locked --release --features mcp && mkdir /data && chown 65532:65532 /data
 
 FROM gcr.io/distroless/cc-debian12:nonroot
 COPY --from=build /build/target/release/pactling /usr/local/bin/pactling

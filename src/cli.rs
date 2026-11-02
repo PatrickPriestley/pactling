@@ -41,11 +41,8 @@ pub struct Explain {
     #[arg(long, short='o', default_value="text", value_parser=["text","json"])]
     pub output: String,
 }
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Ignore {
-    pub name: String,
-    pub version: Option<String>,
-}
+pub use crate::broker_client::Ignore;
+use crate::broker_client::{self, Credentials, ExplanationQuery, Selector, Target};
 fn nonempty(value: &str) -> Result<String, String> {
     if value.is_empty() {
         Err("must not be empty".into())
@@ -65,37 +62,27 @@ fn parse_ignore(value: &str) -> Result<Ignore, String> {
 }
 
 pub fn query_pairs(args: &Explain) -> Vec<(String, String)> {
-    let mut pairs = vec![];
-    let mut add = |key: &str, value: &str| pairs.push((key.to_owned(), value.to_owned()));
-    add("q[][pacticipant]", &args.pacticipant);
-    if let Some(version) = &args.version {
-        add("q[][version]", version);
+    let selector = if let Some(version) = &args.version {
+        Selector::Version(version.clone())
+    } else if let Some(tag) = &args.latest {
+        Selector::Latest((!tag.is_empty()).then(|| tag.clone()))
+    } else if let Some(branch) = &args.branch {
+        Selector::Branch(branch.clone())
     } else {
-        add("q[][latest]", "true");
-        if let Some(tag) = &args.latest {
-            if !tag.is_empty() {
-                add("q[][tag]", tag);
-            }
-        } else if let Some(branch) = &args.branch {
-            add("q[][branch]", branch);
-        } else {
-            add("q[][mainBranch]", "true");
-        }
-    }
-    add("latestby", "cvp");
-    if let Some(environment) = &args.to_environment {
-        add("environment", environment);
+        Selector::MainBranch
+    };
+    let target = if let Some(environment) = &args.to_environment {
+        Target::Environment(environment.clone())
     } else {
-        add("latest", "true");
-        add("tag", args.to.as_deref().expect("required target group"));
+        Target::Tag(args.to.clone().expect("required target group"))
+    };
+    ExplanationQuery {
+        pacticipant: args.pacticipant.clone(),
+        selector,
+        target,
+        ignores: args.ignore.clone(),
     }
-    for ignore in &args.ignore {
-        add("ignore[][pacticipant]", &ignore.name);
-        if let Some(version) = &ignore.version {
-            add("ignore[][version]", version);
-        }
-    }
-    pairs
+    .pairs()
 }
 
 fn decision_code(document: &serde_json::Value) -> Result<i32, String> {
@@ -125,24 +112,10 @@ fn render_text(document: &serde_json::Value) -> String {
 }
 
 fn endpoint(args: &Explain) -> Result<reqwest::Url, String> {
+    let base = broker_client::base_url(&args.broker_base_url)?;
     let mut url =
-        reqwest::Url::parse(&args.broker_base_url).map_err(|_| "invalid broker base URL")?;
-    if !matches!(url.scheme(), "http" | "https")
-        || url.host_str().is_none()
-        || !url.username().is_empty()
-        || url.password().is_some()
-        || url.query().is_some()
-        || url.fragment().is_some()
-    {
-        return Err(
-            "broker base URL must be HTTP(S), without credentials, query or fragment".into(),
-        );
-    }
-    let path = format!(
-        "{}/pactling/v1/can-i-deploy/explanation",
-        url.path().trim_end_matches('/')
-    );
-    url.set_path(&path);
+        broker_client::append_path(&base, &["pactling", "v1", "can-i-deploy", "explanation"])
+            .map_err(|e| e.to_string())?;
     url.query_pairs_mut().extend_pairs(query_pairs(args));
     Ok(url)
 }
@@ -150,19 +123,19 @@ fn endpoint(args: &Explain) -> Result<reqwest::Url, String> {
 async fn request(args: Explain) -> Result<i32, String> {
     use std::io::Write;
     let url = endpoint(&args)?;
-    let client = reqwest::Client::builder()
-        .redirect(reqwest::redirect::Policy::none())
-        .timeout(std::time::Duration::from_secs(30))
+    let client = broker_client::client_builder()
         .build()
         .map_err(|e| e.without_url().to_string())?;
-    let mut request = client
-        .get(url)
-        .header(reqwest::header::ACCEPT, "application/json");
-    if let Some(username) = args.broker_username {
-        request = request.basic_auth(username, args.broker_password);
-    } else if let Some(token) = args.broker_token {
-        request = request.bearer_auth(token);
-    }
+    let credentials = Credentials {
+        username: args.broker_username,
+        password: args.broker_password,
+        token: args.broker_token,
+    };
+    let request = credentials.apply(
+        client
+            .get(url)
+            .header(reqwest::header::ACCEPT, "application/json"),
+    );
     let response = request
         .send()
         .await

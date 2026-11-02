@@ -320,3 +320,48 @@ Confirm enabling `mcp` in published release artifacts (recommended, while source
 feature-disabled), and the proposed 4 MiB upstream/1 MiB tool-result/five-minute cache limits.
 This plan intentionally does not add broker pagination or richer context tools; large installations
 may hit explicit size limits until a separately approved broker pagination design exists.
+
+### Task 2 preservation amendment (2026-11-02)
+
+Exact reqwest 0.13.5 source shows Cargo's unified `gzip`/`deflate` features enable
+response decoding by default for every client (`async_impl/client.rs`, `Accepts::default`).
+The MCP client needs decoded streaming limits, but the existing explain and webhook
+clients must retain their prior request headers and response handling. Explicitly disable
+both codecs on those existing clients. This adds `src/service/webhook_delivery.rs` to task 2's
+files solely to preserve server behavior; no webhook policy or broker auth changes.
+`tests/mcp_client_guards.rs` adds real-client loopback regression coverage for the CLI and
+webhook receiver, exact matrix query grouping and Accept headers. Reject a custom streaming
+decoder: reqwest already provides the required decoding and explicit per-client opt-out.
+
+The same exact-source audit found reqwest's default low-level protocol-NACK retries.
+Disable retries only on the MCP client to meet the accepted one-attempt contract. A private
+MCP builder and `src/broker_client_tests.rs` exercise an actual HTTP/2 REFUSED_STREAM peer,
+with HTTP/2 prior knowledge only in the test. The small test-only `h2` dependency is already
+in the existing dependency graph. Production protocol negotiation stays unchanged.
+
+### Task 3 catalog path clarification (2026-11-02)
+
+The configured-origin URL builder rejects exact dot segments and control characters.
+A catalog can nevertheless contain such broker names. If a required catalog link cannot
+represent that name, fail the whole call with INVALID_BROKER_RESPONSE, fixed text
+"Catalog contains an unsupported path name", and the safe catalog source evidenceUrl.
+This reports an adapter representability limitation, not an assertion that the broker
+name itself is invalid. Never normalize the name into a different route, drop the item,
+or pass through the broker's href. Matrix/explanation query-only names remain accepted.
+The source default remains unchanged; task 3 enables existing jsonschema 0.60.2 only with
+MCP for runtime validation of the exact discovery schemas. Explanation v1 is bundled as
+an unchanged embedded schema resource retaining its own `$id` and local references.
+
+### Task 3 v1 minor-version clarification (2026-11-02)
+
+The existing explanation schema's decision/error definitions constrain schemaVersion to
+literal `1.0`, while the accepted error contract rejects unsupported **major** versions
+and the CLI accepts v1 minor versions. Runtime validation against an unchanged embedded
+resource consequently rejects an otherwise valid `1.9` response. Preserve that document
+unchanged and derive the bundled resource by changing only the decision/error version
+assertions to string pattern `^1\.[0-9]+$`. The original schema and fixtures stay untouched;
+all local references still resolve inside the bundled resource. Reject other majors and
+nonnumeric minor strings. The supplemental schema-equivalence test must normalize exactly
+those two nodes back to `const: "1.0"` before asserting full equality, and separately assert
+the precise derived constraints. This is the necessary correction to its earlier exact
+resource assertion, authorized by the supervising agent before changing the test.

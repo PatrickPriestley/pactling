@@ -8,3 +8,7 @@
 !migrations/
 !migrations/**
 !LICENSE
+!docs/
+!docs/api/
+!docs/api/mcp/
+!docs/api/mcp/*.schema.json
