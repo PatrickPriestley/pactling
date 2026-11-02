@@ -2,6 +2,7 @@
 mod error;
 #[cfg(test)]
 mod error_tests;
+mod pagination;
 mod schema;
 mod tools;
 #[cfg(test)]

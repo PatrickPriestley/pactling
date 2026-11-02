@@ -17,7 +17,6 @@ struct Session {
     seen: Arc<Mutex<Vec<String>>>,
     response: Arc<Mutex<(u16, String)>>,
     server: tokio::task::JoinHandle<()>,
-    base: String,
 }
 impl Drop for Session {
     fn drop(&mut self) {
@@ -65,7 +64,6 @@ impl Session {
             seen,
             response,
             server,
-            base,
         };
         s.rpc("initialize",json!({"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"tool-test","version":"1"}})).await;
         s.input
@@ -125,7 +123,7 @@ fn code(v: &Value, c: &str) {
 
 // Task 3 transitional contracts. Task 4 replaces this seam with frozen paging.
 #[tokio::test]
-async fn mcp_transitional_catalog_does_not_truncate() {
+async fn mcp_catalog_pages_freeze_one_response() {
     let mut s = Session::new(
         200,
         json!({"_embedded":{"pacticipants":[{"name":"A"},{"name":"B"}]}}),
@@ -133,12 +131,16 @@ async fn mcp_transitional_catalog_does_not_truncate() {
     .await;
     for size in [json!(1), json!(1.0)] {
         let r = s.call("list_pacticipants", json!({"pageSize":size})).await;
-        code(&r, "RESPONSE_TOO_LARGE");
-        assert!(
-            r["error"]["evidenceUrl"]
-                .as_str()
-                .unwrap()
-                .starts_with(&s.base)
+        assert!(r.get("data").is_some(), "expected successful page: {r}");
+        assert_eq!(r["data"]["items"].as_array().unwrap().len(), 1);
+        let cursor = r["data"]["nextCursor"].as_str().unwrap();
+        let second = s.call("list_pacticipants", json!({"cursor":cursor})).await;
+        assert_eq!(second["data"]["items"][0]["name"], "B");
+        assert_eq!(second["data"]["nextCursor"], Value::Null);
+        assert_eq!(r["data"]["retrievedAt"], second["data"]["retrievedAt"]);
+        assert_eq!(
+            s.call("list_pacticipants", json!({"cursor":cursor})).await,
+            second
         );
     }
     s.reply(200, json!({"_embedded":{"pacticipants":[]}}));
@@ -148,7 +150,7 @@ async fn mcp_transitional_catalog_does_not_truncate() {
     );
 }
 #[tokio::test]
-async fn mcp_guards_cursor_precedence_and_temporary_expiry() {
+async fn mcp_cursor_with_page_size_is_invalid_input() {
     let mut s = Session::new(200, json!({"_embedded":{"integrations":[]}})).await;
     for args in [
         json!({"cursor":"valid","pageSize":2}),
@@ -165,7 +167,7 @@ async fn mcp_guards_cursor_precedence_and_temporary_expiry() {
     code(
         &s.call("list_integrations", json!({"cursor":"previous-process"}))
             .await,
-        "CURSOR_EXPIRED",
+        "CURSOR_INVALID",
     );
     assert!(s.seen.lock().unwrap().is_empty());
 }
