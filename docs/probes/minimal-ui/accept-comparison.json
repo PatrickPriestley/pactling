@@ -1,0 +1,618 @@
+[
+  {
+    "name": "index",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "index",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "index",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "index",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "index",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "index",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "index",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "index",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "integrations",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "integrations",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "integrations",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "integrations",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "integrations",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "integrations",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "integrations",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "integrations",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "pact",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "pact",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "pact",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "pact",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "pact",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "pact",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "pact",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "pact",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "latest-pact",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-pair",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "matrix-query",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-allowed",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-blocked",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "deploy-unknown",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "dashboard",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "absent",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "wildcard",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "hal",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "json",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "html",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "browser",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "json-preferred",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  },
+  {
+    "name": "explanation-extension",
+    "mode": "html-rejected",
+    "statusEqual": true,
+    "contentTypeEqual": true,
+    "bodyEqual": true
+  }
+]

@@ -21,6 +21,11 @@ pub async fn build(config: Config) -> anyhow::Result<Router> {
     let state = AppState { db, config };
     Ok(Router::new()
         .route("/", any(http::index::index))
+        .route("/ui/", any(http::ui::index::index))
+        .route("/ui/deployment-explanation", any(http::ui::explanation::explanation))
+        .route("/ui/style.css", any(http::ui::style))
+        .route("/ui/matrix/provider/{provider}/consumer/{consumer}", any(http::ui::matrix::matrix))
+        .route("/ui/pacts/provider/{provider}/consumer/{consumer}/version/{version}", any(http::ui::pact::pact))
         .route("/pacticipants", any(http::pacticipants::collection))
         .route("/pacticipants/{name}", any(http::pacticipants::resource))
         .route(

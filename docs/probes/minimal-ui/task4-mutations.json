@@ -1,0 +1,350 @@
+[
+  {
+    "name": "get",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-get.log"
+  },
+  {
+    "name": "options",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-options.log"
+  },
+  {
+    "name": "fallback",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-fallback.log"
+  },
+  {
+    "name": "empty_false",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-empty_false.log"
+  },
+  {
+    "name": "empty_true",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-empty_true.log"
+  },
+  {
+    "name": "raw_default",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-raw_default.log"
+  },
+  {
+    "name": "validation_skip",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-validation_skip.log"
+  },
+  {
+    "name": "error_status",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-error_status.log"
+  },
+  {
+    "name": "error_bad_request",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-error_bad_request.log"
+  },
+  {
+    "name": "error_validation",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-error_validation.log"
+  },
+  {
+    "name": "error_internal",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-error_internal.log"
+  },
+  {
+    "name": "form_marker_false",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_marker_false.log"
+  },
+  {
+    "name": "form_marker_true",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_marker_true.log"
+  },
+  {
+    "name": "form_selector_some",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_selector_some.log"
+  },
+  {
+    "name": "form_mode_version",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_mode_version.log"
+  },
+  {
+    "name": "form_mode_tag",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_mode_tag.log"
+  },
+  {
+    "name": "form_mode_branch",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_mode_branch.log"
+  },
+  {
+    "name": "form_mode_main",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_mode_main.log"
+  },
+  {
+    "name": "form_mode_latest",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_mode_latest.log"
+  },
+  {
+    "name": "form_mode_all",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_mode_all.log"
+  },
+  {
+    "name": "form_env",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_env.log"
+  },
+  {
+    "name": "form_tag",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_tag.log"
+  },
+  {
+    "name": "form_ignore_version",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_ignore_version.log"
+  },
+  {
+    "name": "form_ignore_name",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_ignore_name.log"
+  },
+  {
+    "name": "form_selector_selected",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_selector_selected.log"
+  },
+  {
+    "name": "form_target_selected",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_target_selected.log"
+  },
+  {
+    "name": "form_ignores_filter",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-form_ignores_filter.log"
+  },
+  {
+    "name": "nullable_null",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-nullable_null.log"
+  },
+  {
+    "name": "nullable_string",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-nullable_string.log"
+  },
+  {
+    "name": "verification_success",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-verification_success.log"
+  },
+  {
+    "name": "verification_failure",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-verification_failure.log"
+  },
+  {
+    "name": "verification_unknown",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-verification_unknown.log"
+  },
+  {
+    "name": "verification_link",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-verification_link.log"
+  },
+  {
+    "name": "evidence_href_key",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-evidence_href_key.log"
+  },
+  {
+    "name": "evidence_href_suffix",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-evidence_href_suffix-final.log"
+  },
+  {
+    "name": "evidence_href_string",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-evidence_href_string.log"
+  },
+  {
+    "name": "evidence_object",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-evidence_object.log"
+  },
+  {
+    "name": "evidence_array",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-evidence_array.log"
+  },
+  {
+    "name": "evidence_string_escape",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-evidence_string_escape.log"
+  },
+  {
+    "name": "evidence_null",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-evidence_null.log"
+  },
+  {
+    "name": "evidence_scalar",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-evidence_scalar.log"
+  },
+  {
+    "name": "query_marker_false",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-query_marker_false.log"
+  },
+  {
+    "name": "query_marker_true",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-query_marker_true.log"
+  },
+  {
+    "name": "query_name_required",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-query_name_required.log"
+  },
+  {
+    "name": "query_target_required",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-query_target_required.log"
+  },
+  {
+    "name": "target_env",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-target_env.log"
+  },
+  {
+    "name": "target_tag",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-target_tag.log"
+  },
+  {
+    "name": "target_unknown",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-target_unknown.log"
+  },
+  {
+    "name": "ignore_filter",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-ignore_filter.log"
+  },
+  {
+    "name": "ignore_empty",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-ignore_empty.log"
+  },
+  {
+    "name": "ignore_default",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-ignore_default.log"
+  },
+  {
+    "name": "ignore_empty_name",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-ignore_empty_name.log"
+  },
+  {
+    "name": "ignore_version",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-ignore_version.log"
+  },
+  {
+    "name": "shared_missing_selector",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-shared_missing_selector.log"
+  },
+  {
+    "name": "shared_missing_target",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-shared_missing_target.log"
+  },
+  {
+    "name": "shared_errors_return",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-shared_errors_return.log"
+  },
+  {
+    "name": "ignore_control_empty_true",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-ignore_control_empty_true.log"
+  },
+  {
+    "name": "ignore_control_empty_false",
+    "killed": true,
+    "exit": 101,
+    "log": "task4-mutation-ignore_control_empty_false.log"
+  }
+]

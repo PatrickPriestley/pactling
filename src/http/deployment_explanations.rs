@@ -59,7 +59,7 @@ pub async fn explanation(
 
 /// The extension accepts matrix selectors, but requires a deployment target.
 /// Compatibility can-i-deploy keeps its separate required version-number check.
-fn validate_explanation_query(q: &MatrixQuery) -> crate::error::Result<()> {
+pub(crate) fn validate_explanation_query(q: &MatrixQuery) -> crate::error::Result<()> {
     let mut errors = serde_json::Map::new();
     if q.selectors.is_empty() {
         errors.insert("pacticipant".into(), json!(["is missing"]));

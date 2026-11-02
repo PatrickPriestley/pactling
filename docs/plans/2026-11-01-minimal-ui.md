@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: implemented
 accepted_by: Patrick Priestley
 accepted_on: 2026-11-01
 ---
@@ -10,8 +10,8 @@ accepted_on: 2026-11-01
 
 Let a person inspect integrations, an exact pact, a pair's matrix and a deployment
 explanation without constructing API requests. Serve four plain-HTML pages from the
-existing axum binary, using existing data and decision services. This is a proposal only;
-no production code is included. Publishing, deployment recording, administration, a full
+existing axum binary, using existing data and decision services. This accepted plan is implemented on `feat/minimal-ui`; verification is recorded in
+[the build evidence](../probes/minimal-ui/README.md). Publishing, deployment recording, administration, a full
 Ruby UI clone, dashboards and live updates are out of scope. [Issue #15](https://github.com/PatrickPriestley/pactling/issues/15)
 (Leptos/WASM) stays deferred; no JS framework or JavaScript is required.
 
@@ -121,3 +121,30 @@ evaluation, and existing API fixtures and real clients are unchanged. This plan/
 requires `agent-review plan`; red/green and guard mutations belong to the future build,
 not this docs-only change. Accepted 2026-11-01: the maintainer confirmed the additive `/ui/` namespace. Index search or pagination stays out of the first version;
 revisit it before release if the integration list grows large.
+
+## Build refinement — 2026-11-01
+
+Verified against the baseline binary: `q[][pacticipant]=UiCheckout&q[][mainBranch]=true&environment=ui-test`
+returns unknown for the seeded latest contract; adding an unused `q[][version]=` changes
+that result to blocked. Native HTML forms submit empty text inputs, so sending every
+optional selector field directly would change the user's selection. Before implementing
+the matrix/explanation forms, choose explicit UI-only form fields and a form marker:
+translate only marked submissions into the existing canonical query, including only the
+selected mode and nonempty optional fields. Unmarked API-shaped queries retain the exact
+existing parser semantics, including empty values. Reject stripping empty values from
+all queries or changing `MatrixQuery::parse`. Test each form mode, empty required fields,
+repeated ignores, reserved characters and the main-branch/empty-version regression.
+The UI helper may live in `src/http/ui/query.rs`; no API route or schema changes.
+
+The task-3 baseline probe also verified that a branch selector without `latest=true`
+selects every version on that branch (three seeded rows), whereas adding `latest=true`
+selects its head (one row). UI modes labeled branch/main-branch **head** therefore emit
+both fields, just as the existing resolver requires. An unknown pair returns the existing
+matrix's 400, and explicit empty canonical version values retain its zero-row behavior.
+
+For explanation queries opened directly in API grammar, the native single-pacticipant
+form is labeled **New explanation**, with supported values prefilled for convenience.
+The exact evaluated canonical query is shown separately: multiple selectors and branch
+queries without `latest=true` cannot be faithfully represented by the small head-selector
+form. Marked native submissions retain their fields. Reject silently claiming that the
+prefilled form fully represents every API query, or expanding v1 into a general query editor.

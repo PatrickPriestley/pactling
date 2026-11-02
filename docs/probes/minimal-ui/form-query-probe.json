@@ -1,0 +1,587 @@
+[
+  {
+    "query": "pacticipant=UiCheckout&version=1&environment=ui-test",
+    "status": 200,
+    "body": {
+      "schemaVersion": "1.0",
+      "decision": "allowed",
+      "summary": "All considered contract verifications succeeded.",
+      "compatibility": {
+        "deployable": true,
+        "success": 1,
+        "failed": 0,
+        "unknown": 0,
+        "ignored": 0,
+        "hasIgnores": false
+      },
+      "request": {
+        "query": "pacticipant=UiCheckout&version=1&environment=ui-test"
+      },
+      "evaluation": {
+        "id": "e82f2905-003c-45ac-8020-5ed235e2587f",
+        "startedAt": "2026-11-01T20:49:52.507202+00:00",
+        "evaluatedAt": "2026-11-01T20:49:52.510516+00:00",
+        "brokerVersion": "0.1.1",
+        "engineRevision": null,
+        "snapshot": {
+          "kind": "read_transaction",
+          "retained": false
+        }
+      },
+      "evidence": {
+        "completeness": "complete",
+        "coverage": "recorded_only",
+        "currentness": "not_checked"
+      },
+      "resolution": {
+        "selectors": [
+          {
+            "index": 0,
+            "pacticipant": "UiCheckout",
+            "versions": [
+              "1"
+            ],
+            "missingReason": null,
+            "requested": {
+              "pacticipant": "UiCheckout",
+              "version": "1",
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": false
+            }
+          }
+        ],
+        "target": {
+          "kind": "environment",
+          "name": "ui-test",
+          "uuid": "03e4d657-2fce-4d39-8bd4-b3cc9aa40d9f",
+          "href": "http://localhost:9494/environments/03e4d657-2fce-4d39-8bd4-b3cc9aa40d9f"
+        },
+        "candidates": [
+          {
+            "id": "candidate-1",
+            "pacticipant": "UiPayments",
+            "version": "2",
+            "selectorIndices": [
+              0
+            ],
+            "sources": [
+              {
+                "kind": "deployed",
+                "uuid": "54010bfd-8a9c-4731-9c3e-d9e466d8d3f2",
+                "href": "http://localhost:9494/deployed-versions/54010bfd-8a9c-4731-9c3e-d9e466d8d3f2",
+                "applicationInstance": null,
+                "recordedAt": "2026-11-01T20:46:10+00:00"
+              }
+            ]
+          }
+        ],
+        "excluded": [],
+        "ignores": []
+      },
+      "rows": [
+        {
+          "id": "row-1",
+          "consumer": "UiCheckout",
+          "consumerVersion": "1",
+          "provider": "UiPayments",
+          "providerVersion": "2",
+          "candidateRefs": [
+            "/resolution/candidates/0"
+          ],
+          "disposition": "considered",
+          "contract": {
+            "hash": {
+              "algorithm": "sha1",
+              "value": "8a7652bc64a256594dac3fff8a01d5b373e63724"
+            },
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/8a7652bc64a256594dac3fff8a01d5b373e63724",
+            "publicationHref": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/version/1"
+          },
+          "verification": {
+            "number": 1,
+            "success": true,
+            "verifiedAt": "2026-11-01T20:46:10+00:00",
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/8a7652bc64a256594dac3fff8a01d5b373e63724/verification-results/1"
+          },
+          "selectorIndices": [
+            0
+          ],
+          "ignoreRefs": []
+        }
+      ],
+      "reasons": [
+        {
+          "code": "ALL_REQUIRED_VERIFICATIONS_SUCCESSFUL",
+          "role": "decisive",
+          "message": "All considered contract verifications succeeded.",
+          "evidenceRefs": [
+            "/rows/0/verification"
+          ],
+          "actionIds": []
+        }
+      ],
+      "nextActions": []
+    }
+  },
+  {
+    "query": "pacticipant=UiCheckout&version=1&environment=ui-test&to=",
+    "status": 200,
+    "body": {
+      "schemaVersion": "1.0",
+      "decision": "allowed",
+      "summary": "All considered contract verifications succeeded.",
+      "compatibility": {
+        "deployable": true,
+        "success": 1,
+        "failed": 0,
+        "unknown": 0,
+        "ignored": 0,
+        "hasIgnores": false
+      },
+      "request": {
+        "query": "pacticipant=UiCheckout&version=1&environment=ui-test&to="
+      },
+      "evaluation": {
+        "id": "cb44660d-27cf-4235-aee2-253bbf5e57f9",
+        "startedAt": "2026-11-01T20:49:52.514246+00:00",
+        "evaluatedAt": "2026-11-01T20:49:52.515617+00:00",
+        "brokerVersion": "0.1.1",
+        "engineRevision": null,
+        "snapshot": {
+          "kind": "read_transaction",
+          "retained": false
+        }
+      },
+      "evidence": {
+        "completeness": "complete",
+        "coverage": "recorded_only",
+        "currentness": "not_checked"
+      },
+      "resolution": {
+        "selectors": [
+          {
+            "index": 0,
+            "pacticipant": "UiCheckout",
+            "versions": [
+              "1"
+            ],
+            "missingReason": null,
+            "requested": {
+              "pacticipant": "UiCheckout",
+              "version": "1",
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": false
+            }
+          }
+        ],
+        "target": {
+          "kind": "environment",
+          "name": "ui-test",
+          "uuid": "03e4d657-2fce-4d39-8bd4-b3cc9aa40d9f",
+          "href": "http://localhost:9494/environments/03e4d657-2fce-4d39-8bd4-b3cc9aa40d9f"
+        },
+        "candidates": [
+          {
+            "id": "candidate-1",
+            "pacticipant": "UiPayments",
+            "version": "2",
+            "selectorIndices": [
+              0
+            ],
+            "sources": [
+              {
+                "kind": "deployed",
+                "uuid": "54010bfd-8a9c-4731-9c3e-d9e466d8d3f2",
+                "href": "http://localhost:9494/deployed-versions/54010bfd-8a9c-4731-9c3e-d9e466d8d3f2",
+                "applicationInstance": null,
+                "recordedAt": "2026-11-01T20:46:10+00:00"
+              }
+            ]
+          }
+        ],
+        "excluded": [],
+        "ignores": []
+      },
+      "rows": [
+        {
+          "id": "row-1",
+          "consumer": "UiCheckout",
+          "consumerVersion": "1",
+          "provider": "UiPayments",
+          "providerVersion": "2",
+          "candidateRefs": [
+            "/resolution/candidates/0"
+          ],
+          "disposition": "considered",
+          "contract": {
+            "hash": {
+              "algorithm": "sha1",
+              "value": "8a7652bc64a256594dac3fff8a01d5b373e63724"
+            },
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/8a7652bc64a256594dac3fff8a01d5b373e63724",
+            "publicationHref": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/version/1"
+          },
+          "verification": {
+            "number": 1,
+            "success": true,
+            "verifiedAt": "2026-11-01T20:46:10+00:00",
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/8a7652bc64a256594dac3fff8a01d5b373e63724/verification-results/1"
+          },
+          "selectorIndices": [
+            0
+          ],
+          "ignoreRefs": []
+        }
+      ],
+      "reasons": [
+        {
+          "code": "ALL_REQUIRED_VERIFICATIONS_SUCCESSFUL",
+          "role": "decisive",
+          "message": "All considered contract verifications succeeded.",
+          "evidenceRefs": [
+            "/rows/0/verification"
+          ],
+          "actionIds": []
+        }
+      ],
+      "nextActions": []
+    }
+  },
+  {
+    "query": "q[][pacticipant]=UiCheckout&q[][version]=&q[][mainBranch]=true&environment=ui-test",
+    "status": 200,
+    "body": {
+      "schemaVersion": "1.0",
+      "decision": "blocked",
+      "summary": "The requested selector for UiCheckout resolves to no versions.",
+      "compatibility": {
+        "deployable": false,
+        "success": 0,
+        "failed": 0,
+        "unknown": 0,
+        "ignored": 0,
+        "hasIgnores": false
+      },
+      "request": {
+        "query": "q[][pacticipant]=UiCheckout&q[][version]=&q[][mainBranch]=true&environment=ui-test"
+      },
+      "evaluation": {
+        "id": "6c772f08-e656-4188-b8dd-9e11eb59cdf7",
+        "startedAt": "2026-11-01T20:49:52.516906+00:00",
+        "evaluatedAt": "2026-11-01T20:49:52.517271+00:00",
+        "brokerVersion": "0.1.1",
+        "engineRevision": null,
+        "snapshot": {
+          "kind": "read_transaction",
+          "retained": false
+        }
+      },
+      "evidence": {
+        "completeness": "incomplete",
+        "coverage": "recorded_only",
+        "currentness": "not_checked"
+      },
+      "resolution": {
+        "selectors": [
+          {
+            "index": 0,
+            "pacticipant": "UiCheckout",
+            "versions": [],
+            "missingReason": "SELECTOR_VERSION_MISSING",
+            "requested": {
+              "pacticipant": "UiCheckout",
+              "version": "",
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": true
+            }
+          }
+        ],
+        "target": {
+          "kind": "environment",
+          "name": "ui-test",
+          "uuid": "03e4d657-2fce-4d39-8bd4-b3cc9aa40d9f",
+          "href": "http://localhost:9494/environments/03e4d657-2fce-4d39-8bd4-b3cc9aa40d9f"
+        },
+        "candidates": [],
+        "excluded": [],
+        "ignores": []
+      },
+      "rows": [],
+      "reasons": [
+        {
+          "code": "SELECTOR_VERSION_MISSING",
+          "role": "decisive",
+          "message": "The requested selector for UiCheckout resolves to no versions.",
+          "evidenceRefs": [
+            "/resolution/selectors/0"
+          ],
+          "actionIds": [
+            "action-1"
+          ]
+        }
+      ],
+      "nextActions": [
+        {
+          "id": "action-1",
+          "type": "RESOLVE_SELECTOR",
+          "message": "Correct this selector or publish and record its intended version and required contract results; creating a version alone does not establish compatibility.",
+          "evidenceRefs": [
+            "/resolution/selectors/0"
+          ],
+          "target": {
+            "selectorIndex": 0,
+            "requested": {
+              "pacticipant": "UiCheckout",
+              "version": "",
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": true
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "query": "q[][pacticipant]=UiCheckout&q[][mainBranch]=true&environment=ui-test",
+    "status": 200,
+    "body": {
+      "schemaVersion": "1.0",
+      "decision": "unknown",
+      "summary": "No verification is recorded for this exact UiCheckout to UiPayments contract and selected provider version.",
+      "compatibility": {
+        "deployable": null,
+        "success": 1,
+        "failed": 1,
+        "unknown": 1,
+        "ignored": 0,
+        "hasIgnores": false
+      },
+      "request": {
+        "query": "q[][pacticipant]=UiCheckout&q[][mainBranch]=true&environment=ui-test"
+      },
+      "evaluation": {
+        "id": "6d108311-0076-434e-bf98-0072a308d4c1",
+        "startedAt": "2026-11-01T20:49:57.705881+00:00",
+        "evaluatedAt": "2026-11-01T20:49:57.710343+00:00",
+        "brokerVersion": "0.1.1",
+        "engineRevision": null,
+        "snapshot": {
+          "kind": "read_transaction",
+          "retained": false
+        }
+      },
+      "evidence": {
+        "completeness": "incomplete",
+        "coverage": "recorded_only",
+        "currentness": "not_checked"
+      },
+      "resolution": {
+        "selectors": [
+          {
+            "index": 0,
+            "pacticipant": "UiCheckout",
+            "versions": [
+              "3",
+              "2",
+              "1"
+            ],
+            "missingReason": null,
+            "requested": {
+              "pacticipant": "UiCheckout",
+              "version": null,
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": true
+            }
+          }
+        ],
+        "target": {
+          "kind": "environment",
+          "name": "ui-test",
+          "uuid": "03e4d657-2fce-4d39-8bd4-b3cc9aa40d9f",
+          "href": "http://localhost:9494/environments/03e4d657-2fce-4d39-8bd4-b3cc9aa40d9f"
+        },
+        "candidates": [
+          {
+            "id": "candidate-1",
+            "pacticipant": "UiPayments",
+            "version": "2",
+            "selectorIndices": [
+              0
+            ],
+            "sources": [
+              {
+                "kind": "deployed",
+                "uuid": "54010bfd-8a9c-4731-9c3e-d9e466d8d3f2",
+                "href": "http://localhost:9494/deployed-versions/54010bfd-8a9c-4731-9c3e-d9e466d8d3f2",
+                "applicationInstance": null,
+                "recordedAt": "2026-11-01T20:46:10+00:00"
+              }
+            ]
+          }
+        ],
+        "excluded": [],
+        "ignores": []
+      },
+      "rows": [
+        {
+          "id": "row-1",
+          "consumer": "UiCheckout",
+          "consumerVersion": "3",
+          "provider": "UiPayments",
+          "providerVersion": null,
+          "candidateRefs": [
+            "/resolution/candidates/0"
+          ],
+          "disposition": "considered",
+          "contract": {
+            "hash": {
+              "algorithm": "sha1",
+              "value": "67ef49bcb4d60c28043bfbaa40f3e6384bcab51b"
+            },
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/67ef49bcb4d60c28043bfbaa40f3e6384bcab51b",
+            "publicationHref": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/version/3"
+          },
+          "verification": null,
+          "selectorIndices": [
+            0
+          ],
+          "ignoreRefs": []
+        },
+        {
+          "id": "row-2",
+          "consumer": "UiCheckout",
+          "consumerVersion": "2",
+          "provider": "UiPayments",
+          "providerVersion": "2",
+          "candidateRefs": [
+            "/resolution/candidates/0"
+          ],
+          "disposition": "considered",
+          "contract": {
+            "hash": {
+              "algorithm": "sha1",
+              "value": "4e635887b3eaf954e1addb3d89dac3a4e6abe9e3"
+            },
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/4e635887b3eaf954e1addb3d89dac3a4e6abe9e3",
+            "publicationHref": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/version/2"
+          },
+          "verification": {
+            "number": 2,
+            "success": false,
+            "verifiedAt": "2026-11-01T20:46:10+00:00",
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/4e635887b3eaf954e1addb3d89dac3a4e6abe9e3/verification-results/2"
+          },
+          "selectorIndices": [
+            0
+          ],
+          "ignoreRefs": []
+        },
+        {
+          "id": "row-3",
+          "consumer": "UiCheckout",
+          "consumerVersion": "1",
+          "provider": "UiPayments",
+          "providerVersion": "2",
+          "candidateRefs": [
+            "/resolution/candidates/0"
+          ],
+          "disposition": "considered",
+          "contract": {
+            "hash": {
+              "algorithm": "sha1",
+              "value": "8a7652bc64a256594dac3fff8a01d5b373e63724"
+            },
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/8a7652bc64a256594dac3fff8a01d5b373e63724",
+            "publicationHref": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/version/1"
+          },
+          "verification": {
+            "number": 1,
+            "success": true,
+            "verifiedAt": "2026-11-01T20:46:10+00:00",
+            "href": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/8a7652bc64a256594dac3fff8a01d5b373e63724/verification-results/1"
+          },
+          "selectorIndices": [
+            0
+          ],
+          "ignoreRefs": []
+        }
+      ],
+      "reasons": [
+        {
+          "code": "VERIFICATION_MISSING",
+          "role": "decisive",
+          "message": "No verification is recorded for this exact UiCheckout to UiPayments contract and selected provider version.",
+          "evidenceRefs": [
+            "/rows/0/contract",
+            "/rows/0/verification",
+            "/resolution/candidates/0"
+          ],
+          "actionIds": [
+            "action-1"
+          ]
+        },
+        {
+          "code": "VERIFICATION_FAILED",
+          "role": "supporting",
+          "message": "UiPayments version 2 failed verification of this UiCheckout contract.",
+          "evidenceRefs": [
+            "/rows/1/contract",
+            "/rows/1/verification",
+            "/resolution/candidates/0"
+          ],
+          "actionIds": [
+            "action-2"
+          ]
+        }
+      ],
+      "nextActions": [
+        {
+          "id": "action-1",
+          "type": "VERIFY_CONTRACT",
+          "message": "Verify this exact contract with UiPayments version 2 and publish the result.",
+          "evidenceRefs": [
+            "/rows/0/contract",
+            "/rows/0/verification",
+            "/resolution/candidates/0"
+          ],
+          "target": {
+            "consumer": "UiCheckout",
+            "consumerVersion": "3",
+            "provider": "UiPayments",
+            "providerVersion": "2",
+            "contractSha": "67ef49bcb4d60c28043bfbaa40f3e6384bcab51b",
+            "verificationHref": null
+          }
+        },
+        {
+          "id": "action-2",
+          "type": "FIX_FAILED_VERIFICATION",
+          "message": "Inspect this result, fix the incompatibility, and publish a new verification for this exact contract and provider version.",
+          "evidenceRefs": [
+            "/rows/1/contract",
+            "/rows/1/verification",
+            "/resolution/candidates/0"
+          ],
+          "target": {
+            "consumer": "UiCheckout",
+            "consumerVersion": "2",
+            "provider": "UiPayments",
+            "providerVersion": "2",
+            "contractSha": "4e635887b3eaf954e1addb3d89dac3a4e6abe9e3",
+            "verificationHref": "http://localhost:9494/pacts/provider/UiPayments/consumer/UiCheckout/pact-version/4e635887b3eaf954e1addb3d89dac3a4e6abe9e3/verification-results/2"
+          }
+        }
+      ]
+    }
+  }
+]

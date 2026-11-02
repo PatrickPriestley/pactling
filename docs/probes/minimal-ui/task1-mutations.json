@@ -1,0 +1,38 @@
+[
+  {
+    "mutation": "index_get",
+    "killed": true
+  },
+  {
+    "mutation": "index_options",
+    "killed": true
+  },
+  {
+    "mutation": "index_fallback",
+    "killed": true
+  },
+  {
+    "mutation": "empty_guard_true",
+    "killed": true
+  },
+  {
+    "mutation": "empty_guard_false",
+    "killed": true
+  },
+  {
+    "mutation": "error_status",
+    "killed": true
+  },
+  {
+    "mutation": "style_get",
+    "killed": true
+  },
+  {
+    "mutation": "style_options",
+    "killed": true
+  },
+  {
+    "mutation": "style_fallback",
+    "killed": true
+  }
+]

@@ -264,6 +264,45 @@ async fn all_108_captured_decisions_share_one_evaluation_and_original_http_gramm
         );
         let explanation = deployment_explanations::document(&links, &evaluation, raw);
         check_explanation(&explanation, &case["expected"], &validator, name);
+        let html = pactling::http::ui::explanation::render_document(&explanation).into_string();
+        assert!(
+            html.contains(&format!(
+                "data-decision=\"{}\"",
+                explanation["decision"].as_str().unwrap()
+            )),
+            "{name}: HTML verdict"
+        );
+        assert_eq!(
+            html.matches("data-consumer-version=").count(),
+            explanation["rows"].as_array().unwrap().len(),
+            "{name}: HTML rows"
+        );
+        for item in explanation["reasons"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .chain(explanation["nextActions"].as_array().unwrap())
+        {
+            for pointer in item["evidenceRefs"].as_array().unwrap() {
+                assert!(
+                    html.contains(&format!("id=\"{}\"", pointer.as_str().unwrap())),
+                    "{name}: absent HTML evidence anchor {pointer}"
+                );
+            }
+        }
+        let mut offset = 0;
+        for row in explanation["rows"].as_array().unwrap() {
+            let marker = format!(
+                "data-consumer-version=\"{}\" data-provider-version=\"{}\"",
+                row["consumerVersion"].as_str().unwrap_or(""),
+                row["providerVersion"].as_str().unwrap_or("")
+            );
+            let pos = html[offset..]
+                .find(&marker)
+                .unwrap_or_else(|| panic!("{name}: missing {marker}"));
+            offset += pos + marker.len();
+        }
+
         assert_eq!(explanation["request"]["query"], raw);
         assert_eq!(
             explanation,

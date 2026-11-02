@@ -1,0 +1,110 @@
+[
+  {
+    "mutation": "pact_get",
+    "killed": true
+  },
+  {
+    "mutation": "pact_options",
+    "killed": true
+  },
+  {
+    "mutation": "pact_method_fallback",
+    "killed": true
+  },
+  {
+    "mutation": "pact_empty_true",
+    "killed": true
+  },
+  {
+    "mutation": "pact_empty_false",
+    "killed": true
+  },
+  {
+    "mutation": "pact_optional_interactions",
+    "killed": true
+  },
+  {
+    "mutation": "pact_missing_status",
+    "killed": true
+  },
+  {
+    "mutation": "pact_db_error_status",
+    "killed": true
+  },
+  {
+    "mutation": "pact_exact_version",
+    "killed": true
+  },
+  {
+    "mutation": "pact_provider_encoding",
+    "killed": true
+  },
+  {
+    "mutation": "pact_consumer_encoding",
+    "killed": true
+  },
+  {
+    "mutation": "pact_version_encoding",
+    "killed": true
+  },
+  {
+    "mutation": "pact_description_escape",
+    "killed": true
+  },
+  {
+    "mutation": "pact_state_escape",
+    "killed": true
+  },
+  {
+    "mutation": "pact_body_escape",
+    "killed": true
+  },
+  {
+    "mutation": "link_controls",
+    "killed": true
+  },
+  {
+    "mutation": "link_whitespace",
+    "killed": true
+  },
+  {
+    "mutation": "link_backslash",
+    "killed": true
+  },
+  {
+    "mutation": "link_local_prefix",
+    "killed": true
+  },
+  {
+    "mutation": "link_local_networkpath",
+    "killed": true
+  },
+  {
+    "mutation": "link_local_branch",
+    "killed": true
+  },
+  {
+    "mutation": "link_http",
+    "killed": true
+  },
+  {
+    "mutation": "link_https",
+    "killed": true
+  },
+  {
+    "mutation": "link_scheme_guard",
+    "killed": true
+  },
+  {
+    "mutation": "link_parse_failure",
+    "killed": true
+  },
+  {
+    "mutation": "link_external_rel",
+    "killed": true
+  },
+  {
+    "mutation": "link_label_escape",
+    "killed": true
+  }
+]
