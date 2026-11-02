@@ -46,3 +46,21 @@ Acceptance-harness assertions are test code, not new production validation branc
   `/tmp/pactling-mcp-build-proof/http-before.json` and `http-after.json`.
 - Full feature/default suites, final independent non-local review and final reproducible
   user-mode rerun belong to the supervising agent's task 6. No push/review claim here.
+
+## Independent user-mode rerun
+
+Before final review, the supervising agent independently ran the final documented harness:
+
+```sh
+PACTLING_BIN=/tmp/pactling-mcp-build-proof/pactling-mcp-debug \
+  bash /tmp/pactling-mcp-task5/e2e/mcp_read_only.sh /tmp/pactling-mcp-owner-demo
+```
+
+Exit 0. [Actual summary](real-client/independent-rerun-summary.json): twelve main-session
+calls plus one wrong-auth and one unavailable call in separate real Codex sessions;
+all five tools, five exact document comparisons, four catalog items, three decisions,
+five error classes, read-only POST 401. Logical database/webhook SHA-256 before and after:
+`428faa87c7565eb41fd425c702b3dbdab4970b3cc3473c6b3f93824a4a6cf6bd`.
+The full rerun output is retained at `/tmp/pactling-mcp-owner-demo`; no model-generated
+summary substitutes for the harness assertions. This is additional runtime acceptance,
+not the required independent code review.

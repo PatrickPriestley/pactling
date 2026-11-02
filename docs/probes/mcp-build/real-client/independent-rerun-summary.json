@@ -1,0 +1,29 @@
+{
+  "codexVersion": "codex-cli 0.166.0",
+  "databaseBeforeSha256": "428faa87c7565eb41fd425c702b3dbdab4970b3cc3473c6b3f93824a4a6cf6bd",
+  "databaseAfterSha256": "428faa87c7565eb41fd425c702b3dbdab4970b3cc3473c6b3f93824a4a6cf6bd",
+  "databaseAndWebhookStateUnchanged": true,
+  "readOnlyWriteStatus": 401,
+  "calls": 12,
+  "exactDocumentComparisons": 5,
+  "catalogItemsCompared": 4,
+  "decisions": [
+    "allowed",
+    "blocked",
+    "unknown"
+  ],
+  "errorCodes": [
+    "AUTH_REQUIRED",
+    "BROKER_UNAVAILABLE",
+    "INVALID_INPUT",
+    "NOT_FOUND",
+    "RESPONSE_TOO_LARGE"
+  ],
+  "tools": [
+    "pactling_explain_deployment",
+    "pactling_get_pact",
+    "pactling_list_integrations",
+    "pactling_list_pacticipants",
+    "pactling_matrix"
+  ]
+}
