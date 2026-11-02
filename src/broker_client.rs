@@ -179,9 +179,7 @@ impl ReadClient {
     pub fn new(base: &str, credentials: Credentials) -> Result<Self, ClientError> {
         credentials.validate()?;
         let base = base_url(base).map_err(|_| ClientError::InvalidConfig)?;
-        let client = client_builder()
-            .gzip(true)
-            .deflate(true)
+        let client = mcp_client_builder()
             .build()
             .map_err(|_| ClientError::Unavailable)?;
         Ok(Self {
@@ -295,3 +293,12 @@ fn transport_error(error: reqwest::Error) -> ClientError {
         ClientError::Unavailable
     }
 }
+
+#[cfg(feature = "mcp")]
+fn mcp_client_builder() -> ClientBuilder {
+    client_builder().gzip(true).deflate(true)
+}
+
+#[cfg(all(test, feature = "mcp"))]
+#[path = "broker_client_tests.rs"]
+mod tests;

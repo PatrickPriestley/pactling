@@ -1700,6 +1700,7 @@ dependencies = [
  "clap",
  "futures-core",
  "futures-util",
+ "h2",
  "jsonschema",
  "maud",
  "regex",
