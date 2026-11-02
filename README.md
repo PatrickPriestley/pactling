@@ -51,8 +51,8 @@ its own namespace; `/` and existing HAL/JSON responses stay unchanged. See the
 
 The read-only `pactling mcp` stdio adapter is another deliberate extension. Five tools
 inspect recorded integrations, pacticipants, exact pacts, pair matrices and deployment
-explanations using the configured broker's read authentication. Published artifacts
-enable MCP; source builds opt in with `--features mcp`. See the [MCP guide](docs/api/mcp.md)
+explanations using the configured broker's read authentication. Release builds containing
+this adapter enable MCP; source builds opt in with `--features mcp`. See the [MCP guide](docs/api/mcp.md)
 for client registration, paging, size limits and evidence boundaries.
 
 Webhook settings use the Ruby broker's variable names and defaults:

@@ -2,7 +2,7 @@
 
 `pactling mcp` serves five inspection tools over stdio and reads a separately running
 pactling broker over HTTP. It opens no local database or listening port. The broker's
-existing read authentication applies. Published binaries and Docker images enable MCP;
+existing read authentication applies. Release builds containing this adapter enable MCP in binaries and Docker images;
 source builds keep it optional:
 
 ```sh
@@ -77,7 +77,16 @@ Success has `isError:false`, a `structuredContent` object and a text block conta
 the same JSON. The object has `adapterSchemaVersion:"1.0"`, `data`,
 `coverage:"recorded_only"`, and `evidenceLinks`. Catalog `data` has `items`,
 `nextCursor` and `retrievedAt`. Other tools preserve the complete broker document in
-`data`. Explanation retains its independently versioned v1 schema and open reason codes.
+`data`. Explanation retains its independently versioned v1 schema and open reason codes. Numeric v1
+minor versions (for example, `1.9`) are preserved; the adapter rejects other majors. Its
+bundled discovery schema permits those minor versions without changing the original
+explanation schema or document.
+
+Catalogs may contain broker names that the adapter cannot safely represent in a path,
+including exact `.`/`..` segments or control characters. The entire catalog call then
+returns `INVALID_BROKER_RESPONSE`; it does not normalize a name into a different link or
+silently omit an item. This is an adapter limitation, not a claim that the broker name
+is invalid. Query-only names in matrix/explanation remain supported.
 
 An `allowed`, `blocked` or `unknown` explanation is a successful tool result. Unknown
 is not permission to deploy. Recorded contracts are not a complete dependency inventory,
