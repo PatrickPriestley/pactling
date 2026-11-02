@@ -4,6 +4,8 @@ mod error;
 mod error_tests;
 mod schema;
 mod tools;
+#[cfg(test)]
+mod version_tests;
 
 use crate::broker_client::{Credentials, ReadClient};
 use clap::Parser;
