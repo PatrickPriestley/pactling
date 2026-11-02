@@ -97,7 +97,7 @@ volumes:
 
 This starts a new broker; it does not import an existing Postgres database. The image
 runs as UID/GID 65532, and a fresh named volume is writable by that user. Host bind
-mounts must provide equivalent permissions. Pin an image tag such as `v0.1.1` when
+mounts must provide equivalent permissions. Pin an image tag such as `v0.1.2` when
 upgrading deliberately.
 
 The release includes macOS arm64 and Linux x86_64 (glibc 2.36+) tarballs and `.sha256`
