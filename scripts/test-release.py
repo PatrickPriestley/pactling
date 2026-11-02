@@ -7,12 +7,40 @@ import unittest
 import tomllib
 import shutil
 import tarfile
+import shlex
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VERSION = tomllib.loads((ROOT / "Cargo.toml").read_text())["package"]["version"]
 
 
 class ReleaseTests(unittest.TestCase):
+    def test_published_native_builds_enable_mcp(self):
+        workflow = (ROOT / '.github/workflows/release.yml').read_text()
+        builds = [shlex.split(line.split('run:', 1)[1])
+                  for line in workflow.splitlines() if 'run: cargo build ' in line]
+        self.assertEqual(len(builds), 2)
+        for command in builds:
+            self.assertIn('--features', command, 'published binaries must enable MCP')
+            self.assertIn('mcp', command[command.index('--features') + 1].split(','))
+        features = tomllib.loads((ROOT / 'Cargo.toml').read_text())['features']
+        self.assertEqual(features['default'], [], 'source default remains feature-disabled')
+
+    def test_published_image_enables_mcp_and_copies_schemas(self):
+        dockerfile = (ROOT / 'Dockerfile').read_text()
+        build = next(line for line in dockerfile.splitlines() if line.startswith('RUN cargo build'))
+        command = shlex.split(build.split('&&', 1)[0])[1:]
+        self.assertIn('--features', command, 'published image must enable MCP')
+        self.assertIn('mcp', command[command.index('--features') + 1].split(','))
+        self.assertIn('COPY docs/api/mcp ./docs/api/mcp', dockerfile.splitlines())
+
+    def test_image_context_includes_only_mcp_schema_documentation(self):
+        rules = (ROOT / '.dockerignore').read_text().splitlines()
+        for rule in ['!docs/', '!docs/api/', '!docs/api/mcp/', '!docs/api/mcp/*.schema.json']:
+            self.assertIn(rule, rules, 'embedded MCP schemas must reach Docker build context')
+        documentation_rules = {rule for rule in rules if rule.startswith('!docs')}
+        self.assertEqual(documentation_rules,
+                         {'!docs/', '!docs/api/', '!docs/api/mcp/', '!docs/api/mcp/*.schema.json'})
+
     def test_archives_include_license(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
