@@ -1,4 +1,5 @@
 //! Optional stdio adapter. Broker access is independent of server startup.
+use crate::broker_client::{Credentials, ReadClient};
 use clap::Parser;
 use rmcp::{
     ErrorData, RoleServer, ServerHandler, ServiceExt,
@@ -16,11 +17,27 @@ use serde_json::json;
 struct Args {
     #[arg(long, env = "PACT_BROKER_BASE_URL", hide_env_values = true)]
     broker_base_url: String,
+    #[arg(
+        long,
+        short = 'u',
+        env = "PACT_BROKER_USERNAME",
+        hide_env_values = true
+    )]
+    broker_username: Option<String>,
+    #[arg(
+        long,
+        short = 'p',
+        env = "PACT_BROKER_PASSWORD",
+        hide_env_values = true
+    )]
+    broker_password: Option<String>,
+    #[arg(long, short = 'k', env = "PACT_BROKER_TOKEN", hide_env_values = true)]
+    broker_token: Option<String>,
 }
 
 /// Serve only MCP frames on stdout. No tracing subscriber, database or listener is started.
 pub async fn run() -> anyhow::Result<()> {
-    let _args = match Args::try_parse_from(std::env::args_os().skip(1)) {
+    let args = match Args::try_parse_from(std::env::args_os().skip(1)) {
         Ok(args) => args,
         Err(error) if !error.use_stderr() => {
             eprint!("{error}");
@@ -28,12 +45,26 @@ pub async fn run() -> anyhow::Result<()> {
         }
         Err(_) => anyhow::bail!("Invalid MCP options; use pactling mcp --help"),
     };
-    McpServer.serve(stdio()).await?.waiting().await?;
+    let client = ReadClient::new(
+        &args.broker_base_url,
+        Credentials {
+            username: args.broker_username,
+            password: args.broker_password,
+            token: args.broker_token,
+        },
+    )?;
+    McpServer { _client: client }
+        .serve(stdio())
+        .await?
+        .waiting()
+        .await?;
     Ok(())
 }
 
 #[derive(Clone)]
-pub struct McpServer;
+pub struct McpServer {
+    _client: ReadClient,
+}
 
 impl ServerHandler for McpServer {
     fn get_info(&self) -> ServerConfig {
