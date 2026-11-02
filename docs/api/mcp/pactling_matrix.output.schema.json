@@ -3,7 +3,6 @@
   "type": "object",
   "oneOf": [
     {
-      "type": "object",
       "properties": {
         "adapterSchemaVersion": {
           "const": "1.0"
@@ -160,7 +159,6 @@
       "additionalProperties": false
     },
     {
-      "type": "object",
       "properties": {
         "adapterSchemaVersion": {
           "const": "1.0"
