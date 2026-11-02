@@ -751,7 +751,7 @@ mod mcp_parity {
             (
                 "MatrixConsumer",
                 json!({"kind":"version","version":"1"}),
-                "matrix-regressions",
+                "matrix-single",
                 "blocked",
             ),
             (
@@ -765,7 +765,7 @@ mod mcp_parity {
             assert_eq!(status, 200);
             assert_eq!(result["data"]["decision"], decision);
         }
-        let (ignored, _, status, _) = session.explain(json!({"pacticipant":"MatrixConsumer","selector":{"kind":"version","version":"1"},"target":{"kind":"environment","name":"matrix-regressions"},"ignores":[{"pacticipant":"MatrixProvider"}]})).await;
+        let (ignored, _, status, _) = session.explain(json!({"pacticipant":"MatrixConsumer","selector":{"kind":"version","version":"1"},"target":{"kind":"environment","name":"matrix-single"},"ignores":[{"pacticipant":"MatrixProvider"}]})).await;
         assert_eq!(status, 200);
         assert_eq!(ignored["data"]["decision"], "allowed");
         assert_eq!(ignored["data"]["compatibility"]["hasIgnores"], true);

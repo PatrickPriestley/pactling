@@ -25,3 +25,21 @@ compared to the safe adapter mapping, rather than incorrectly expecting raw erro
 These are characterization tests of the existing task 3 adapter. They do not constitute
 red/green evidence for new pagination or claim all 108 cases as MCP round trips.
 Execution and final verification are owned by the task 4 conductor; no cargo was run here.
+
+## Characterization fixture correction
+
+The conductor's initial run passed the manifest and three-canonical-case tests, then
+failed the dedicated blocked assertion: MatrixConsumer v1 against matrix-regressions
+was actually allowed. This was a test setup assumption, not adapter behavior: canonical
+`latestby=cvp` selects the newer successful provider evidence in that multi-version target.
+The existing Ruby `single_provider_environment` fixture records one failed provider in
+`matrix-single`. A real production broker probe replayed the unchanged corpus setup and
+confirmed the exact MCP query form (`latestby=cvp`) returns blocked for that target,
+while the original target returns allowed. It also verified latest MatrixLatestUnknownConsumer
+selects version 3 and returns unknown. Raw probe script and log:
+`/tmp/pactling-task4-parity-probe.py`, `/tmp/pactling-task4-parity-probe.log`.
+
+With conductor authorization for test hygiene, change only that dedicated target to
+`matrix-single`, retaining the required blocked assertion. Use the same target for the
+whole-provider ignore case, so the expected allowed outcome exercises ignored failed evidence.
+Existing captured fixture bytes, manifest, and the original 108-case test stay unchanged.
