@@ -1,0 +1,19 @@
+[
+  "codex",
+  "-a",
+  "never",
+  "exec",
+  "--ignore-user-config",
+  "--ephemeral",
+  "--skip-git-repo-check",
+  "--sandbox",
+  "read-only",
+  "--json",
+  "-c",
+  "mcp_servers.pactling.command=\"/opt/homebrew/opt/python@3.15/bin/python3.15\"",
+  "-c",
+  "mcp_servers.pactling.args=[\"/private/tmp/pactling-mcp-task5/e2e/mcp_frames.py\", \"/private/tmp/pactling-mcp-build-proof/pactling-mcp-debug\", \"/private/tmp/pactling-mcp-real-client-2/unavailable-frames.jsonl\"]",
+  "-c",
+  "mcp_servers.pactling.env_vars=[\"PACT_BROKER_BASE_URL\",\"PACT_BROKER_USERNAME\",\"PACT_BROKER_PASSWORD\"]",
+  "Use only pactling_list_integrations with {} once. Report its actual error code. Do not use shell, ask permission, log in or retry."
+]

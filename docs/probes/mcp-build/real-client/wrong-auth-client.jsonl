@@ -1,0 +1,7 @@
+{"type":"thread.started","thread_id":"01a19a38-c90b-7120-a25e-0375689daae8"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll call `pactling_list_integrations` once with `{}` and report the error code it returns."}}
+{"type":"item.started","item":{"id":"item_1","type":"mcp_tool_call","server":"pactling","tool":"pactling_list_integrations","arguments":{},"result":null,"error":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_1","type":"mcp_tool_call","server":"pactling","tool":"pactling_list_integrations","arguments":{},"result":{"content":[{"type":"text","text":"{\"adapterSchemaVersion\":\"1.0\",\"error\":{\"code\":\"AUTH_REQUIRED\",\"message\":\"Broker authentication failed.\",\"retryable\":false,\"httpStatus\":401}}"}],"structured_content":{"adapterSchemaVersion":"1.0","error":{"code":"AUTH_REQUIRED","message":"Broker authentication failed.","retryable":false,"httpStatus":401}}},"error":null,"status":"failed"}}
+{"type":"item.completed","item":{"id":"item_2","type":"agent_message","text":"Actual error code: `AUTH_REQUIRED` (HTTP 401)."}}
+{"type":"turn.completed","usage":{"input_tokens":49946,"cached_input_tokens":37120,"cache_write_input_tokens":0,"output_tokens":132,"reasoning_output_tokens":0}}

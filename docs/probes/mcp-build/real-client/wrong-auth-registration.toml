@@ -1,0 +1,5 @@
+[mcp_servers.pactling]
+command = "/opt/homebrew/opt/python@3.15/bin/python3.15"
+args = ["/private/tmp/pactling-mcp-task5/e2e/mcp_frames.py", "/private/tmp/pactling-mcp-build-proof/pactling-mcp-debug", "/private/tmp/pactling-mcp-real-client-2/wrong-auth-frames.jsonl"]
+
+env_vars = ["PACT_BROKER_BASE_URL", "PACT_BROKER_USERNAME", "PACT_BROKER_PASSWORD"]

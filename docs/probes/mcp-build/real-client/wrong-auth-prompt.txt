@@ -1,0 +1,1 @@
+Use only pactling_list_integrations with {} once. Report its actual error code. Do not use shell, ask permission, log in or retry.
