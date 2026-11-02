@@ -1,6 +1,7 @@
 ---
-status: proposed
-accepted_by: null
+status: accepted
+accepted_by: Patrick Priestley
+accepted_on: 2026-11-02
 issue: 14
 ---
 
@@ -307,7 +308,13 @@ existing read snapshot per call; MCP must not hold database transactions across 
    verified ones test-first. Measure release binary/dependency overhead; do not assert “lightweight”
    from a successful compile. Never merge without owner authorization.
 
-## Maintainer decisions still needed
+## Maintainer decisions
+
+Accepted 2026-11-02 by the maintainer: `mcp` is enabled in published release artifacts
+(the source default stays feature-disabled), and the 4 MiB upstream, 1 MiB tool-result and
+five-minute cache limits stand as proposed.
+
+Original question:
 
 Confirm enabling `mcp` in published release artifacts (recommended, while source default remains
 feature-disabled), and the proposed 4 MiB upstream/1 MiB tool-result/five-minute cache limits.
