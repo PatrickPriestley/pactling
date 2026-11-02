@@ -119,15 +119,19 @@ async fn oversized_cache_entry_and_later_oversized_item_fail_atomically() {
     assert_eq!(large.unwrap_err().0["error"]["code"], "RESPONSE_TOO_LARGE");
     assert_eq!(cache.0.lock().unwrap().len(), 1);
     assert!(cache.next("pactling_list_pacticipants", cursor).is_ok());
-    let later = cache
-        .first(
+    // An item that cannot fit alone must fail, not loop forever on an empty page.
+    let later = tokio::time::timeout(
+        Duration::from_secs(10),
+        cache.first(
             "pactling_list_pacticipants",
             vec![json!({"name":"small"}), json!({"name":"x".repeat(600_000)})],
             1,
             &ReadRoute::Pacticipants,
             "https://broker/pacticipants",
-        )
-        .await;
+        ),
+    )
+    .await
+    .expect("oversized item must fail promptly");
     assert_eq!(later.unwrap_err().0["error"]["code"], "RESPONSE_TOO_LARGE");
     assert_eq!(cache.0.lock().unwrap().len(), 1);
     assert!(cache.next("pactling_list_pacticipants", cursor).is_ok());
