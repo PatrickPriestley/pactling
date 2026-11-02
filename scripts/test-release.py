@@ -14,6 +14,16 @@ VERSION = tomllib.loads((ROOT / "Cargo.toml").read_text())["package"]["version"]
 
 
 class ReleaseTests(unittest.TestCase):
+    def test_ci_checks_default_and_published_feature_sets(self):
+        commands = [line.split('run:', 1)[1].strip()
+                    for line in (ROOT / '.github/workflows/ci.yml').read_text().splitlines()
+                    if '- run:' in line]
+        for command in ['cargo clippy --all-targets -- -D warnings', 'cargo test',
+                        'cargo clippy --all-targets --features mcp -- -D warnings',
+                        'cargo test --features mcp', 'python3 scripts/test-release.py']:
+            with self.subTest(command=command):
+                self.assertIn(command, commands, 'CI must check source and published configurations')
+
     def test_published_native_builds_enable_mcp(self):
         workflow = (ROOT / '.github/workflows/release.yml').read_text()
         builds = [shlex.split(line.split('run:', 1)[1])
