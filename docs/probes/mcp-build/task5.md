@@ -64,3 +64,19 @@ five error classes, read-only POST 401. Logical database/webhook SHA-256 before 
 The full rerun output is retained at `/tmp/pactling-mcp-owner-demo`; no model-generated
 summary substitutes for the harness assertions. This is additional runtime acceptance,
 not the required independent code review.
+
+## Final packaging handoff
+
+Merged `feat/mcp-packaging` at `ce04125`; see the [packaging report](task5-packaging.md).
+All eight packaging contract tests pass after merge, and all eight configuration mutations
+were killed. Native macOS arm64 release and isolated Homebrew installation/formula tests
+pass. MCP adds 6,202,064 bytes (32.35%) to the measured native binary and 52 normal packages;
+the 199-package source-default graph is unchanged.
+
+**Task 5's Docker/compose acceptance remains incomplete.** The attempted isolated Docker
+builder exhausted scratch disk before compilation, followed by daemon metadata I/O errors.
+A normal restart did not recover it. No successful image or container result is claimed.
+The packaging report records the two probe resources awaiting cleanup when Docker is
+healthy; no owner images/volumes were pruned or reset. No heavy build remains running.
+The idle generated Cargo debug/release caches were reclaimed with supervisor authorization;
+final task-6 tests will rebuild them. Executable snapshots, all source and evidence remain.
