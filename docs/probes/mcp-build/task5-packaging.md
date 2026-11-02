@@ -102,7 +102,8 @@ GitHub Actions execution are not inferred from this local test.
 
 ## Docker/compose limitation and recovery record
 
-**Not verified:** actual Docker image build, container runtime and compose smoke. The
+**Superseded by the verification below.** At the time of this attempt: actual Docker image
+build, container runtime and compose smoke were not verified. The
 exact updated Dockerfile was submitted for `linux/arm64` using:
 
 ```sh
@@ -148,3 +149,35 @@ not present in the initial image inventory. No `pactling-mcp-proof:local` image 
 Raw build/restart/cleanup logs remain in `/tmp/pactling-mcp-packaging-proof/`. A successful
 Docker/compose check remains required before claiming packaging acceptance across all
 published artifact types; static contract tests alone do not establish it.
+
+## Docker/compose verification after recovery (2026-11-02)
+
+**Verified against Docker Desktop 28.4.0** after the host disk was freed (52 GiB free) and
+Docker Desktop was restarted. Source commit `45c4cf1`. The probe's leftover builder container
+and `_state` volume were removed first. The default builder was used, so no Rust base was
+duplicated:
+
+```sh
+docker build --platform linux/arm64 -t pactling-mcp-proof:local --progress plain .
+```
+
+The build passed. The image is `linux/arm64`, 19,586,744 bytes, and `--version` prints
+`pactling 0.1.2`. A stdio JSON-RPC driver (initialize, `notifications/initialized`,
+`tools/list`, `tools/call`) checked these cases. Only throwaway names were used, and all were
+removed afterwards:
+
+| Check | Result |
+| --- | --- |
+| Broker container on a user network, `GET /integrations` | 200; `PUT` of a seeded pact 201 |
+| `docker run -i --rm … pactling-mcp-proof:local mcp` with `PACT_BROKER_BASE_URL=http://<broker>:9292` | protocol `2025-06-18` (and `2025-11-25` in a second session), exactly five tools, seeded pair listed, exact pact returned, missing version `NOT_FOUND`, exit 0, stderr empty |
+| Same command, unreachable broker host | `BROKER_UNAVAILABLE`, stderr empty |
+| Repository `docker-compose.yml` with only `image:` and the host port overridden, `up -d --no-build` | `/integrations` 200, pact `PUT` 201 |
+| `docker compose exec -T -e PACT_BROKER_BASE_URL=http://localhost:9292 pact-broker /usr/local/bin/pactling mcp` | five tools, seeded pair, exact pact, `NOT_FOUND`, exit 0, stderr empty |
+| `docker compose restart`, then `/integrations` | seeded integration still present (named volume persists) |
+| Paging with two integrations, `pageSize:1` | page 1 has a cursor; page 2 has `nextCursor:null`; replay returns the same page |
+| Cursor plus `pageSize` / cross-tool cursor / malformed cursor / unknown UUID cursor | `INVALID_INPUT` `/cursor` / `CURSOR_INVALID` / `CURSOR_INVALID` / `CURSOR_EXPIRED` |
+| `consumer:".."` / `consumer:"a/b"` | `INVALID_INPUT` without a GET / encoded segment, broker `NOT_FOUND` |
+
+Still not proven: the x86_64 Linux release archive, built only by the release workflow, and
+hosted release Actions. This run used a direct protocol driver, not a real MCP client inside
+the container. The real Codex client check ran against the native binary.

@@ -86,14 +86,13 @@ the recorded broker contract is 400 (while a known participant's unknown version
 200 blocked). Existing tests/plan preserve the observed behavior. Its Docker feasibility
 assessment does not close the missing runtime check.
 
-## Open acceptance check
+## Docker/compose acceptance
 
-**Docker/compose runtime proof remains blocked**, not passed. The isolated builder filled
-the host disk while duplicating its Rust base, before source compilation. Docker Desktop
-then reported metadata/blob I/O errors and an ordinary restart did not recover it. No
-owner image/volume/cache was pruned or reset. The probe's own container/volume still need
-cleanup when Docker is healthy; exact commands and IDs are in [packaging](task5-packaging.md).
+**Docker/compose runtime proof passed** after the host disk was freed and Docker Desktop
+restarted. The `linux/arm64` image built with the default builder. Its MCP adapter ran from its
+own container against a broker container and inside the repository's Compose service. Data
+persisted across a Compose restart. The probe's leftover container and volume were removed.
+Details are in [packaging](task5-packaging.md#dockercompose-verification-after-recovery-2026-11-02).
 Native macOS arm64 release/default server and MCP smokes, archive checksum and actual
-Homebrew install/test/uninstall passed before the version-only main rebase. Linux release
-execution, hosted Actions, image execution and compose runtime are not proven here.
-The PR remains draft until Docker/compose acceptance can be completed.
+Homebrew install/test/uninstall passed before the version-only main rebase. The x86_64 Linux
+release archive and hosted release Actions are still not proven locally.
