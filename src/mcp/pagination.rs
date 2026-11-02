@@ -15,7 +15,13 @@ const CACHE_LIMIT: usize = 16 * 1024 * 1024;
 const ENTRY_LIMIT: usize = 4;
 const TTL: Duration = Duration::from_secs(300);
 
+#[cfg(test)]
+thread_local! {
+    pub(super) static FITS_CALLS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 pub fn fits(envelope: &Value) -> bool {
+    #[cfg(test)]
+    FITS_CALLS.with(|c| c.set(c.get() + 1));
     serde_json::to_vec(&CallToolResult::structured(envelope.clone()))
         .unwrap()
         .len()
@@ -106,23 +112,38 @@ impl Pagination {
         loop {
             // Preparation owns no shared cache state and can be dropped on cancellation.
             tokio::task::yield_now().await;
+            let len = entry.items.len();
+            let max_end = (start + entry.page_size).min(len);
+            let next_token = uuid::Uuid::new_v4().to_string();
             let mut page = Page {
                 start,
-                end: (start + entry.page_size).min(entry.items.len()),
+                end: max_end,
                 cursor,
                 next: None,
             };
-            let next_token = uuid::Uuid::new_v4().to_string();
-            loop {
-                page.next = (page.end < entry.items.len()).then(|| next_token.clone());
-                if fits(&entry.envelope(&page)) {
-                    break;
+            let set_end = |page: &mut Page, end: usize| {
+                page.end = end;
+                page.next = (end < len).then(|| next_token.clone());
+            };
+            set_end(&mut page, max_end);
+            if !fits(&entry.envelope(&page)) {
+                // A page grows with each added item, so binary search for the largest fit:
+                // `fit` always fits (or is `start`, no items) and `too_big` never does.
+                let (mut fit, mut too_big) = (start, max_end);
+                while too_big - fit > 1 {
+                    let mid = fit + (too_big - fit) / 2;
+                    set_end(&mut page, mid);
+                    if fits(&entry.envelope(&page)) {
+                        fit = mid;
+                    } else {
+                        too_big = mid;
+                    }
+                    tokio::task::yield_now().await;
                 }
-                if page.end <= start + 1 {
+                if fit == start {
                     return Err(ToolError::too_large(route, source));
                 }
-                page.end -= 1;
-                tokio::task::yield_now().await;
+                set_end(&mut page, fit);
             }
             start = page.end;
             cursor = page.next.clone();

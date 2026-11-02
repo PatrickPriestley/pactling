@@ -5,7 +5,7 @@ use super::{
     schema::{self, Contract},
 };
 use crate::broker_client::{
-    ExplanationQuery, Grouping, Ignore, ReadClient, ReadRoute, Selector, Target,
+    self, ClientError, ExplanationQuery, Grouping, Ignore, ReadClient, ReadRoute, Selector, Target,
 };
 use rmcp::{
     ErrorData,
@@ -67,7 +67,10 @@ async fn execute(
     let route = route(contract.name, args);
     let source = client
         .source_url(&route)
-        .map_err(|e| ToolError::client(e, &route, ""))?
+        .map_err(|e| match e {
+            ClientError::InvalidPath => ToolError::invalid_input(path_field(args)),
+            e => ToolError::client(e, &route, ""),
+        })?
         .to_string();
     let response = client
         .get(&route)
@@ -104,6 +107,21 @@ async fn execute(
     Ok(envelope)
 }
 
+/// Only pactling_get_pact puts arguments into the path; the first unrepresentable one is named.
+fn path_field(args: &Value) -> &'static str {
+    [
+        ("consumer", "/consumer"),
+        ("provider", "/provider"),
+        ("consumerVersion", "/consumerVersion"),
+    ]
+    .into_iter()
+    .find(|(field, _)| {
+        args[*field]
+            .as_str()
+            .is_some_and(broker_client::invalid_segment)
+    })
+    .map_or("", |(_, pointer)| pointer)
+}
 // Called only after the corresponding schema has validated recursively.
 fn string(args: &Value, field: &str) -> String {
     args[field].as_str().unwrap().to_owned()

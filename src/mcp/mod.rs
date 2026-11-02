@@ -13,8 +13,8 @@ use clap::Parser;
 use rmcp::{
     ErrorData, RoleServer, ServerHandler, ServiceExt,
     model::{
-        CallToolRequestParams, CallToolResponse, ListToolsResult, PaginatedRequestParams,
-        ServerCapabilities, ServerConfig,
+        CallToolRequestParams, CallToolResponse, Implementation, ListToolsResult,
+        PaginatedRequestParams, ServerCapabilities, ServerConfig,
     },
     service::RequestContext,
     transport::stdio,
@@ -80,7 +80,9 @@ pub struct McpServer {
 
 impl ServerHandler for McpServer {
     fn get_info(&self) -> ServerConfig {
+        // rmcp's default identity is its own crate name and version.
         ServerConfig::new(ServerCapabilities::builder().enable_tools().build())
+            .with_server_info(Implementation::new("pactling", env!("CARGO_PKG_VERSION")))
     }
 
     async fn call_tool(

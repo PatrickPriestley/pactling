@@ -54,6 +54,10 @@ mod enabled {
         send(&mut input, json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":protocol,"capabilities":{},"clientInfo":{"name":"dispatch-test","version":"1"}}})).await;
         let reply = read(&mut lines).await;
         assert_eq!(reply["result"]["protocolVersion"], protocol);
+        assert_eq!(
+            reply["result"]["serverInfo"],
+            json!({"name":"pactling","version":env!("CARGO_PKG_VERSION")})
+        );
         assert!(reply["result"]["capabilities"]["tools"].is_object());
         assert!(reply["result"]["capabilities"].get("resources").is_none());
         assert!(reply["result"]["capabilities"].get("prompts").is_none());

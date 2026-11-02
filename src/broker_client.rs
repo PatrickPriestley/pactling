@@ -26,11 +26,13 @@ pub(crate) fn base_url(base: &str) -> Result<Url, String> {
     Ok(url)
 }
 
+/// Dot segments would be normalized into another route; control characters are refused.
+pub(crate) fn invalid_segment(segment: &str) -> bool {
+    matches!(segment, "." | "..") || segment.chars().any(char::is_control)
+}
+
 pub(crate) fn append_path(base: &Url, segments: &[&str]) -> Result<Url, ClientError> {
-    if segments
-        .iter()
-        .any(|s| matches!(*s, "." | "..") || s.chars().any(char::is_control))
-    {
+    if segments.iter().any(|s| invalid_segment(s)) {
         return Err(ClientError::InvalidPath);
     }
     let mut url = base.clone();

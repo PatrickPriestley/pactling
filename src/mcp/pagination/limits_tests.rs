@@ -119,15 +119,19 @@ async fn oversized_cache_entry_and_later_oversized_item_fail_atomically() {
     assert_eq!(large.unwrap_err().0["error"]["code"], "RESPONSE_TOO_LARGE");
     assert_eq!(cache.0.lock().unwrap().len(), 1);
     assert!(cache.next("pactling_list_pacticipants", cursor).is_ok());
-    let later = cache
-        .first(
+    // An item that cannot fit alone must fail, not loop forever on an empty page.
+    let later = tokio::time::timeout(
+        Duration::from_secs(10),
+        cache.first(
             "pactling_list_pacticipants",
             vec![json!({"name":"small"}), json!({"name":"x".repeat(600_000)})],
             1,
             &ReadRoute::Pacticipants,
             "https://broker/pacticipants",
-        )
-        .await;
+        ),
+    )
+    .await
+    .expect("oversized item must fail promptly");
     assert_eq!(later.unwrap_err().0["error"]["code"], "RESPONSE_TOO_LARGE");
     assert_eq!(cache.0.lock().unwrap().len(), 1);
     assert!(cache.next("pactling_list_pacticipants", cursor).is_ok());
@@ -158,4 +162,52 @@ fn result_budget_includes_escaped_text_and_errors_omit_only_oversized_optional_u
         small.structured_content.unwrap()["error"]["evidenceUrl"],
         "https://broker/pacticipants"
     );
+}
+#[tokio::test]
+async fn page_shrink_takes_logarithmic_size_checks_and_keeps_pages_maximal() {
+    let cache = Pagination::default();
+    FITS_CALLS.with(|c| c.set(0));
+    let first = cache
+        .first(
+            "pactling_list_pacticipants",
+            items(100, 20_000),
+            100,
+            &ReadRoute::Pacticipants,
+            "https://broker/pacticipants",
+        )
+        .await
+        .unwrap();
+    let calls = FITS_CALLS.with(|c| c.get());
+    let entries = cache.0.lock().unwrap();
+    let entry = &entries[0];
+    assert!(entry.pages.len() > 1, "fixture must force shrinking");
+    // One check at full size, then a binary search over at most 100 ends.
+    assert!(
+        calls <= entry.pages.len() * 9,
+        "{calls} size checks for {} pages",
+        entry.pages.len()
+    );
+    assert_eq!(
+        first["data"]["items"].as_array().unwrap().len(),
+        entry.pages[0].end
+    );
+    for page in &entry.pages[..entry.pages.len() - 1] {
+        let mut larger = Page {
+            start: page.start,
+            end: page.end + 1,
+            cursor: None,
+            next: page.next.clone(),
+        };
+        if larger.end == entry.items.len() {
+            larger.next = None;
+        }
+        assert!(
+            !fits(&entry.envelope(&larger)),
+            "page {}..{} not maximal",
+            page.start,
+            page.end
+        );
+        assert!(fits(&entry.envelope(page)));
+    }
+    assert_eq!(entry.pages.last().unwrap().end, 100);
 }
