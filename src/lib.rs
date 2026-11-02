@@ -6,3 +6,6 @@ pub mod http;
 pub mod service;
 
 pub mod cli;
+
+#[cfg(feature = "mcp")]
+pub mod mcp;

@@ -6,6 +6,15 @@ async fn main() -> anyhow::Result<()> {
     if std::env::args_os().nth(1).as_deref() == Some(std::ffi::OsStr::new("explain")) {
         std::process::exit(pactling::cli::run(std::env::args_os().skip(1)).await);
     }
+    if std::env::args_os().nth(1).as_deref() == Some(std::ffi::OsStr::new("mcp")) {
+        #[cfg(feature = "mcp")]
+        return pactling::mcp::run().await;
+        #[cfg(not(feature = "mcp"))]
+        {
+            eprintln!("MCP support is not enabled; rebuild with --features mcp");
+            std::process::exit(3);
+        }
+    }
     tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
