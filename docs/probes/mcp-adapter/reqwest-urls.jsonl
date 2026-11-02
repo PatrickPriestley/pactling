@@ -1,0 +1,7 @@
+{"name":"slash/name","url":"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/slash%2Fname/version/1","status":200}
+{"name":"%2F","url":"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/%252F/version/1","status":200}
+{"name":".","url":"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/version/1","status":404}
+{"name":"..","url":"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/version/1","status":404}
+{"name":"nul\u0000","url":"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/nul%00/version/1","status":404}
+{"name":"question?","url":"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/question%3F/version/1","status":200}
+{"name":"hash#","url":"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/hash%23/version/1","status":200}

@@ -1,0 +1,930 @@
+{
+  "total": 108,
+  "minimumIncluded": 3,
+  "cases": [
+    {
+      "case": "failed_consumer_first",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "failed_provider_first",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "three_selectors_0",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "three_selectors_1",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "three_selectors_2",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "three_selectors_3",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "three_selectors_4",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "three_selectors_5",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "missing_provider_version",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "missing_provider_version_first",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "ignore_missing_provider_version",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "ignore_other_existing_provider_version",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "ignore_matching_provider_version",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "ignore_whole_provider",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "provider_side_ignore_wrong_consumer_version",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "provider_side_ignore_matching_consumer_version",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "released_versions_ignore_only_success",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "released_versions_ignore_only_failure",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "released_versions_ignore_whole_provider",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "unpinned_unverified",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "unpinned_unverified_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "existing_unverified_pin",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "duplicate_selector",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "successful_pin",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "single_provider_environment",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "unverified_pin_ignored",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "unverified_latest_version_ignored",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "any_provider_version_ignore",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "missing_with_warning",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "missing_with_failed_integration",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "ignore_unknown_service",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "ignore_unknown_service_version",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_unverified",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_success",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_success_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_tag_missing",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_tag",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_tag_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_branch",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_branch_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_mainBranch",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_mainBranch_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_provider_branch_missing",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "single_latest_selector_warning",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "directional_integration",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "bidirectional_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "two_missing_providers",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "two_missing_services",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_consumer_branch_missing",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "unknown_and_failed_is_null",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "unknown_and_failed_single_selector",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "missing_selectors_keep_query_order",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "ignore_warnings_keep_query_order",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "main_branch_missing",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "main_branch_missing_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latest_without_versions",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "tag_without_latest_missing",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "tag_without_latest_missing_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "tag_without_latest_missing_first_of_two",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "missing_selector_without_integration_keeps_order",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "tag_without_latest_verified",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "tag_without_latest_verified_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "tag_without_latest_unverified",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "branch_without_latest",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "branch_without_latest_missing",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "main_branch_without_latest",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "main_branch_without_latest_missing",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "consumer_tag_without_latest",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "consumer_tag_without_latest_single",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "two_latest_selectors_warning",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "to_tag_option_no_environment_warning",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "environment_with_unverified_release",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "environment_with_unverified_release_ignored",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "latestby_cvp_consumer_environment",
+      "included": true,
+      "excludedReasons": []
+    },
+    {
+      "case": "latestby_cvp_provider_environment",
+      "included": false,
+      "excludedReasons": [
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cvp_two_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cvp_two_selectors_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cvpv_consumer_environment",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "latestby_cvpv_provider_environment",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cvpv_two_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cvpv_two_selectors_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cp_consumer_environment",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "latestby_cp_provider_environment",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cp_two_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cp_two_selectors_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_none_consumer_environment",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp"
+      ]
+    },
+    {
+      "case": "latestby_none_provider_environment",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_none_two_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_none_two_selectors_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cvp_ignore_new_provider",
+      "included": true,
+      "excludedReasons": []
+    },
+    {
+      "case": "latestby_cvp_ignore_old_provider",
+      "included": true,
+      "excludedReasons": []
+    },
+    {
+      "case": "latestby_cvp_multiple_consumers",
+      "included": false,
+      "excludedReasons": [
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cvp_all_two_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cvpv_multiple_consumers",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cvpv_all_two_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cp_multiple_consumers",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cp_all_two_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_none_multiple_consumers",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_none_all_two_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cvp_split_consumer_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cvp_split_consumer_selectors_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cp_split_consumer_selectors",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cp_split_consumer_selectors_reverse",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cp_keeps_distinct_providers",
+      "included": false,
+      "excludedReasons": [
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag"
+      ]
+    },
+    {
+      "case": "latestby_cvp_unverified_first",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cvpv_unverified_first",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_cp_unverified_first",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    },
+    {
+      "case": "latestby_none_unverified_first",
+      "included": false,
+      "excludedReasons": [
+        "requires exactly one selector",
+        "grouping differs from canonical CLI cvp",
+        "requires target environment or latest tag",
+        "unqualified selector is outside typed modes"
+      ]
+    }
+  ]
+}

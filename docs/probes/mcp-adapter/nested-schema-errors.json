@@ -1,0 +1,188 @@
+[
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "error-probe",
+          "version": "0"
+        }
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "tools": {}
+        },
+        "serverInfo": {
+          "name": "rmcp",
+          "version": "3.8.0"
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/call",
+      "params": {
+        "name": "pactling_explain_deployment",
+        "arguments": {
+          "pacticipant": "ProbeConsumer",
+          "selector": {
+            "kind": "mainBranch",
+            "unexpected": true
+          },
+          "target": {
+            "kind": "environment",
+            "name": "test"
+          }
+        }
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"adapterSchemaVersion\":\"1.0\",\"data\":{\"schemaVersion\":\"1.0\",\"decision\":\"blocked\",\"summary\":\"The requested selector for ProbeConsumer resolves to no versions.\",\"compatibility\":{\"deployable\":false,\"success\":0,\"failed\":0,\"unknown\":0,\"ignored\":0,\"hasIgnores\":false},\"request\":{\"query\":\"q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&latestby=cvp&environment=test\"},\"evaluation\":{\"id\":\"00bbfe38-232f-452c-921d-8b27eb1f31f3\",\"startedAt\":\"2026-11-02T01:16:24.208304+00:00\",\"evaluatedAt\":\"2026-11-02T01:16:24.208729+00:00\",\"brokerVersion\":\"0.1.1\",\"engineRevision\":null,\"snapshot\":{\"kind\":\"read_transaction\",\"retained\":false}},\"evidence\":{\"completeness\":\"incomplete\",\"coverage\":\"recorded_only\",\"currentness\":\"not_checked\"},\"resolution\":{\"selectors\":[{\"index\":0,\"pacticipant\":\"ProbeConsumer\",\"versions\":[],\"missingReason\":\"SELECTOR_VERSION_MISSING\",\"requested\":{\"pacticipant\":\"ProbeConsumer\",\"version\":null,\"latest\":true,\"tag\":null,\"branch\":null,\"mainBranch\":true}}],\"target\":{\"kind\":\"environment\",\"name\":\"test\",\"uuid\":\"328ce46a-3085-4fa8-aeb4-185cf684e06e\",\"href\":\"http://127.0.0.1:9495/environments/328ce46a-3085-4fa8-aeb4-185cf684e06e\"},\"candidates\":[],\"excluded\":[],\"ignores\":[]},\"rows\":[],\"reasons\":[{\"code\":\"SELECTOR_VERSION_MISSING\",\"role\":\"decisive\",\"message\":\"The requested selector for ProbeConsumer resolves to no versions.\",\"evidenceRefs\":[\"/resolution/selectors/0\"],\"actionIds\":[\"action-1\"]}],\"nextActions\":[{\"id\":\"action-1\",\"type\":\"RESOLVE_SELECTOR\",\"message\":\"Correct this selector or publish and record its intended version and required contract results; creating a version alone does not establish compatibility.\",\"evidenceRefs\":[\"/resolution/selectors/0\"],\"target\":{\"selectorIndex\":0,\"requested\":{\"pacticipant\":\"ProbeConsumer\",\"version\":null,\"latest\":true,\"tag\":null,\"branch\":null,\"mainBranch\":true}}}]},\"coverage\":\"recorded_only\",\"evidenceLinks\":[{\"rel\":\"source\",\"href\":\"http://127.0.0.1:9495/pactling/v1/can-i-deploy/explanation?q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&latestby=cvp&environment=test\"}]}"
+          }
+        ],
+        "structuredContent": {
+          "adapterSchemaVersion": "1.0",
+          "data": {
+            "schemaVersion": "1.0",
+            "decision": "blocked",
+            "summary": "The requested selector for ProbeConsumer resolves to no versions.",
+            "compatibility": {
+              "deployable": false,
+              "success": 0,
+              "failed": 0,
+              "unknown": 0,
+              "ignored": 0,
+              "hasIgnores": false
+            },
+            "request": {
+              "query": "q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&latestby=cvp&environment=test"
+            },
+            "evaluation": {
+              "id": "00bbfe38-232f-452c-921d-8b27eb1f31f3",
+              "startedAt": "2026-11-02T01:16:24.208304+00:00",
+              "evaluatedAt": "2026-11-02T01:16:24.208729+00:00",
+              "brokerVersion": "0.1.1",
+              "engineRevision": null,
+              "snapshot": {
+                "kind": "read_transaction",
+                "retained": false
+              }
+            },
+            "evidence": {
+              "completeness": "incomplete",
+              "coverage": "recorded_only",
+              "currentness": "not_checked"
+            },
+            "resolution": {
+              "selectors": [
+                {
+                  "index": 0,
+                  "pacticipant": "ProbeConsumer",
+                  "versions": [],
+                  "missingReason": "SELECTOR_VERSION_MISSING",
+                  "requested": {
+                    "pacticipant": "ProbeConsumer",
+                    "version": null,
+                    "latest": true,
+                    "tag": null,
+                    "branch": null,
+                    "mainBranch": true
+                  }
+                }
+              ],
+              "target": {
+                "kind": "environment",
+                "name": "test",
+                "uuid": "328ce46a-3085-4fa8-aeb4-185cf684e06e",
+                "href": "http://127.0.0.1:9495/environments/328ce46a-3085-4fa8-aeb4-185cf684e06e"
+              },
+              "candidates": [],
+              "excluded": [],
+              "ignores": []
+            },
+            "rows": [],
+            "reasons": [
+              {
+                "code": "SELECTOR_VERSION_MISSING",
+                "role": "decisive",
+                "message": "The requested selector for ProbeConsumer resolves to no versions.",
+                "evidenceRefs": [
+                  "/resolution/selectors/0"
+                ],
+                "actionIds": [
+                  "action-1"
+                ]
+              }
+            ],
+            "nextActions": [
+              {
+                "id": "action-1",
+                "type": "RESOLVE_SELECTOR",
+                "message": "Correct this selector or publish and record its intended version and required contract results; creating a version alone does not establish compatibility.",
+                "evidenceRefs": [
+                  "/resolution/selectors/0"
+                ],
+                "target": {
+                  "selectorIndex": 0,
+                  "requested": {
+                    "pacticipant": "ProbeConsumer",
+                    "version": null,
+                    "latest": true,
+                    "tag": null,
+                    "branch": null,
+                    "mainBranch": true
+                  }
+                }
+              }
+            ]
+          },
+          "coverage": "recorded_only",
+          "evidenceLinks": [
+            {
+              "rel": "source",
+              "href": "http://127.0.0.1:9495/pactling/v1/can-i-deploy/explanation?q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Blatest%5D=true&q%5B%5D%5BmainBranch%5D=true&latestby=cvp&environment=test"
+            }
+          ]
+        },
+        "isError": false
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "missing_tool",
+        "arguments": {}
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "error": {
+        "code": -32602,
+        "message": "tool not found"
+      }
+    }
+  }
+]

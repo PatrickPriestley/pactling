@@ -1,0 +1,1015 @@
+[
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "PUT",
+    "path": "/pacts/provider/P/consumer/C/version/1",
+    "auth": "synthetic writer or unauthenticated Ruby",
+    "status": 200,
+    "document": {
+      "consumer": {
+        "name": "C"
+      },
+      "provider": {
+        "name": "P"
+      },
+      "interactions": [],
+      "metadata": {},
+      "createdAt": "2026-11-02T01:19:29+00:00",
+      "_links": {
+        "self": {
+          "title": "Pact",
+          "name": "Pact between C (1) and P",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1"
+        },
+        "pb:consumer": {
+          "title": "Consumer",
+          "name": "C",
+          "href": "http://127.0.0.1:9495/pacticipants/C"
+        },
+        "pb:consumer-version": {
+          "title": "Consumer version",
+          "name": "1",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1"
+        },
+        "pb:provider": {
+          "title": "Provider",
+          "name": "P",
+          "href": "http://127.0.0.1:9495/pacticipants/P"
+        },
+        "pb:pact-version": {
+          "title": "Pact content version permalink",
+          "name": "ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd"
+        },
+        "pb:latest-pact-version": {
+          "title": "Latest version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest"
+        },
+        "pb:all-pact-versions": {
+          "title": "All versions of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/versions"
+        },
+        "pb:latest-untagged-pact-version": {
+          "title": "Latest untagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest-untagged"
+        },
+        "pb:latest-tagged-pact-version": {
+          "title": "Latest tagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest/{tag}",
+          "templated": true
+        },
+        "pb:previous-distinct": {
+          "title": "Previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/previous-distinct"
+        },
+        "pb:diff-previous-distinct": {
+          "title": "Diff with previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/diff/previous-distinct"
+        },
+        "pb:diff": {
+          "title": "Diff with another specified version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/diff/pact-version/{pactVersion}",
+          "templated": true
+        },
+        "pb:pact-webhooks": {
+          "title": "Webhooks for the pact between C and P",
+          "href": "http://127.0.0.1:9495/webhooks/provider/P/consumer/C"
+        },
+        "pb:consumer-webhooks": {
+          "title": "Webhooks for all pacts with provider P",
+          "href": "http://127.0.0.1:9495/webhooks/consumer/P"
+        },
+        "pb:tag-prod-version": {
+          "title": "PUT to this resource to tag this consumer version as 'production'",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1/tags/prod"
+        },
+        "pb:tag-version": {
+          "title": "PUT to this resource to tag this consumer version",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1/tags/{tag}"
+        },
+        "pb:publish-verification-results": {
+          "title": "Publish verification results",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results"
+        },
+        "pb:latest-verification-results": {
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results/latest"
+        },
+        "pb:triggered-webhooks": {
+          "title": "Webhooks triggered by the publication of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/triggered-webhooks"
+        },
+        "pb:matrix-for-consumer-version": {
+          "title": "View matrix rows for the consumer version to which this pact belongs",
+          "href": "http://127.0.0.1:9495/matrix?q%5B%5D%5Bpacticipant%5D=C&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+        },
+        "curies": [
+          {
+            "name": "pb",
+            "href": "http://127.0.0.1:9495/doc/{rel}?context=pact",
+            "templated": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "POST",
+    "path": "/environments",
+    "auth": "synthetic writer or unauthenticated Ruby",
+    "status": 400,
+    "document": {
+      "errors": {
+        "name": [
+          "name 'test' is already used by an existing environment."
+        ]
+      }
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "GET",
+    "path": "/integrations",
+    "auth": "read-only Basic",
+    "status": 200,
+    "document": {
+      "_embedded": {
+        "integrations": [
+          {
+            "consumer": {
+              "name": "C"
+            },
+            "provider": {
+              "name": "P"
+            },
+            "_links": {
+              "pb:dashboard": {
+                "title": "BETA: Pacts to show on the dashboard",
+                "href": "http://127.0.0.1:9495/dashboard/provider/P/consumer/C"
+              },
+              "pb:matrix": {
+                "title": "Matrix of pacts/verification results for C and P",
+                "href": "/matrix/provider/P/consumer/C"
+              },
+              "pb:group": {
+                "href": "http://127.0.0.1:9495/pacticipants/C"
+              },
+              "pb:delete_integration": {
+                "title": "Delete the integration between C and P",
+                "href": "http://127.0.0.1:9495/integrations/provider/P/consumer/C"
+              }
+            }
+          }
+        ]
+      },
+      "_links": {
+        "self": {
+          "href": "http://127.0.0.1:9495/integrations",
+          "title": "All integrations"
+        }
+      }
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "GET",
+    "path": "/pacticipants",
+    "auth": "read-only Basic",
+    "status": 200,
+    "document": {
+      "_embedded": {
+        "pacticipants": [
+          {
+            "name": "C",
+            "displayName": "C",
+            "createdAt": "2026-11-02T01:19:29+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/C/versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/C/versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/C"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/C/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/C/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/C/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of C",
+                "href": "http://127.0.0.1:9495/pacticipants/C/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of C",
+                "href": "http://127.0.0.1:9495/pacticipants/C/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for C",
+                "href": "http://127.0.0.1:9495/pacticipants/C/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/C/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy C badge",
+                "href": "http://127.0.0.1:9495/pacticipants/C/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy C from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/C/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "P",
+            "displayName": "P",
+            "createdAt": "2026-11-02T01:19:29+00:00",
+            "_embedded": {
+              "labels": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/P"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/P/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/P/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/P/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of P",
+                "href": "http://127.0.0.1:9495/pacticipants/P/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of P",
+                "href": "http://127.0.0.1:9495/pacticipants/P/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for P",
+                "href": "http://127.0.0.1:9495/pacticipants/P/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/P/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy P badge",
+                "href": "http://127.0.0.1:9495/pacticipants/P/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy P from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/P/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "_links": {
+        "self": {
+          "href": "http://127.0.0.1:9495/pacticipants"
+        },
+        "pb:pacticipants-with-label": {
+          "href": "http://127.0.0.1:9495/pacticipants/label/{label}",
+          "title": "Find pacticipants by label",
+          "templated": true
+        },
+        "pb:pacticipants": [
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/C",
+            "title": "Pacticipant",
+            "name": "C"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/P",
+            "title": "Pacticipant",
+            "name": "P"
+          }
+        ],
+        "pacticipants": [
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/C",
+            "title": "C",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/P",
+            "title": "P",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          }
+        ]
+      },
+      "pacticipants": [
+        {
+          "name": "C",
+          "displayName": "C",
+          "createdAt": "2026-11-02T01:19:29+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/C/versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/C/versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/C"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/C/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/C/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/C/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of C",
+              "href": "http://127.0.0.1:9495/pacticipants/C/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of C",
+              "href": "http://127.0.0.1:9495/pacticipants/C/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for C",
+              "href": "http://127.0.0.1:9495/pacticipants/C/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/C/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy C badge",
+              "href": "http://127.0.0.1:9495/pacticipants/C/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy C from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/C/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "P",
+          "displayName": "P",
+          "createdAt": "2026-11-02T01:19:29+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "labels": []
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/P"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/P/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/P/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/P/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of P",
+              "href": "http://127.0.0.1:9495/pacticipants/P/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of P",
+              "href": "http://127.0.0.1:9495/pacticipants/P/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for P",
+              "href": "http://127.0.0.1:9495/pacticipants/P/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/P/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy P badge",
+              "href": "http://127.0.0.1:9495/pacticipants/P/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy P from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/P/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "GET",
+    "path": "/pacts/provider/P/consumer/C/version/1",
+    "auth": "read-only Basic",
+    "status": 200,
+    "document": {
+      "consumer": {
+        "name": "C"
+      },
+      "provider": {
+        "name": "P"
+      },
+      "interactions": [],
+      "metadata": {},
+      "createdAt": "2026-11-02T01:19:29+00:00",
+      "_links": {
+        "self": {
+          "title": "Pact",
+          "name": "Pact between C (1) and P",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1"
+        },
+        "pb:consumer": {
+          "title": "Consumer",
+          "name": "C",
+          "href": "http://127.0.0.1:9495/pacticipants/C"
+        },
+        "pb:consumer-version": {
+          "title": "Consumer version",
+          "name": "1",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1"
+        },
+        "pb:provider": {
+          "title": "Provider",
+          "name": "P",
+          "href": "http://127.0.0.1:9495/pacticipants/P"
+        },
+        "pb:pact-version": {
+          "title": "Pact content version permalink",
+          "name": "ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd"
+        },
+        "pb:latest-pact-version": {
+          "title": "Latest version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest"
+        },
+        "pb:all-pact-versions": {
+          "title": "All versions of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/versions"
+        },
+        "pb:latest-untagged-pact-version": {
+          "title": "Latest untagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest-untagged"
+        },
+        "pb:latest-tagged-pact-version": {
+          "title": "Latest tagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest/{tag}",
+          "templated": true
+        },
+        "pb:previous-distinct": {
+          "title": "Previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/previous-distinct"
+        },
+        "pb:diff-previous-distinct": {
+          "title": "Diff with previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/diff/previous-distinct"
+        },
+        "pb:diff": {
+          "title": "Diff with another specified version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/diff/pact-version/{pactVersion}",
+          "templated": true
+        },
+        "pb:pact-webhooks": {
+          "title": "Webhooks for the pact between C and P",
+          "href": "http://127.0.0.1:9495/webhooks/provider/P/consumer/C"
+        },
+        "pb:consumer-webhooks": {
+          "title": "Webhooks for all pacts with provider P",
+          "href": "http://127.0.0.1:9495/webhooks/consumer/P"
+        },
+        "pb:tag-prod-version": {
+          "title": "PUT to this resource to tag this consumer version as 'production'",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1/tags/prod"
+        },
+        "pb:tag-version": {
+          "title": "PUT to this resource to tag this consumer version",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1/tags/{tag}"
+        },
+        "pb:publish-verification-results": {
+          "title": "Publish verification results",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results"
+        },
+        "pb:latest-verification-results": {
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results/latest"
+        },
+        "pb:triggered-webhooks": {
+          "title": "Webhooks triggered by the publication of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/triggered-webhooks"
+        },
+        "pb:matrix-for-consumer-version": {
+          "title": "View matrix rows for the consumer version to which this pact belongs",
+          "href": "http://127.0.0.1:9495/matrix?q%5B%5D%5Bpacticipant%5D=C&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+        },
+        "curies": [
+          {
+            "name": "pb",
+            "href": "http://127.0.0.1:9495/doc/{rel}?context=pact",
+            "templated": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "GET",
+    "path": "/matrix?q%5B%5D%5Bpacticipant%5D=C&q%5B%5D%5Bpacticipant%5D=P",
+    "auth": "read-only Basic",
+    "status": 200,
+    "document": {
+      "summary": {
+        "deployable": null,
+        "reason": "There is no verified pact between any version of C and any version of P",
+        "success": 0,
+        "failed": 0,
+        "unknown": 1
+      },
+      "notices": [
+        {
+          "type": "error",
+          "text": "There is no verified pact between any version of C and any version of P"
+        }
+      ],
+      "matrix": [
+        {
+          "consumer": {
+            "name": "C",
+            "version": {
+              "number": "1",
+              "branches": [],
+              "branchVersions": [],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://127.0.0.1:9495/pacticipants/C/versions/1"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/C"
+              }
+            }
+          },
+          "provider": {
+            "name": "P",
+            "version": null,
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/P"
+              }
+            }
+          },
+          "pact": {
+            "createdAt": "2026-11-02T01:19:29+00:00",
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1"
+              }
+            }
+          },
+          "verificationResult": null
+        }
+      ]
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "GET",
+    "path": "/pactling/v1/can-i-deploy/explanation?pacticipant=C&version=1&environment=test",
+    "auth": "read-only Basic",
+    "status": 200,
+    "document": {
+      "schemaVersion": "1.0",
+      "decision": "unknown",
+      "summary": "No verification is recorded for this exact C to P contract and selected provider version.",
+      "compatibility": {
+        "deployable": null,
+        "success": 0,
+        "failed": 0,
+        "unknown": 1,
+        "ignored": 0,
+        "hasIgnores": false
+      },
+      "request": {
+        "query": "pacticipant=C&version=1&environment=test"
+      },
+      "evaluation": {
+        "id": "872457cc-fa2d-4615-8aa6-97b0783797bc",
+        "startedAt": "2026-11-02T01:19:38.620244+00:00",
+        "evaluatedAt": "2026-11-02T01:19:38.621443+00:00",
+        "brokerVersion": "0.1.1",
+        "engineRevision": null,
+        "snapshot": {
+          "kind": "read_transaction",
+          "retained": false
+        }
+      },
+      "evidence": {
+        "completeness": "incomplete",
+        "coverage": "recorded_only",
+        "currentness": "not_checked"
+      },
+      "resolution": {
+        "selectors": [
+          {
+            "index": 0,
+            "pacticipant": "C",
+            "versions": [
+              "1"
+            ],
+            "missingReason": null,
+            "requested": {
+              "pacticipant": "C",
+              "version": "1",
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": false
+            }
+          }
+        ],
+        "target": {
+          "kind": "environment",
+          "name": "test",
+          "uuid": "a6f81a23-2d65-43d5-b0e9-45a3684be970",
+          "href": "http://127.0.0.1:9495/environments/a6f81a23-2d65-43d5-b0e9-45a3684be970"
+        },
+        "candidates": [],
+        "excluded": [],
+        "ignores": []
+      },
+      "rows": [
+        {
+          "id": "row-1",
+          "consumer": "C",
+          "consumerVersion": "1",
+          "provider": "P",
+          "providerVersion": null,
+          "candidateRefs": [],
+          "disposition": "considered",
+          "contract": {
+            "hash": {
+              "algorithm": "sha1",
+              "value": "ed7c1aebc3e11064ce9afc29297e1e36203583cd"
+            },
+            "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+            "publicationHref": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1"
+          },
+          "verification": null,
+          "selectorIndices": [
+            0
+          ],
+          "ignoreRefs": []
+        }
+      ],
+      "reasons": [
+        {
+          "code": "VERIFICATION_MISSING",
+          "role": "decisive",
+          "message": "No verification is recorded for this exact C to P contract and selected provider version.",
+          "evidenceRefs": [
+            "/rows/0/contract",
+            "/rows/0/verification"
+          ],
+          "actionIds": [
+            "action-1"
+          ]
+        },
+        {
+          "code": "TARGET_VERSION_UNRESOLVED",
+          "role": "supporting",
+          "message": "No exact provider version was resolved for this contract's target.",
+          "evidenceRefs": [
+            "/rows/0/contract",
+            "/rows/0/verification"
+          ],
+          "actionIds": [
+            "action-1"
+          ]
+        }
+      ],
+      "nextActions": [
+        {
+          "id": "action-1",
+          "type": "RESOLVE_TARGET_VERSION",
+          "message": "Determine and record the intended provider version for this target before verifying this contract.",
+          "evidenceRefs": [
+            "/rows/0/contract",
+            "/rows/0/verification"
+          ],
+          "target": {
+            "consumer": "C",
+            "consumerVersion": "1",
+            "provider": "P",
+            "providerVersion": null,
+            "contractSha": "ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+            "environment": "test",
+            "tag": null
+          }
+        }
+      ]
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "method": "PUT",
+    "path": "/pacts/provider/P/consumer/C/version/1",
+    "auth": "synthetic writer or unauthenticated Ruby",
+    "status": 201,
+    "document": {
+      "consumer": {
+        "name": "C"
+      },
+      "provider": {
+        "name": "P"
+      },
+      "interactions": [],
+      "createdAt": "2026-11-02T01:19:38+00:00",
+      "_links": {
+        "self": {
+          "title": "Pact",
+          "name": "Pact between C (1) and P",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/version/1"
+        },
+        "pb:consumer": {
+          "title": "Consumer",
+          "name": "C",
+          "href": "http://127.0.0.1:9292/pacticipants/C"
+        },
+        "pb:consumer-version": {
+          "title": "Consumer version",
+          "name": "1",
+          "href": "http://127.0.0.1:9292/pacticipants/C/versions/1"
+        },
+        "pb:provider": {
+          "title": "Provider",
+          "name": "P",
+          "href": "http://127.0.0.1:9292/pacticipants/P"
+        },
+        "pb:pact-version": {
+          "title": "Pact content version permalink",
+          "name": "ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd"
+        },
+        "pb:latest-pact-version": {
+          "title": "Latest version of this pact",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/latest"
+        },
+        "pb:all-pact-versions": {
+          "title": "All versions of this pact",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/versions"
+        },
+        "pb:latest-untagged-pact-version": {
+          "title": "Latest untagged version of this pact",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/latest-untagged"
+        },
+        "pb:latest-tagged-pact-version": {
+          "title": "Latest tagged version of this pact",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/latest/{tag}",
+          "templated": true
+        },
+        "pb:previous-distinct": {
+          "title": "Previous distinct version of this pact",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/version/1/previous-distinct"
+        },
+        "pb:diff-previous-distinct": {
+          "title": "Diff with previous distinct version of this pact",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/version/1/diff/previous-distinct"
+        },
+        "pb:diff": {
+          "title": "Diff with another specified version of this pact",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/diff/pact-version/{pactVersion}",
+          "templated": true
+        },
+        "pb:pact-webhooks": {
+          "title": "Webhooks for the pact between C and P",
+          "href": "http://127.0.0.1:9292/webhooks/provider/P/consumer/C"
+        },
+        "pb:consumer-webhooks": {
+          "title": "Webhooks for all pacts with provider P",
+          "href": "http://127.0.0.1:9292/webhooks/consumer/P"
+        },
+        "pb:tag-prod-version": {
+          "title": "PUT to this resource to tag this consumer version as 'production'",
+          "href": "http://127.0.0.1:9292/pacticipants/C/versions/1/tags/prod"
+        },
+        "pb:tag-version": {
+          "title": "PUT to this resource to tag this consumer version",
+          "href": "http://127.0.0.1:9292/pacticipants/C/versions/1/tags/{tag}"
+        },
+        "pb:publish-verification-results": {
+          "title": "Publish verification results",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results"
+        },
+        "pb:latest-verification-results": {
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results/latest"
+        },
+        "pb:triggered-webhooks": {
+          "title": "Webhooks triggered by the publication of this pact",
+          "href": "http://127.0.0.1:9292/pacts/provider/P/consumer/C/version/1/triggered-webhooks"
+        },
+        "pb:matrix-for-consumer-version": {
+          "title": "View matrix rows for the consumer version to which this pact belongs",
+          "href": "http://127.0.0.1:9292/matrix?q%5B%5D%5Bpacticipant%5D=C&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+        },
+        "curies": [
+          {
+            "name": "pb",
+            "href": "http://127.0.0.1:9292/doc/{rel}?context=pact",
+            "templated": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "GET",
+    "path": "/matrix?q%5B%5D%5Bpacticipant%5D=C&q%5B%5D%5Bpacticipant%5D=C",
+    "auth": "read-only Basic",
+    "status": 200,
+    "document": {
+      "summary": {
+        "deployable": true,
+        "reason": "There are no missing dependencies",
+        "success": 0,
+        "failed": 0,
+        "unknown": 0
+      },
+      "notices": [
+        {
+          "type": "success",
+          "text": "There are no missing dependencies"
+        }
+      ],
+      "matrix": []
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "method": "GET",
+    "path": "/matrix?q%5B%5D%5Bpacticipant%5D=DefinitelyAbsent&q%5B%5D%5Bpacticipant%5D=P",
+    "auth": "read-only Basic",
+    "status": 400,
+    "document": {
+      "errors": [
+        "Pacticipant DefinitelyAbsent not found"
+      ]
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "method": "GET",
+    "path": "/matrix?q%5B%5D%5Bpacticipant%5D=C&q%5B%5D%5Bpacticipant%5D=C",
+    "auth": "synthetic writer or unauthenticated Ruby",
+    "status": 200,
+    "document": {
+      "summary": {
+        "deployable": true,
+        "reason": "There are no missing dependencies",
+        "success": 0,
+        "failed": 0,
+        "unknown": 0
+      },
+      "notices": [
+        {
+          "type": "success",
+          "text": "There are no missing dependencies"
+        }
+      ],
+      "matrix": []
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "method": "GET",
+    "path": "/matrix?q%5B%5D%5Bpacticipant%5D=DefinitelyAbsent&q%5B%5D%5Bpacticipant%5D=P",
+    "auth": "synthetic writer or unauthenticated Ruby",
+    "status": 400,
+    "document": {
+      "errors": [
+        "Pacticipant DefinitelyAbsent not found"
+      ]
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "method": "GET",
+    "path": "/pactling/v1/can-i-deploy/explanation?pacticipant=C&version=1&environment=test",
+    "auth": "synthetic writer or unauthenticated Ruby",
+    "status": 404,
+    "document": {
+      "error": "The requested document was not found on this server."
+    }
+  }
+]

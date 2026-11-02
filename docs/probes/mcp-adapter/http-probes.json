@@ -1,0 +1,54 @@
+[
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2025-11-25",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "http-probe",
+          "version": "0"
+        }
+      }
+    },
+    "status": 200,
+    "contentType": "text/event-stream",
+    "body": "data: \nid: 0\nretry: 3000\n\ndata: {\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"protocolVersion\":\"2025-11-25\",\"capabilities\":{\"tools\":{}},\"serverInfo\":{\"name\":\"rmcp\",\"version\":\"3.8.0\"}}}\n\n"
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "method": "notifications/initialized"
+    },
+    "status": 202,
+    "contentType": null,
+    "body": ""
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/list",
+      "params": {}
+    },
+    "status": 200,
+    "contentType": "text/event-stream",
+    "body": "data: \nid: 0/0\nretry: 3000\n\ndata: {\"jsonrpc\":\"2.0\",\"id\":2,\"result\":{\"tools\":[{\"name\":\"list_integrations\",\"description\":\"PROTOTYPE: list recorded broker integrations. Read-only; not a complete architecture or live-health inventory. No writes or task-context operations.\",\"inputSchema\":{\"type\":\"object\",\"properties\":{}}}]}}\nid: 1/0\n\n"
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "list_integrations",
+        "arguments": {}
+      }
+    },
+    "status": 200,
+    "contentType": "text/event-stream",
+    "body": "data: \nid: 0/1\nretry: 3000\n\ndata: {\"jsonrpc\":\"2.0\",\"id\":3,\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"schemaVersion\\\":\\\"1.0\\\",\\\"items\\\":[{\\\"consumer\\\":{\\\"name\\\":\\\"ProbeConsumer\\\"},\\\"provider\\\":{\\\"name\\\":\\\"ProbeProvider\\\"},\\\"_links\\\":{\\\"pb:dashboard\\\":{\\\"title\\\":\\\"BETA: Pacts to show on the dashboard\\\",\\\"href\\\":\\\"http://127.0.0.1:9495/dashboard/provider/ProbeProvider/consumer/ProbeConsumer\\\"},\\\"pb:matrix\\\":{\\\"title\\\":\\\"Matrix of pacts/verification results for ProbeConsumer and ProbeProvider\\\",\\\"href\\\":\\\"/matrix/provider/ProbeProvider/consumer/ProbeConsumer\\\"},\\\"pb:group\\\":{\\\"href\\\":\\\"http://127.0.0.1:9495/pacticipants/ProbeConsumer\\\"},\\\"pb:delete_integration\\\":{\\\"title\\\":\\\"Delete the integration between ProbeConsumer and ProbeProvider\\\",\\\"href\\\":\\\"http://127.0.0.1:9495/integrations/provider/ProbeProvider/consumer/ProbeConsumer\\\"}}}],\\\"nextCursor\\\":null,\\\"coverage\\\":\\\"recorded_only\\\"}\"}],\"structuredContent\":{\"schemaVersion\":\"1.0\",\"items\":[{\"consumer\":{\"name\":\"ProbeConsumer\"},\"provider\":{\"name\":\"ProbeProvider\"},\"_links\":{\"pb:dashboard\":{\"title\":\"BETA: Pacts to show on the dashboard\",\"href\":\"http://127.0.0.1:9495/dashboard/provider/ProbeProvider/consumer/ProbeConsumer\"},\"pb:matrix\":{\"title\":\"Matrix of pacts/verification results for ProbeConsumer and ProbeProvider\",\"href\":\"/matrix/provider/ProbeProvider/consumer/ProbeConsumer\"},\"pb:group\":{\"href\":\"http://127.0.0.1:9495/pacticipants/ProbeConsumer\"},\"pb:delete_integration\":{\"title\":\"Delete the integration between ProbeConsumer and ProbeProvider\",\"href\":\"http://127.0.0.1:9495/integrations/provider/ProbeProvider/consumer/ProbeConsumer\"}}}],\"nextCursor\":null,\"coverage\":\"recorded_only\"},\"isError\":false}}\nid: 1/1\n\n"
+  }
+]

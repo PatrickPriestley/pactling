@@ -1,0 +1,1 @@
+Python jsonschema 4.26.0 Draft202012Validator: two advertised input/output schemas valid; real unknown and error structuredContent both validate against root type:object oneOf output.
