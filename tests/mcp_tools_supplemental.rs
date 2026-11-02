@@ -14,7 +14,6 @@ struct Session {
     child: Child,
     input: ChildStdin,
     output: tokio::io::Lines<BufReader<ChildStdout>>,
-    seen: Arc<Mutex<Vec<String>>>,
     response: Arc<Mutex<(u16, String)>>,
     server: tokio::task::JoinHandle<()>,
     base: String,
@@ -62,7 +61,6 @@ impl Session {
             child,
             input,
             output,
-            seen,
             response,
             server,
             base,
@@ -125,12 +123,6 @@ fn explanation() -> Value {
 }
 fn matrix() -> Value {
     fixture("tests/fixtures/ruby-broker/2.121.2/phase4/GET_matrix_integration.json")
-}
-fn pair() -> Value {
-    json!({"participantA":"Consumer","participantB":"Provider"})
-}
-fn pact() -> Value {
-    json!({"consumer":"C","provider":"P","consumerVersion":"1"})
 }
 fn code(v: &Value, c: &str) {
     assert_eq!(v["error"]["code"], c, "{v}");
