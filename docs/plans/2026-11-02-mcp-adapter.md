@@ -320,3 +320,21 @@ Confirm enabling `mcp` in published release artifacts (recommended, while source
 feature-disabled), and the proposed 4 MiB upstream/1 MiB tool-result/five-minute cache limits.
 This plan intentionally does not add broker pagination or richer context tools; large installations
 may hit explicit size limits until a separately approved broker pagination design exists.
+
+### Task 2 preservation amendment (2026-11-02)
+
+Exact reqwest 0.13.5 source shows Cargo's unified `gzip`/`deflate` features enable
+response decoding by default for every client (`async_impl/client.rs`, `Accepts::default`).
+The MCP client needs decoded streaming limits, but the existing explain and webhook
+clients must retain their prior request headers and response handling. Explicitly disable
+both codecs on those existing clients. This adds `src/service/webhook_delivery.rs` to task 2's
+files solely to preserve server behavior; no webhook policy or broker auth changes.
+`tests/mcp_client_guards.rs` adds real-client loopback regression coverage for the CLI and
+webhook receiver, exact matrix query grouping and Accept headers. Reject a custom streaming
+decoder: reqwest already provides the required decoding and explicit per-client opt-out.
+
+The same exact-source audit found reqwest's default low-level protocol-NACK retries.
+Disable retries only on the MCP client to meet the accepted one-attempt contract. A private
+MCP builder and `src/broker_client_tests.rs` exercise an actual HTTP/2 REFUSED_STREAM peer,
+with HTTP/2 prior knowledge only in the test. The small test-only `h2` dependency is already
+in the existing dependency graph. Production protocol negotiation stays unchanged.
