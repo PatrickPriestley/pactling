@@ -5,6 +5,10 @@ edition = "2024"
 description = "A Pact broker in one binary"
 license = "MIT"
 
+[features]
+default = []
+mcp = []
+
 [dependencies]
 anyhow = "1"
 maud = "0.27"
