@@ -159,3 +159,51 @@ fn result_budget_includes_escaped_text_and_errors_omit_only_oversized_optional_u
         "https://broker/pacticipants"
     );
 }
+#[tokio::test]
+async fn page_shrink_takes_logarithmic_size_checks_and_keeps_pages_maximal() {
+    let cache = Pagination::default();
+    FITS_CALLS.with(|c| c.set(0));
+    let first = cache
+        .first(
+            "pactling_list_pacticipants",
+            items(100, 20_000),
+            100,
+            &ReadRoute::Pacticipants,
+            "https://broker/pacticipants",
+        )
+        .await
+        .unwrap();
+    let calls = FITS_CALLS.with(|c| c.get());
+    let entries = cache.0.lock().unwrap();
+    let entry = &entries[0];
+    assert!(entry.pages.len() > 1, "fixture must force shrinking");
+    // One check at full size, then a binary search over at most 100 ends.
+    assert!(
+        calls <= entry.pages.len() * 9,
+        "{calls} size checks for {} pages",
+        entry.pages.len()
+    );
+    assert_eq!(
+        first["data"]["items"].as_array().unwrap().len(),
+        entry.pages[0].end
+    );
+    for page in &entry.pages[..entry.pages.len() - 1] {
+        let mut larger = Page {
+            start: page.start,
+            end: page.end + 1,
+            cursor: None,
+            next: page.next.clone(),
+        };
+        if larger.end == entry.items.len() {
+            larger.next = None;
+        }
+        assert!(
+            !fits(&entry.envelope(&larger)),
+            "page {}..{} not maximal",
+            page.start,
+            page.end
+        );
+        assert!(fits(&entry.envelope(page)));
+    }
+    assert_eq!(entry.pages.last().unwrap().end, 100);
+}
