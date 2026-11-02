@@ -338,3 +338,16 @@ Disable retries only on the MCP client to meet the accepted one-attempt contract
 MCP builder and `src/broker_client_tests.rs` exercise an actual HTTP/2 REFUSED_STREAM peer,
 with HTTP/2 prior knowledge only in the test. The small test-only `h2` dependency is already
 in the existing dependency graph. Production protocol negotiation stays unchanged.
+
+### Task 3 catalog path clarification (2026-11-02)
+
+The configured-origin URL builder rejects exact dot segments and control characters.
+A catalog can nevertheless contain such broker names. If a required catalog link cannot
+represent that name, fail the whole call with INVALID_BROKER_RESPONSE, fixed text
+"Catalog contains an unsupported path name", and the safe catalog source evidenceUrl.
+This reports an adapter representability limitation, not an assertion that the broker
+name itself is invalid. Never normalize the name into a different route, drop the item,
+or pass through the broker's href. Matrix/explanation query-only names remain accepted.
+The source default remains unchanged; task 3 enables existing jsonschema 0.60.2 only with
+MCP for runtime validation of the exact discovery schemas. Explanation v1 is bundled as
+an unchanged embedded schema resource retaining its own `$id` and local references.
