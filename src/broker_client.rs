@@ -296,7 +296,10 @@ fn transport_error(error: reqwest::Error) -> ClientError {
 
 #[cfg(feature = "mcp")]
 fn mcp_client_builder() -> ClientBuilder {
-    client_builder().gzip(true).deflate(true)
+    client_builder()
+        .gzip(true)
+        .deflate(true)
+        .retry(reqwest::retry::never())
 }
 
 #[cfg(all(test, feature = "mcp"))]
