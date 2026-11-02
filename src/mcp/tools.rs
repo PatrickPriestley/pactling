@@ -1,6 +1,7 @@
 //! Fixed read-only tool dispatch. Catalog paging is isolated for the frozen-cache step.
 use super::{
     error::ToolError,
+    pagination::{self, Pagination},
     schema::{self, Contract},
 };
 use crate::broker_client::{
@@ -30,6 +31,7 @@ pub fn definitions() -> Vec<Tool> {
 
 pub async fn call(
     client: &ReadClient,
+    cache: &Pagination,
     request: CallToolRequestParams,
 ) -> Result<CallToolResult, ErrorData> {
     let contract = schema::CONTRACTS
@@ -37,28 +39,30 @@ pub async fn call(
         .find(|c| c.name == request.name.as_ref())
         .ok_or_else(|| ErrorData::invalid_params("Unknown tool", None))?;
     let arguments = Value::Object(request.arguments.unwrap_or_default());
-    let result = execute(client, contract, &arguments).await;
+    let result = execute(client, cache, contract, &arguments).await;
     Ok(match result {
-        Ok(envelope) => CallToolResult::structured(envelope),
-        Err(error) => CallToolResult::structured_error(error.0),
+        Ok(envelope) => {
+            if !contract.output_validator.is_valid(&envelope) {
+                pagination::error_result(ToolError::invalid_response())
+            } else {
+                CallToolResult::structured(envelope)
+            }
+        }
+        Err(error) => pagination::error_result(error),
     })
 }
 
 async fn execute(
     client: &ReadClient,
+    cache: &Pagination,
     contract: &Contract,
     args: &Value,
 ) -> Result<Value, ToolError> {
     if let Some(field) = contract.invalid_field(args) {
         return Err(ToolError::invalid_input(field));
     }
-    // Temporary continuation seam: task 4 supplies process-local frozen state.
-    if args.get("cursor").is_some() {
-        return Err(ToolError::new(
-            "CURSOR_EXPIRED",
-            "Cursor state is unavailable; restart the listing.",
-            false,
-        ));
+    if let Some(cursor) = args.get("cursor") {
+        return cache.next(contract.name, cursor.as_str().unwrap());
     }
     let route = route(contract.name, args);
     let source = client
@@ -81,18 +85,21 @@ async fn execute(
     let data = match &route {
         ReadRoute::Integrations | ReadRoute::Pacticipants => {
             let items = project_catalog(client, &route, &document, &source)?;
-            complete_catalog(
-                items,
-                args["pageSize"].as_f64().unwrap_or(25.0) as usize,
-                &route,
-                &source,
-            )?
+            return cache
+                .first(
+                    contract.name,
+                    items,
+                    args["pageSize"].as_f64().unwrap_or(25.0) as usize,
+                    &route,
+                    &source,
+                )
+                .await;
         }
         _ => document,
     };
     let envelope = schema::success(data, &source);
-    if !contract.output_validator.is_valid(&envelope) {
-        return Err(ToolError::invalid_response());
+    if !pagination::fits(&envelope) {
+        return Err(ToolError::too_large(&route, &source));
     }
     Ok(envelope)
 }
@@ -221,17 +228,4 @@ fn project_catalog(
         }
         _=>unreachable!("catalog route"),
     }).collect()
-}
-
-/// Replace this seam with frozen-response paging; never truncate a catalog silently.
-fn complete_catalog(
-    items: Vec<Value>,
-    page_size: usize,
-    route: &ReadRoute,
-    source: &str,
-) -> Result<Value, ToolError> {
-    if items.len() > page_size {
-        return Err(ToolError::too_large(route, source));
-    }
-    Ok(json!({"items":items,"nextCursor":null,"retrievedAt":chrono::Utc::now().to_rfc3339()}))
 }

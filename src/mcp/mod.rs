@@ -61,13 +61,21 @@ pub async fn run() -> anyhow::Result<()> {
             token: args.broker_token,
         },
     )?;
-    McpServer { client }.serve(stdio()).await?.waiting().await?;
+    McpServer {
+        client,
+        cache: pagination::Pagination::default(),
+    }
+    .serve(stdio())
+    .await?
+    .waiting()
+    .await?;
     Ok(())
 }
 
 #[derive(Clone)]
 pub struct McpServer {
     client: ReadClient,
+    cache: pagination::Pagination,
 }
 
 impl ServerHandler for McpServer {
@@ -78,9 +86,13 @@ impl ServerHandler for McpServer {
     async fn call_tool(
         &self,
         request: CallToolRequestParams,
-        _context: RequestContext<RoleServer>,
+        context: RequestContext<RoleServer>,
     ) -> Result<CallToolResponse, ErrorData> {
-        tools::call(&self.client, request).await.map(Into::into)
+        tokio::select! {
+            biased;
+            _ = context.ct.cancelled() => Err(ErrorData::internal_error("Request cancelled", None)),
+            result = tools::call(&self.client, &self.cache, request) => result.map(Into::into),
+        }
     }
 
     async fn list_tools(
