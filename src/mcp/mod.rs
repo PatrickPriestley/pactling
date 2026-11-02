@@ -1,5 +1,7 @@
 //! Optional stdio adapter. Broker access is independent of server startup.
 mod error;
+#[cfg(test)]
+mod error_tests;
 mod schema;
 mod tools;
 

@@ -351,3 +351,17 @@ or pass through the broker's href. Matrix/explanation query-only names remain ac
 The source default remains unchanged; task 3 enables existing jsonschema 0.60.2 only with
 MCP for runtime validation of the exact discovery schemas. Explanation v1 is bundled as
 an unchanged embedded schema resource retaining its own `$id` and local references.
+
+### Task 3 v1 minor-version clarification (2026-11-02)
+
+The existing explanation schema's decision/error definitions constrain schemaVersion to
+literal `1.0`, while the accepted error contract rejects unsupported **major** versions
+and the CLI accepts v1 minor versions. Runtime validation against an unchanged embedded
+resource consequently rejects an otherwise valid `1.9` response. Preserve that document
+unchanged and derive the bundled resource by changing only the decision/error version
+assertions to string pattern `^1\.[0-9]+$`. The original schema and fixtures stay untouched;
+all local references still resolve inside the bundled resource. Reject other majors and
+nonnumeric minor strings. The supplemental schema-equivalence test must normalize exactly
+those two nodes back to `const: "1.0"` before asserting full equality, and separately assert
+the precise derived constraints. This is the necessary correction to its earlier exact
+resource assertion, authorized by the supervising agent before changing the test.

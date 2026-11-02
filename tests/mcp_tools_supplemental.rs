@@ -174,8 +174,16 @@ async fn mcp_catalog_unrepresentable_names_fail_without_partial_data() {
 #[test]
 fn mcp_bundled_explanation_refs_preserve_original_schema() {
     let schema = fixture("docs/api/mcp/pactling_explain_deployment.output.schema.json");
+    let mut original = schema["$defs"]["explanation"].clone();
+    for kind in ["decision", "error"] {
+        assert_eq!(
+            original["$defs"][kind]["properties"]["schemaVersion"],
+            json!({"type":"string","pattern":"^1\\.[0-9]+$"})
+        );
+        original["$defs"][kind]["properties"]["schemaVersion"] = json!({"const":"1.0"});
+    }
     assert_eq!(
-        schema["$defs"]["explanation"],
+        original,
         fixture("docs/api/deployment-explanations-v1.schema.json")
     );
     let validator = jsonschema::validator_for(&schema).unwrap();
