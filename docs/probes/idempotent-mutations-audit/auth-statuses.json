@@ -1,0 +1,50 @@
+[
+  {
+    "identityClass": "anonymous",
+    "method": "GET",
+    "path": "/",
+    "status": 200
+  },
+  {
+    "identityClass": "anonymous",
+    "method": "POST",
+    "path": "/environments",
+    "status": 401
+  },
+  {
+    "identityClass": "read-only",
+    "method": "GET",
+    "path": "/",
+    "status": 200
+  },
+  {
+    "identityClass": "read-only",
+    "method": "POST",
+    "path": "/environments",
+    "status": 401
+  },
+  {
+    "identityClass": "read-write",
+    "method": "GET",
+    "path": "/",
+    "status": 200
+  },
+  {
+    "identityClass": "read-write",
+    "method": "POST",
+    "path": "/environments",
+    "status": 400
+  },
+  {
+    "identityClass": "bearer",
+    "method": "GET",
+    "path": "/",
+    "status": 200
+  },
+  {
+    "identityClass": "bearer",
+    "method": "POST",
+    "path": "/environments",
+    "status": 400
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "broker": "ruby",
+    "create": {
+      "status": 201,
+      "body": {
+        "uuid": "2zynciCZhoT7DfvS8ARlBA",
+        "description": "POST host.docker.internal",
+        "enabled": true,
+        "request": {
+          "method": "POST",
+          "url": "http://host.docker.internal:9396/ruby"
+        },
+        "events": [
+          {
+            "name": "contract_published"
+          }
+        ],
+        "createdAt": "2026-11-02T22:54:50+00:00",
+        "_links": {
+          "self": {
+            "title": "POST host.docker.internal",
+            "href": "http://localhost:9292/webhooks/2zynciCZhoT7DfvS8ARlBA"
+          },
+          "pb:execute": {
+            "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+            "href": "http://localhost:9292/webhooks/2zynciCZhoT7DfvS8ARlBA/execute"
+          },
+          "pb:webhooks": {
+            "title": "All webhooks",
+            "href": "http://localhost:9292/webhooks"
+          }
+        }
+      }
+    }
+  },
+  {
+    "broker": "ruby",
+    "attempt": 1,
+    "command": [
+      "pact-broker",
+      "publish",
+      "/tmp/pactling-audit-probe/pact.json",
+      "--consumer-app-version",
+      "1",
+      "--branch",
+      "main",
+      "--tag",
+      "dev",
+      "--broker-base-url",
+      "http://localhost:9393"
+    ],
+    "exit": 0,
+    "stdout": "Updated AuditC version 1 with branch main and tags dev\n\u001b[32mPact successfully republished for AuditC version 1 and provider AuditP with no content changes.\u001b[0m\n  View the published pact at \u001b[35mhttp://localhost:9393/pacts/provider/AuditP/consumer/AuditC/version/1\u001b[0m\n  Events detected: contract_published\n  Webhook 2zynciCZhoT7DfvS8ARlBA triggered for event contract_published.\n    View logs at \u001b[35mhttp://localhost:9393/triggered-webhooks/d96994c7-67db-4e27-a1e8-833f4eaf6a80/logs\u001b[0m\n",
+    "stderr": ""
+  },
+  {
+    "broker": "ruby",
+    "attempt": 2,
+    "command": [
+      "pact-broker",
+      "publish",
+      "/tmp/pactling-audit-probe/pact.json",
+      "--consumer-app-version",
+      "1",
+      "--branch",
+      "main",
+      "--tag",
+      "dev",
+      "--broker-base-url",
+      "http://localhost:9393"
+    ],
+    "exit": 0,
+    "stdout": "Updated AuditC version 1 with branch main and tags dev\n\u001b[32mPact successfully republished for AuditC version 1 and provider AuditP with no content changes.\u001b[0m\n  View the published pact at \u001b[35mhttp://localhost:9393/pacts/provider/AuditP/consumer/AuditC/version/1\u001b[0m\n  Events detected: contract_published\n  Webhook 2zynciCZhoT7DfvS8ARlBA triggered for event contract_published.\n    View logs at \u001b[35mhttp://localhost:9393/triggered-webhooks/e0b5b539-9fd9-4eb9-944b-a029861d189a/logs\u001b[0m\n",
+    "stderr": ""
+  },
+  {
+    "broker": "pactling",
+    "create": {
+      "status": 201,
+      "body": {
+        "uuid": "atnYNtItTFmMZE1mwluVdg",
+        "description": "POST localhost",
+        "enabled": true,
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:9396/pactling"
+        },
+        "events": [
+          {
+            "name": "contract_published"
+          }
+        ],
+        "createdAt": "2026-11-02T22:54:51+00:00",
+        "_links": {
+          "self": {
+            "title": "POST localhost",
+            "href": "http://localhost:9394/webhooks/atnYNtItTFmMZE1mwluVdg"
+          },
+          "pb:execute": {
+            "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
+            "href": "http://localhost:9394/webhooks/atnYNtItTFmMZE1mwluVdg/execute"
+          },
+          "pb:webhooks": {
+            "title": "All webhooks",
+            "href": "http://localhost:9394/webhooks"
+          }
+        }
+      }
+    }
+  },
+  {
+    "broker": "pactling",
+    "attempt": 1,
+    "command": [
+      "pact-broker",
+      "publish",
+      "/tmp/pactling-audit-probe/pact.json",
+      "--consumer-app-version",
+      "1",
+      "--branch",
+      "main",
+      "--tag",
+      "dev",
+      "--broker-base-url",
+      "http://localhost:9395"
+    ],
+    "exit": 0,
+    "stdout": "Updated AuditC version 1 with branch main and tags dev\n\u001b[32mPact successfully republished for AuditC version 1 and provider AuditP with no content changes.\u001b[0m\n  View the published pact at \u001b[35mhttp://localhost:9395/pacts/provider/AuditP/consumer/AuditC/version/1\u001b[0m\n  Events detected: contract_published\n  Webhook atnYNtItTFmMZE1mwluVdg triggered for event contract_published.\n    View logs at \u001b[35mhttp://localhost:9395/triggered-webhooks/e446f736-ea73-4e7e-b124-ddff3a62a500/logs\u001b[0m\n",
+    "stderr": ""
+  },
+  {
+    "broker": "pactling",
+    "attempt": 2,
+    "command": [
+      "pact-broker",
+      "publish",
+      "/tmp/pactling-audit-probe/pact.json",
+      "--consumer-app-version",
+      "1",
+      "--branch",
+      "main",
+      "--tag",
+      "dev",
+      "--broker-base-url",
+      "http://localhost:9395"
+    ],
+    "exit": 0,
+    "stdout": "Updated AuditC version 1 with branch main and tags dev\n\u001b[32mPact successfully republished for AuditC version 1 and provider AuditP with no content changes.\u001b[0m\n  View the published pact at \u001b[35mhttp://localhost:9395/pacts/provider/AuditP/consumer/AuditC/version/1\u001b[0m\n  Events detected: contract_published\n  Webhook atnYNtItTFmMZE1mwluVdg triggered for event contract_published.\n    View logs at \u001b[35mhttp://localhost:9395/triggered-webhooks/0aeea682-40ac-4fde-8a95-503be6bfb261/logs\u001b[0m\n",
+    "stderr": ""
+  }
+]
