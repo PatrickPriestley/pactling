@@ -83,7 +83,7 @@ async fn execute(
             let items = project_catalog(client, &route, &document, &source)?;
             complete_catalog(
                 items,
-                args["pageSize"].as_u64().unwrap_or(25) as usize,
+                args["pageSize"].as_f64().unwrap_or(25.0) as usize,
                 &route,
                 &source,
             )?

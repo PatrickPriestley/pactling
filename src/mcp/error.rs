@@ -57,7 +57,7 @@ impl ToolError {
                 let recognized = match route {
                     ReadRoute::Explanation(query) => match &query.target {
                         Target::Environment(name) => {
-                            document["schemaVersion"] == "1.0"
+                            super::schema::supported_explanation_version(&document["schemaVersion"])
                                 && document["error"]["code"] == "INVALID_QUERY"
                                 && document["error"]["details"]
                                     == json!([format!(

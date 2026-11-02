@@ -72,3 +72,12 @@ impl Contract {
 pub fn success(data: Value, source: &str) -> Value {
     json!({"adapterSchemaVersion":"1.0", "data":data, "coverage":"recorded_only", "evidenceLinks":[{"rel":"source","href":source}]})
 }
+
+/// Error-status recognition uses the same numeric-v1 constraint as discovery and decisions.
+pub fn supported_explanation_version(version: &Value) -> bool {
+    static VERSION: LazyLock<jsonschema::Validator> = LazyLock::new(|| {
+        jsonschema::validator_for(&CONTRACTS[0].output["$defs"]["explanation"]["$defs"]["error"]["properties"]["schemaVersion"])
+            .expect("valid bundled version constraint")
+    });
+    VERSION.is_valid(version)
+}

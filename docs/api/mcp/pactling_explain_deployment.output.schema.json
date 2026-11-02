@@ -967,7 +967,8 @@
           ],
           "properties": {
             "schemaVersion": {
-              "const": "1.0"
+              "type": "string",
+              "pattern": "^1\\.[0-9]+$"
             },
             "decision": {
               "enum": [
@@ -1233,7 +1234,8 @@
           ],
           "properties": {
             "schemaVersion": {
-              "const": "1.0"
+              "type": "string",
+              "pattern": "^1\\.[0-9]+$"
             },
             "error": {
               "type": "object",
