@@ -200,11 +200,27 @@ async fn mcp_guards_catalog_relation_presence_and_complete_pages() {
 #[tokio::test]
 async fn mcp_guards_transport_path_and_unknown_tool_errors() {
     let mut s = Session::new(200, json!({})).await;
-    for name in [".", "..", "C\n"] {
-        let mut a = pact();
-        a["consumer"] = json!(name);
-        code(&s.call("get_pact", a).await, "INVALID_INPUT");
+    for field in ["consumer", "provider", "consumerVersion"] {
+        for name in [".", "..", "C\n"] {
+            let mut a = pact();
+            a[field] = json!(name);
+            let r = s.call("get_pact", a).await;
+            code(&r, "INVALID_INPUT");
+            assert_eq!(
+                r["error"]["details"],
+                json!({"reasonCode":"SCHEMA_VALIDATION","field":format!("/{field}")})
+            );
+        }
     }
+    // Several unrepresentable segments: the first in argument order is named.
+    let mut a = pact();
+    a["provider"] = json!("..");
+    a["consumerVersion"] = json!(".");
+    let r = s.call("get_pact", a.clone()).await;
+    assert_eq!(r["error"]["details"]["field"], "/provider");
+    a["consumer"] = json!(".");
+    let r = s.call("get_pact", a).await;
+    assert_eq!(r["error"]["details"]["field"], "/consumer");
     let r = s
         .rpc(
             "tools/call",
