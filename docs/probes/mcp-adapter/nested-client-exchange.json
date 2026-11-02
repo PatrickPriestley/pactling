@@ -1,0 +1,576 @@
+[
+  {
+    "direction": "client_to_server",
+    "message": {
+      "jsonrpc": "2.0",
+      "id": 0,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "experimental": {
+            "codex/auth-change": {}
+          },
+          "elicitation": {
+            "form": {},
+            "url": {}
+          }
+        },
+        "clientInfo": {
+          "name": "codex-mcp-client",
+          "title": "Codex",
+          "version": "0.166.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "server_to_client",
+    "message": {
+      "jsonrpc": "2.0",
+      "id": 0,
+      "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "tools": {}
+        },
+        "serverInfo": {
+          "name": "rmcp",
+          "version": "3.8.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "client_to_server",
+    "message": {
+      "jsonrpc": "2.0",
+      "method": "notifications/initialized"
+    }
+  },
+  {
+    "direction": "client_to_server",
+    "message": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "tools/list",
+      "params": {}
+    }
+  },
+  {
+    "direction": "server_to_client",
+    "message": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "tools": [
+          {
+            "name": "list_integrations",
+            "description": "PROTOTYPE: list recorded broker integrations. Read-only; not a complete architecture or live-health inventory. No writes or task-context operations.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": false
+            },
+            "outputSchema": {
+              "type": "object",
+              "properties": {
+                "schemaVersion": {
+                  "const": "1.0"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "nextCursor": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "coverage": {
+                  "const": "recorded_only"
+                }
+              },
+              "required": [
+                "schemaVersion",
+                "items",
+                "nextCursor",
+                "coverage"
+              ],
+              "additionalProperties": false
+            },
+            "annotations": {
+              "readOnlyHint": true,
+              "destructiveHint": false,
+              "idempotentHint": true,
+              "openWorldHint": false
+            }
+          },
+          {
+            "name": "pactling_explain_deployment",
+            "description": "PROTOTYPE: explain a deployment using existing broker v1 evidence. Read-only. Unknown is not allowed; not live health. No actions executed.",
+            "inputSchema": {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Args",
+              "type": "object",
+              "properties": {
+                "pacticipant": {
+                  "type": "string"
+                },
+                "selector": {
+                  "$ref": "#/$defs/Selector"
+                },
+                "target": {
+                  "$ref": "#/$defs/Target"
+                },
+                "ignores": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/Ignore"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "pacticipant",
+                "selector",
+                "target"
+              ],
+              "$defs": {
+                "Selector": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "const": "version"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "version"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "const": "latest"
+                        },
+                        "tag": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "const": "branch"
+                        },
+                        "branch": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "branch"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "const": "mainBranch"
+                        }
+                      },
+                      "required": [
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "Target": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "const": "environment"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "name"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "const": "tag"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "name"
+                      ]
+                    }
+                  ]
+                },
+                "Ignore": {
+                  "type": "object",
+                  "properties": {
+                    "pacticipant": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "pacticipant"
+                  ]
+                }
+              }
+            },
+            "outputSchema": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "adapterSchemaVersion": {
+                      "const": "1.0"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "coverage": {
+                      "const": "recorded_only"
+                    },
+                    "evidenceLinks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  },
+                  "required": [
+                    "adapterSchemaVersion",
+                    "data",
+                    "coverage",
+                    "evidenceLinks"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "adapterSchemaVersion": {
+                      "const": "1.0"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "httpStatus": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "adapterSchemaVersion",
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "annotations": {
+              "readOnlyHint": true,
+              "destructiveHint": false,
+              "idempotentHint": true,
+              "openWorldHint": false
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "direction": "client_to_server",
+    "message": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/call",
+      "params": {
+        "name": "pactling_explain_deployment",
+        "arguments": {
+          "pacticipant": "ProbeConsumer",
+          "selector": {
+            "kind": "version",
+            "version": "1"
+          },
+          "target": {
+            "kind": "environment",
+            "name": "test"
+          }
+        }
+      }
+    }
+  },
+  {
+    "direction": "server_to_client",
+    "message": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"adapterSchemaVersion\":\"1.0\",\"data\":{\"schemaVersion\":\"1.0\",\"decision\":\"unknown\",\"summary\":\"No verification is recorded for this exact ProbeConsumer to ProbeProvider contract and selected provider version.\",\"compatibility\":{\"deployable\":null,\"success\":0,\"failed\":0,\"unknown\":1,\"ignored\":0,\"hasIgnores\":false},\"request\":{\"query\":\"q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvp&environment=test\"},\"evaluation\":{\"id\":\"c3d8c5f8-4e35-4f68-9fb4-243636f279eb\",\"startedAt\":\"2026-11-02T01:15:29.320205+00:00\",\"evaluatedAt\":\"2026-11-02T01:15:29.322241+00:00\",\"brokerVersion\":\"0.1.1\",\"engineRevision\":null,\"snapshot\":{\"kind\":\"read_transaction\",\"retained\":false}},\"evidence\":{\"completeness\":\"incomplete\",\"coverage\":\"recorded_only\",\"currentness\":\"not_checked\"},\"resolution\":{\"selectors\":[{\"index\":0,\"pacticipant\":\"ProbeConsumer\",\"versions\":[\"1\"],\"missingReason\":null,\"requested\":{\"pacticipant\":\"ProbeConsumer\",\"version\":\"1\",\"latest\":false,\"tag\":null,\"branch\":null,\"mainBranch\":false}}],\"target\":{\"kind\":\"environment\",\"name\":\"test\",\"uuid\":\"328ce46a-3085-4fa8-aeb4-185cf684e06e\",\"href\":\"http://127.0.0.1:9495/environments/328ce46a-3085-4fa8-aeb4-185cf684e06e\"},\"candidates\":[],\"excluded\":[],\"ignores\":[]},\"rows\":[{\"id\":\"row-1\",\"consumer\":\"ProbeConsumer\",\"consumerVersion\":\"1\",\"provider\":\"ProbeProvider\",\"providerVersion\":null,\"candidateRefs\":[],\"disposition\":\"considered\",\"contract\":{\"hash\":{\"algorithm\":\"sha1\",\"value\":\"c084c5e6191555a35fa4083adae03d1ff190b910\"},\"href\":\"http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/c084c5e6191555a35fa4083adae03d1ff190b910\",\"publicationHref\":\"http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/1\"},\"verification\":null,\"selectorIndices\":[0],\"ignoreRefs\":[]}],\"reasons\":[{\"code\":\"VERIFICATION_MISSING\",\"role\":\"decisive\",\"message\":\"No verification is recorded for this exact ProbeConsumer to ProbeProvider contract and selected provider version.\",\"evidenceRefs\":[\"/rows/0/contract\",\"/rows/0/verification\"],\"actionIds\":[\"action-1\"]},{\"code\":\"TARGET_VERSION_UNRESOLVED\",\"role\":\"supporting\",\"message\":\"No exact provider version was resolved for this contract's target.\",\"evidenceRefs\":[\"/rows/0/contract\",\"/rows/0/verification\"],\"actionIds\":[\"action-1\"]}],\"nextActions\":[{\"id\":\"action-1\",\"type\":\"RESOLVE_TARGET_VERSION\",\"message\":\"Determine and record the intended provider version for this target before verifying this contract.\",\"evidenceRefs\":[\"/rows/0/contract\",\"/rows/0/verification\"],\"target\":{\"consumer\":\"ProbeConsumer\",\"consumerVersion\":\"1\",\"provider\":\"ProbeProvider\",\"providerVersion\":null,\"contractSha\":\"c084c5e6191555a35fa4083adae03d1ff190b910\",\"environment\":\"test\",\"tag\":null}}]},\"coverage\":\"recorded_only\",\"evidenceLinks\":[{\"rel\":\"source\",\"href\":\"http://127.0.0.1:9495/pactling/v1/can-i-deploy/explanation?q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvp&environment=test\"}]}"
+          }
+        ],
+        "structuredContent": {
+          "adapterSchemaVersion": "1.0",
+          "data": {
+            "schemaVersion": "1.0",
+            "decision": "unknown",
+            "summary": "No verification is recorded for this exact ProbeConsumer to ProbeProvider contract and selected provider version.",
+            "compatibility": {
+              "deployable": null,
+              "success": 0,
+              "failed": 0,
+              "unknown": 1,
+              "ignored": 0,
+              "hasIgnores": false
+            },
+            "request": {
+              "query": "q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvp&environment=test"
+            },
+            "evaluation": {
+              "id": "c3d8c5f8-4e35-4f68-9fb4-243636f279eb",
+              "startedAt": "2026-11-02T01:15:29.320205+00:00",
+              "evaluatedAt": "2026-11-02T01:15:29.322241+00:00",
+              "brokerVersion": "0.1.1",
+              "engineRevision": null,
+              "snapshot": {
+                "kind": "read_transaction",
+                "retained": false
+              }
+            },
+            "evidence": {
+              "completeness": "incomplete",
+              "coverage": "recorded_only",
+              "currentness": "not_checked"
+            },
+            "resolution": {
+              "selectors": [
+                {
+                  "index": 0,
+                  "pacticipant": "ProbeConsumer",
+                  "versions": [
+                    "1"
+                  ],
+                  "missingReason": null,
+                  "requested": {
+                    "pacticipant": "ProbeConsumer",
+                    "version": "1",
+                    "latest": false,
+                    "tag": null,
+                    "branch": null,
+                    "mainBranch": false
+                  }
+                }
+              ],
+              "target": {
+                "kind": "environment",
+                "name": "test",
+                "uuid": "328ce46a-3085-4fa8-aeb4-185cf684e06e",
+                "href": "http://127.0.0.1:9495/environments/328ce46a-3085-4fa8-aeb4-185cf684e06e"
+              },
+              "candidates": [],
+              "excluded": [],
+              "ignores": []
+            },
+            "rows": [
+              {
+                "id": "row-1",
+                "consumer": "ProbeConsumer",
+                "consumerVersion": "1",
+                "provider": "ProbeProvider",
+                "providerVersion": null,
+                "candidateRefs": [],
+                "disposition": "considered",
+                "contract": {
+                  "hash": {
+                    "algorithm": "sha1",
+                    "value": "c084c5e6191555a35fa4083adae03d1ff190b910"
+                  },
+                  "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/c084c5e6191555a35fa4083adae03d1ff190b910",
+                  "publicationHref": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/1"
+                },
+                "verification": null,
+                "selectorIndices": [
+                  0
+                ],
+                "ignoreRefs": []
+              }
+            ],
+            "reasons": [
+              {
+                "code": "VERIFICATION_MISSING",
+                "role": "decisive",
+                "message": "No verification is recorded for this exact ProbeConsumer to ProbeProvider contract and selected provider version.",
+                "evidenceRefs": [
+                  "/rows/0/contract",
+                  "/rows/0/verification"
+                ],
+                "actionIds": [
+                  "action-1"
+                ]
+              },
+              {
+                "code": "TARGET_VERSION_UNRESOLVED",
+                "role": "supporting",
+                "message": "No exact provider version was resolved for this contract's target.",
+                "evidenceRefs": [
+                  "/rows/0/contract",
+                  "/rows/0/verification"
+                ],
+                "actionIds": [
+                  "action-1"
+                ]
+              }
+            ],
+            "nextActions": [
+              {
+                "id": "action-1",
+                "type": "RESOLVE_TARGET_VERSION",
+                "message": "Determine and record the intended provider version for this target before verifying this contract.",
+                "evidenceRefs": [
+                  "/rows/0/contract",
+                  "/rows/0/verification"
+                ],
+                "target": {
+                  "consumer": "ProbeConsumer",
+                  "consumerVersion": "1",
+                  "provider": "ProbeProvider",
+                  "providerVersion": null,
+                  "contractSha": "c084c5e6191555a35fa4083adae03d1ff190b910",
+                  "environment": "test",
+                  "tag": null
+                }
+              }
+            ]
+          },
+          "coverage": "recorded_only",
+          "evidenceLinks": [
+            {
+              "rel": "source",
+              "href": "http://127.0.0.1:9495/pactling/v1/can-i-deploy/explanation?q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Bversion%5D=1&latestby=cvp&environment=test"
+            }
+          ]
+        },
+        "isError": false
+      }
+    }
+  },
+  {
+    "direction": "client_to_server",
+    "message": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "pactling_explain_deployment",
+        "arguments": {
+          "pacticipant": "ProbeConsumer",
+          "selector": {
+            "kind": "version",
+            "version": "1"
+          },
+          "target": {
+            "kind": "environment",
+            "name": "nope"
+          }
+        }
+      }
+    }
+  },
+  {
+    "direction": "server_to_client",
+    "message": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"adapterSchemaVersion\":\"1.0\",\"error\":{\"code\":\"INVALID_INPUT\",\"message\":\"Prototype request rejected.\",\"retryable\":false,\"httpStatus\":400}}"
+          }
+        ],
+        "structuredContent": {
+          "adapterSchemaVersion": "1.0",
+          "error": {
+            "code": "INVALID_INPUT",
+            "message": "Prototype request rejected.",
+            "retryable": false,
+            "httpStatus": 400
+          }
+        },
+        "isError": true
+      }
+    }
+  }
+]

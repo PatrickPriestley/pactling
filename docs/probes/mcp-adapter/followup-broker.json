@@ -1,0 +1,2651 @@
+[
+  {
+    "path": "/pacticipants",
+    "method": "POST",
+    "status": 201,
+    "document": {
+      "name": "NoVersion",
+      "displayName": "No Version",
+      "createdAt": "2026-11-02T01:16:17+00:00",
+      "_embedded": {
+        "labels": []
+      },
+      "_links": {
+        "self": {
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion"
+        },
+        "pb:versions": {
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions"
+        },
+        "pb:branches": {
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches"
+        },
+        "pb:version": {
+          "title": "Get, create or delete a pacticipant version",
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions/{version}",
+          "templated": true
+        },
+        "pb:version-tag": {
+          "title": "Get, create or delete a tag for a version of NoVersion",
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions/{version}/tags/{tag}",
+          "templated": true
+        },
+        "pb:branch-version": {
+          "title": "Get or add/create a version for a branch of NoVersion",
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches/{branch}/versions/{version}",
+          "templated": true
+        },
+        "pb:label": {
+          "title": "Get, create or delete a label for NoVersion",
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/labels/{label}",
+          "templated": true
+        },
+        "versions": {
+          "title": "Deprecated - use pb:versions",
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions"
+        },
+        "pb:can-i-deploy-badge": {
+          "title": "Can I Deploy NoVersion badge",
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+          "templated": true
+        },
+        "pb:can-i-deploy-branch-to-environment-badge": {
+          "title": "Can I Deploy NoVersion from branch to environment badge",
+          "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+          "templated": true
+        },
+        "curies": [
+          {
+            "name": "pb",
+            "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+            "templated": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "path": "/pacticipants",
+    "method": "GET",
+    "status": 200,
+    "document": {
+      "_embedded": {
+        "pacticipants": [
+          {
+            "name": "%2F",
+            "displayName": "%2F",
+            "createdAt": "2026-11-02T01:15:34+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/%252F/versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/%252F/versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/%252F"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of %2F",
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of %2F",
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for %2F",
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy %2F badge",
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy %2F from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/%252F/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": ".",
+            "displayName": "",
+            "createdAt": "2026-11-02T01:15:34+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/./versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/./versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/."
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/./versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/./branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/./versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of .",
+                "href": "http://127.0.0.1:9495/pacticipants/./versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of .",
+                "href": "http://127.0.0.1:9495/pacticipants/./branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for .",
+                "href": "http://127.0.0.1:9495/pacticipants/./labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/./versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy . badge",
+                "href": "http://127.0.0.1:9495/pacticipants/./latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy . from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/./branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "..",
+            "displayName": "",
+            "createdAt": "2026-11-02T01:15:34+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/../versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/../versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/.."
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/../versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/../branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/../versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of ..",
+                "href": "http://127.0.0.1:9495/pacticipants/../versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of ..",
+                "href": "http://127.0.0.1:9495/pacticipants/../branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for ..",
+                "href": "http://127.0.0.1:9495/pacticipants/../labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/../versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy .. badge",
+                "href": "http://127.0.0.1:9495/pacticipants/../latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy .. from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/../branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "EdgeProvider",
+            "displayName": "Edge Provider",
+            "createdAt": "2026-11-02T01:15:34+00:00",
+            "_embedded": {
+              "labels": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of EdgeProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of EdgeProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for EdgeProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy EdgeProvider badge",
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy EdgeProvider from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "hash#",
+            "displayName": "Hash#",
+            "createdAt": "2026-11-02T01:15:34+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of hash#",
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of hash#",
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for hash#",
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy hash# badge",
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy hash# from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/hash%23/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "NoVersion",
+            "displayName": "No Version",
+            "createdAt": "2026-11-02T01:16:17+00:00",
+            "_embedded": {
+              "labels": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of NoVersion",
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of NoVersion",
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for NoVersion",
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy NoVersion badge",
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy NoVersion from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "nul%00",
+            "displayName": "Nul%00",
+            "createdAt": "2026-11-02T01:15:34+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of nul%00",
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of nul%00",
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for nul%00",
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy nul%00 badge",
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy nul%00 from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/nul%2500/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "OtherConsumer",
+            "displayName": "Other Consumer",
+            "createdAt": "2026-11-02T01:15:21+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of OtherConsumer",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of OtherConsumer",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for OtherConsumer",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy OtherConsumer badge",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy OtherConsumer from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "OtherProvider",
+            "displayName": "Other Provider",
+            "createdAt": "2026-11-02T01:15:21+00:00",
+            "_embedded": {
+              "labels": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of OtherProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of OtherProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for OtherProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy OtherProvider badge",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy OtherProvider from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "ProbeConsumer",
+            "displayName": "Probe Consumer",
+            "createdAt": "2026-11-02T01:15:21+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of ProbeConsumer",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of ProbeConsumer",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for ProbeConsumer",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy ProbeConsumer badge",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy ProbeConsumer from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "ProbeProvider",
+            "displayName": "Probe Provider",
+            "createdAt": "2026-11-02T01:15:21+00:00",
+            "_embedded": {
+              "labels": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of ProbeProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of ProbeProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for ProbeProvider",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy ProbeProvider badge",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy ProbeProvider from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "question?",
+            "displayName": "Question?",
+            "createdAt": "2026-11-02T01:15:34+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of question?",
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of question?",
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for question?",
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy question? badge",
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy question? from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/question%3F/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "slash/name",
+            "displayName": "Slash/name",
+            "createdAt": "2026-11-02T01:15:34+00:00",
+            "_embedded": {
+              "latestVersion": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/1"
+                  }
+                }
+              },
+              "labels": [],
+              "latest-version": {
+                "number": "1",
+                "_links": {
+                  "self": {
+                    "title": "Version",
+                    "name": "1",
+                    "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/1"
+                  }
+                },
+                "title": "DEPRECATED - please use latestVersion",
+                "name": "DEPRECATED - please use latestVersion"
+              }
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname"
+              },
+              "pb:versions": {
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions"
+              },
+              "pb:branches": {
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/branches"
+              },
+              "pb:version": {
+                "title": "Get, create or delete a pacticipant version",
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/{version}",
+                "templated": true
+              },
+              "pb:version-tag": {
+                "title": "Get, create or delete a tag for a version of slash/name",
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/{version}/tags/{tag}",
+                "templated": true
+              },
+              "pb:branch-version": {
+                "title": "Get or add/create a version for a branch of slash/name",
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/branches/{branch}/versions/{version}",
+                "templated": true
+              },
+              "pb:label": {
+                "title": "Get, create or delete a label for slash/name",
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/labels/{label}",
+                "templated": true
+              },
+              "versions": {
+                "title": "Deprecated - use pb:versions",
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions"
+              },
+              "pb:can-i-deploy-badge": {
+                "title": "Can I Deploy slash/name badge",
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+                "templated": true
+              },
+              "pb:can-i-deploy-branch-to-environment-badge": {
+                "title": "Can I Deploy slash/name from branch to environment badge",
+                "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+                "templated": true
+              },
+              "curies": [
+                {
+                  "name": "pb",
+                  "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                  "templated": true
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "_links": {
+        "self": {
+          "href": "http://127.0.0.1:9495/pacticipants"
+        },
+        "pb:pacticipants-with-label": {
+          "href": "http://127.0.0.1:9495/pacticipants/label/{label}",
+          "title": "Find pacticipants by label",
+          "templated": true
+        },
+        "pb:pacticipants": [
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/%252F",
+            "title": "Pacticipant",
+            "name": "%2F"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/.",
+            "title": "Pacticipant",
+            "name": "."
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/..",
+            "title": "Pacticipant",
+            "name": ".."
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider",
+            "title": "Pacticipant",
+            "name": "EdgeProvider"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/hash%23",
+            "title": "Pacticipant",
+            "name": "hash#"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/NoVersion",
+            "title": "Pacticipant",
+            "name": "NoVersion"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/nul%2500",
+            "title": "Pacticipant",
+            "name": "nul%00"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer",
+            "title": "Pacticipant",
+            "name": "OtherConsumer"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/OtherProvider",
+            "title": "Pacticipant",
+            "name": "OtherProvider"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer",
+            "title": "Pacticipant",
+            "name": "ProbeConsumer"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider",
+            "title": "Pacticipant",
+            "name": "ProbeProvider"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/question%3F",
+            "title": "Pacticipant",
+            "name": "question?"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname",
+            "title": "Pacticipant",
+            "name": "slash/name"
+          }
+        ],
+        "pacticipants": [
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/%252F",
+            "title": "%2F",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/.",
+            "title": ".",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/..",
+            "title": "..",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider",
+            "title": "EdgeProvider",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/hash%23",
+            "title": "hash#",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/NoVersion",
+            "title": "NoVersion",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/nul%2500",
+            "title": "nul%00",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer",
+            "title": "OtherConsumer",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/OtherProvider",
+            "title": "OtherProvider",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer",
+            "title": "ProbeConsumer",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider",
+            "title": "ProbeProvider",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/question%3F",
+            "title": "question?",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          },
+          {
+            "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname",
+            "title": "slash/name",
+            "name": "DEPRECATED - please use pb:pacticipants"
+          }
+        ]
+      },
+      "pacticipants": [
+        {
+          "name": "%2F",
+          "displayName": "%2F",
+          "createdAt": "2026-11-02T01:15:34+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/%252F/versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/%252F/versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/%252F"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of %2F",
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of %2F",
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for %2F",
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy %2F badge",
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy %2F from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/%252F/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": ".",
+          "displayName": "",
+          "createdAt": "2026-11-02T01:15:34+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/./versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/./versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/."
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/./versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/./branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/./versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of .",
+              "href": "http://127.0.0.1:9495/pacticipants/./versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of .",
+              "href": "http://127.0.0.1:9495/pacticipants/./branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for .",
+              "href": "http://127.0.0.1:9495/pacticipants/./labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/./versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy . badge",
+              "href": "http://127.0.0.1:9495/pacticipants/./latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy . from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/./branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "..",
+          "displayName": "",
+          "createdAt": "2026-11-02T01:15:34+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/../versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/../versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/.."
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/../versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/../branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/../versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of ..",
+              "href": "http://127.0.0.1:9495/pacticipants/../versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of ..",
+              "href": "http://127.0.0.1:9495/pacticipants/../branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for ..",
+              "href": "http://127.0.0.1:9495/pacticipants/../labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/../versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy .. badge",
+              "href": "http://127.0.0.1:9495/pacticipants/../latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy .. from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/../branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "EdgeProvider",
+          "displayName": "Edge Provider",
+          "createdAt": "2026-11-02T01:15:34+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "labels": []
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of EdgeProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of EdgeProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for EdgeProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy EdgeProvider badge",
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy EdgeProvider from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/EdgeProvider/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "hash#",
+          "displayName": "Hash#",
+          "createdAt": "2026-11-02T01:15:34+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of hash#",
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of hash#",
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for hash#",
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy hash# badge",
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy hash# from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/hash%23/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "NoVersion",
+          "displayName": "No Version",
+          "createdAt": "2026-11-02T01:16:17+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "labels": []
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of NoVersion",
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of NoVersion",
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for NoVersion",
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy NoVersion badge",
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy NoVersion from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/NoVersion/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "nul%00",
+          "displayName": "Nul%00",
+          "createdAt": "2026-11-02T01:15:34+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of nul%00",
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of nul%00",
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for nul%00",
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy nul%00 badge",
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy nul%00 from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/nul%2500/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "OtherConsumer",
+          "displayName": "Other Consumer",
+          "createdAt": "2026-11-02T01:15:21+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of OtherConsumer",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of OtherConsumer",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for OtherConsumer",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy OtherConsumer badge",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy OtherConsumer from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "OtherProvider",
+          "displayName": "Other Provider",
+          "createdAt": "2026-11-02T01:15:21+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "labels": []
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of OtherProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of OtherProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for OtherProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy OtherProvider badge",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy OtherProvider from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/OtherProvider/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "ProbeConsumer",
+          "displayName": "Probe Consumer",
+          "createdAt": "2026-11-02T01:15:21+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of ProbeConsumer",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of ProbeConsumer",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for ProbeConsumer",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy ProbeConsumer badge",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy ProbeConsumer from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "ProbeProvider",
+          "displayName": "Probe Provider",
+          "createdAt": "2026-11-02T01:15:21+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "labels": []
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of ProbeProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of ProbeProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for ProbeProvider",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy ProbeProvider badge",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy ProbeProvider from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "question?",
+          "displayName": "Question?",
+          "createdAt": "2026-11-02T01:15:34+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of question?",
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of question?",
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for question?",
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy question? badge",
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy question? from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/question%3F/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "slash/name",
+          "displayName": "Slash/name",
+          "createdAt": "2026-11-02T01:15:34+00:00",
+          "title": "DEPRECATED - Please use the embedded pacticipants collection",
+          "_embedded": {
+            "latestVersion": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/1"
+                }
+              }
+            },
+            "labels": [],
+            "latest-version": {
+              "number": "1",
+              "_links": {
+                "self": {
+                  "title": "Version",
+                  "name": "1",
+                  "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/1"
+                }
+              },
+              "title": "DEPRECATED - please use latestVersion",
+              "name": "DEPRECATED - please use latestVersion"
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname"
+            },
+            "pb:versions": {
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions"
+            },
+            "pb:branches": {
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/branches"
+            },
+            "pb:version": {
+              "title": "Get, create or delete a pacticipant version",
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/{version}",
+              "templated": true
+            },
+            "pb:version-tag": {
+              "title": "Get, create or delete a tag for a version of slash/name",
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/{version}/tags/{tag}",
+              "templated": true
+            },
+            "pb:branch-version": {
+              "title": "Get or add/create a version for a branch of slash/name",
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/branches/{branch}/versions/{version}",
+              "templated": true
+            },
+            "pb:label": {
+              "title": "Get, create or delete a label for slash/name",
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/labels/{label}",
+              "templated": true
+            },
+            "versions": {
+              "title": "Deprecated - use pb:versions",
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/versions"
+            },
+            "pb:can-i-deploy-badge": {
+              "title": "Can I Deploy slash/name badge",
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/latest-version/{tag}/can-i-deploy/to/{environmentTag}/badge",
+              "templated": true
+            },
+            "pb:can-i-deploy-branch-to-environment-badge": {
+              "title": "Can I Deploy slash/name from branch to environment badge",
+              "href": "http://127.0.0.1:9495/pacticipants/slash%2Fname/branches/{branch}/latest-version/can-i-deploy/to-environment/{environment}/badge",
+              "templated": true
+            },
+            "curies": [
+              {
+                "name": "pb",
+                "href": "http://127.0.0.1:9495/doc/{rel}?context=pacticipant",
+                "templated": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "path": "/pacticipants/Absent",
+    "method": "GET",
+    "status": 404,
+    "document": {
+      "error": "No pacticipant with name 'Absent' found"
+    }
+  },
+  {
+    "path": "/pacts/provider/Absent/consumer/Absent/version/1",
+    "method": "GET",
+    "status": 404,
+    "document": {
+      "error": "The requested document was not found on this server."
+    }
+  },
+  {
+    "path": "/wrong-prefix/integrations",
+    "method": "GET",
+    "status": 404,
+    "document": {
+      "error": "The requested document was not found on this server."
+    }
+  },
+  {
+    "path": "/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/2",
+    "method": "PUT",
+    "status": 201,
+    "document": {
+      "consumer": {
+        "name": "ProbeConsumer"
+      },
+      "provider": {
+        "name": "ProbeProvider"
+      },
+      "interactions": [],
+      "metadata": {},
+      "createdAt": "2026-11-02T01:16:17+00:00",
+      "_links": {
+        "self": {
+          "title": "Pact",
+          "name": "Pact between ProbeConsumer (2) and ProbeProvider",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/2"
+        },
+        "pb:consumer": {
+          "title": "Consumer",
+          "name": "ProbeConsumer",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+        },
+        "pb:consumer-version": {
+          "title": "Consumer version",
+          "name": "2",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/2"
+        },
+        "pb:provider": {
+          "title": "Provider",
+          "name": "ProbeProvider",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider"
+        },
+        "pb:pact-version": {
+          "title": "Pact content version permalink",
+          "name": "ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd"
+        },
+        "pb:latest-pact-version": {
+          "title": "Latest version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/latest"
+        },
+        "pb:all-pact-versions": {
+          "title": "All versions of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/versions"
+        },
+        "pb:latest-untagged-pact-version": {
+          "title": "Latest untagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/latest-untagged"
+        },
+        "pb:latest-tagged-pact-version": {
+          "title": "Latest tagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/latest/{tag}",
+          "templated": true
+        },
+        "pb:previous-distinct": {
+          "title": "Previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/2/previous-distinct"
+        },
+        "pb:diff-previous-distinct": {
+          "title": "Diff with previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/2/diff/previous-distinct"
+        },
+        "pb:diff": {
+          "title": "Diff with another specified version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/diff/pact-version/{pactVersion}",
+          "templated": true
+        },
+        "pb:pact-webhooks": {
+          "title": "Webhooks for the pact between ProbeConsumer and ProbeProvider",
+          "href": "http://127.0.0.1:9495/webhooks/provider/ProbeProvider/consumer/ProbeConsumer"
+        },
+        "pb:consumer-webhooks": {
+          "title": "Webhooks for all pacts with provider ProbeProvider",
+          "href": "http://127.0.0.1:9495/webhooks/consumer/ProbeProvider"
+        },
+        "pb:tag-prod-version": {
+          "title": "PUT to this resource to tag this consumer version as 'production'",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/2/tags/prod"
+        },
+        "pb:tag-version": {
+          "title": "PUT to this resource to tag this consumer version",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/2/tags/{tag}"
+        },
+        "pb:publish-verification-results": {
+          "title": "Publish verification results",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results"
+        },
+        "pb:latest-verification-results": {
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results/latest"
+        },
+        "pb:triggered-webhooks": {
+          "title": "Webhooks triggered by the publication of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/2/triggered-webhooks"
+        },
+        "pb:matrix-for-consumer-version": {
+          "title": "View matrix rows for the consumer version to which this pact belongs",
+          "href": "http://127.0.0.1:9495/matrix?q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Bversion%5D=2&latestby=cvpv"
+        },
+        "curies": [
+          {
+            "name": "pb",
+            "href": "http://127.0.0.1:9495/doc/{rel}?context=pact",
+            "templated": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "path": "/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/3",
+    "method": "PUT",
+    "status": 201,
+    "document": {
+      "consumer": {
+        "name": "ProbeConsumer"
+      },
+      "provider": {
+        "name": "ProbeProvider"
+      },
+      "interactions": [],
+      "metadata": {},
+      "createdAt": "2026-11-02T01:16:17+00:00",
+      "_links": {
+        "self": {
+          "title": "Pact",
+          "name": "Pact between ProbeConsumer (3) and ProbeProvider",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/3"
+        },
+        "pb:consumer": {
+          "title": "Consumer",
+          "name": "ProbeConsumer",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+        },
+        "pb:consumer-version": {
+          "title": "Consumer version",
+          "name": "3",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/3"
+        },
+        "pb:provider": {
+          "title": "Provider",
+          "name": "ProbeProvider",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider"
+        },
+        "pb:pact-version": {
+          "title": "Pact content version permalink",
+          "name": "ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd"
+        },
+        "pb:latest-pact-version": {
+          "title": "Latest version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/latest"
+        },
+        "pb:all-pact-versions": {
+          "title": "All versions of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/versions"
+        },
+        "pb:latest-untagged-pact-version": {
+          "title": "Latest untagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/latest-untagged"
+        },
+        "pb:latest-tagged-pact-version": {
+          "title": "Latest tagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/latest/{tag}",
+          "templated": true
+        },
+        "pb:previous-distinct": {
+          "title": "Previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/3/previous-distinct"
+        },
+        "pb:diff-previous-distinct": {
+          "title": "Diff with previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/3/diff/previous-distinct"
+        },
+        "pb:diff": {
+          "title": "Diff with another specified version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/diff/pact-version/{pactVersion}",
+          "templated": true
+        },
+        "pb:pact-webhooks": {
+          "title": "Webhooks for the pact between ProbeConsumer and ProbeProvider",
+          "href": "http://127.0.0.1:9495/webhooks/provider/ProbeProvider/consumer/ProbeConsumer"
+        },
+        "pb:consumer-webhooks": {
+          "title": "Webhooks for all pacts with provider ProbeProvider",
+          "href": "http://127.0.0.1:9495/webhooks/consumer/ProbeProvider"
+        },
+        "pb:tag-prod-version": {
+          "title": "PUT to this resource to tag this consumer version as 'production'",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/3/tags/prod"
+        },
+        "pb:tag-version": {
+          "title": "PUT to this resource to tag this consumer version",
+          "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/3/tags/{tag}"
+        },
+        "pb:publish-verification-results": {
+          "title": "Publish verification results",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results"
+        },
+        "pb:latest-verification-results": {
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results/latest"
+        },
+        "pb:triggered-webhooks": {
+          "title": "Webhooks triggered by the publication of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/3/triggered-webhooks"
+        },
+        "pb:matrix-for-consumer-version": {
+          "title": "View matrix rows for the consumer version to which this pact belongs",
+          "href": "http://127.0.0.1:9495/matrix?q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Bversion%5D=3&latestby=cvpv"
+        },
+        "curies": [
+          {
+            "name": "pb",
+            "href": "http://127.0.0.1:9495/doc/{rel}?context=pact",
+            "templated": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "path": "/matrix?q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Bpacticipant%5D=ProbeProvider",
+    "method": "GET",
+    "status": 200,
+    "document": {
+      "summary": {
+        "deployable": null,
+        "reason": "There is no verified pact between any version of ProbeConsumer and any version of ProbeProvider\nThere is no verified pact between any version of ProbeConsumer and any version of ProbeProvider\nThere is no verified pact between any version of ProbeConsumer and any version of ProbeProvider",
+        "success": 0,
+        "failed": 0,
+        "unknown": 3
+      },
+      "notices": [
+        {
+          "type": "error",
+          "text": "There is no verified pact between any version of ProbeConsumer and any version of ProbeProvider"
+        },
+        {
+          "type": "error",
+          "text": "There is no verified pact between any version of ProbeConsumer and any version of ProbeProvider"
+        },
+        {
+          "type": "error",
+          "text": "There is no verified pact between any version of ProbeConsumer and any version of ProbeProvider"
+        }
+      ],
+      "matrix": [
+        {
+          "consumer": {
+            "name": "ProbeConsumer",
+            "version": {
+              "number": "3",
+              "branches": [],
+              "branchVersions": [],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/3"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+              }
+            }
+          },
+          "provider": {
+            "name": "ProbeProvider",
+            "version": null,
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider"
+              }
+            }
+          },
+          "pact": {
+            "createdAt": "2026-11-02T01:16:17+00:00",
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/3"
+              }
+            }
+          },
+          "verificationResult": null
+        },
+        {
+          "consumer": {
+            "name": "ProbeConsumer",
+            "version": {
+              "number": "2",
+              "branches": [],
+              "branchVersions": [],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/2"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+              }
+            }
+          },
+          "provider": {
+            "name": "ProbeProvider",
+            "version": null,
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider"
+              }
+            }
+          },
+          "pact": {
+            "createdAt": "2026-11-02T01:16:17+00:00",
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/2"
+              }
+            }
+          },
+          "verificationResult": null
+        },
+        {
+          "consumer": {
+            "name": "ProbeConsumer",
+            "version": {
+              "number": "1",
+              "branches": [],
+              "branchVersions": [],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/1"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+              }
+            }
+          },
+          "provider": {
+            "name": "ProbeProvider",
+            "version": null,
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider"
+              }
+            }
+          },
+          "pact": {
+            "createdAt": "2026-11-02T01:15:21+00:00",
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/1"
+              }
+            }
+          },
+          "verificationResult": null
+        }
+      ]
+    }
+  },
+  {
+    "path": "/matrix?q%5B%5D%5Bpacticipant%5D=ProbeConsumer&q%5B%5D%5Bpacticipant%5D=ProbeProvider&latestby=cp",
+    "method": "GET",
+    "status": 200,
+    "document": {
+      "summary": {
+        "deployable": null,
+        "reason": "There is no verified pact between any version of ProbeConsumer and any version of ProbeProvider",
+        "success": 0,
+        "failed": 0,
+        "unknown": 1
+      },
+      "notices": [
+        {
+          "type": "error",
+          "text": "There is no verified pact between any version of ProbeConsumer and any version of ProbeProvider"
+        }
+      ],
+      "matrix": [
+        {
+          "consumer": {
+            "name": "ProbeConsumer",
+            "version": {
+              "number": "3",
+              "branches": [],
+              "branchVersions": [],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer/versions/3"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+              }
+            }
+          },
+          "provider": {
+            "name": "ProbeProvider",
+            "version": null,
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacticipants/ProbeProvider"
+              }
+            }
+          },
+          "pact": {
+            "createdAt": "2026-11-02T01:16:17+00:00",
+            "_links": {
+              "self": {
+                "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/3"
+              }
+            }
+          },
+          "verificationResult": null
+        }
+      ]
+    }
+  }
+]

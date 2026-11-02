@@ -1,0 +1,92 @@
+[
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "error-probe",
+          "version": "0"
+        }
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "tools": {}
+        },
+        "serverInfo": {
+          "name": "rmcp",
+          "version": "3.8.0"
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/call",
+      "params": {
+        "name": "pactling_explain_deployment",
+        "arguments": {
+          "pacticipant": "ProbeConsumer",
+          "selector": {
+            "kind": "version",
+            "version": 42
+          },
+          "target": {
+            "kind": "environment",
+            "name": "test"
+          }
+        }
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"adapterSchemaVersion\":\"1.0\",\"error\":{\"code\":\"INVALID_INPUT\",\"message\":\"Prototype request rejected.\",\"retryable\":false}}"
+          }
+        ],
+        "structuredContent": {
+          "adapterSchemaVersion": "1.0",
+          "error": {
+            "code": "INVALID_INPUT",
+            "message": "Prototype request rejected.",
+            "retryable": false
+          }
+        },
+        "isError": true
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "missing_tool",
+        "arguments": {}
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "error": {
+        "code": -32602,
+        "message": "tool not found"
+      }
+    }
+  }
+]

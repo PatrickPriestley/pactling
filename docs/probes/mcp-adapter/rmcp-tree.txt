@@ -1,0 +1,2 @@
+rmcp v3.8.0
+└── pactling-mcp-prototype v0.0.0 (/tmp/pactling-mcp-probe)

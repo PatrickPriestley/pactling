@@ -1,0 +1,133 @@
+[
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {},
+        "clientInfo": {
+          "name": "error-probe",
+          "version": "0"
+        }
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "result": {
+        "protocolVersion": "2025-06-18",
+        "capabilities": {
+          "tools": {}
+        },
+        "serverInfo": {
+          "name": "rmcp",
+          "version": "3.8.0"
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "method": "tools/call",
+      "params": {
+        "name": "list_integrations",
+        "arguments": {
+          "unexpected": true
+        }
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 2,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"schemaVersion\":\"1.0\",\"items\":[{\"consumer\":{\"name\":\"ProbeConsumer\"},\"provider\":{\"name\":\"ProbeProvider\"},\"_links\":{\"pb:dashboard\":{\"title\":\"BETA: Pacts to show on the dashboard\",\"href\":\"http://127.0.0.1:9495/dashboard/provider/ProbeProvider/consumer/ProbeConsumer\"},\"pb:matrix\":{\"title\":\"Matrix of pacts/verification results for ProbeConsumer and ProbeProvider\",\"href\":\"/matrix/provider/ProbeProvider/consumer/ProbeConsumer\"},\"pb:group\":{\"href\":\"http://127.0.0.1:9495/pacticipants/ProbeConsumer\"},\"pb:delete_integration\":{\"title\":\"Delete the integration between ProbeConsumer and ProbeProvider\",\"href\":\"http://127.0.0.1:9495/integrations/provider/ProbeProvider/consumer/ProbeConsumer\"}}},{\"consumer\":{\"name\":\"OtherConsumer\"},\"provider\":{\"name\":\"OtherProvider\"},\"_links\":{\"pb:dashboard\":{\"title\":\"BETA: Pacts to show on the dashboard\",\"href\":\"http://127.0.0.1:9495/dashboard/provider/OtherProvider/consumer/OtherConsumer\"},\"pb:matrix\":{\"title\":\"Matrix of pacts/verification results for OtherConsumer and OtherProvider\",\"href\":\"/matrix/provider/OtherProvider/consumer/OtherConsumer\"},\"pb:group\":{\"href\":\"http://127.0.0.1:9495/pacticipants/OtherConsumer\"},\"pb:delete_integration\":{\"title\":\"Delete the integration between OtherConsumer and OtherProvider\",\"href\":\"http://127.0.0.1:9495/integrations/provider/OtherProvider/consumer/OtherConsumer\"}}}],\"nextCursor\":null,\"coverage\":\"recorded_only\"}"
+          }
+        ],
+        "structuredContent": {
+          "schemaVersion": "1.0",
+          "items": [
+            {
+              "consumer": {
+                "name": "ProbeConsumer"
+              },
+              "provider": {
+                "name": "ProbeProvider"
+              },
+              "_links": {
+                "pb:dashboard": {
+                  "title": "BETA: Pacts to show on the dashboard",
+                  "href": "http://127.0.0.1:9495/dashboard/provider/ProbeProvider/consumer/ProbeConsumer"
+                },
+                "pb:matrix": {
+                  "title": "Matrix of pacts/verification results for ProbeConsumer and ProbeProvider",
+                  "href": "/matrix/provider/ProbeProvider/consumer/ProbeConsumer"
+                },
+                "pb:group": {
+                  "href": "http://127.0.0.1:9495/pacticipants/ProbeConsumer"
+                },
+                "pb:delete_integration": {
+                  "title": "Delete the integration between ProbeConsumer and ProbeProvider",
+                  "href": "http://127.0.0.1:9495/integrations/provider/ProbeProvider/consumer/ProbeConsumer"
+                }
+              }
+            },
+            {
+              "consumer": {
+                "name": "OtherConsumer"
+              },
+              "provider": {
+                "name": "OtherProvider"
+              },
+              "_links": {
+                "pb:dashboard": {
+                  "title": "BETA: Pacts to show on the dashboard",
+                  "href": "http://127.0.0.1:9495/dashboard/provider/OtherProvider/consumer/OtherConsumer"
+                },
+                "pb:matrix": {
+                  "title": "Matrix of pacts/verification results for OtherConsumer and OtherProvider",
+                  "href": "/matrix/provider/OtherProvider/consumer/OtherConsumer"
+                },
+                "pb:group": {
+                  "href": "http://127.0.0.1:9495/pacticipants/OtherConsumer"
+                },
+                "pb:delete_integration": {
+                  "title": "Delete the integration between OtherConsumer and OtherProvider",
+                  "href": "http://127.0.0.1:9495/integrations/provider/OtherProvider/consumer/OtherConsumer"
+                }
+              }
+            }
+          ],
+          "nextCursor": null,
+          "coverage": "recorded_only"
+        },
+        "isError": false
+      }
+    }
+  },
+  {
+    "request": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "method": "tools/call",
+      "params": {
+        "name": "missing_tool",
+        "arguments": {}
+      }
+    },
+    "response": {
+      "jsonrpc": "2.0",
+      "id": 3,
+      "error": {
+        "code": -32602,
+        "message": "tool not found"
+      }
+    }
+  }
+]

@@ -1,0 +1,184 @@
+[
+  {
+    "broker": "http://127.0.0.1:9495",
+    "name": "slash/name",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/slash%2Fname/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"slash/name\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between slash/name (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/slash%2Fname/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"slash/name\",\"href\":\"http://127.0.0.1:9495/pacticipants/slash%2Fname\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/1\"}"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"slash/name\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between slash/name (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/slash%2Fname/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"slash/name\",\"href\":\"http://127.0.0.1:9495/pacticipants/slash%2Fname\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/slash%2Fname/versions/1\"}"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "name": "%2F",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/%252F/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"%2F\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between %2F (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/%252F/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"%2F\",\"href\":\"http://127.0.0.1:9495/pacticipants/%252F\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/%252F/versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"%2F\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between %2F (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/%252F/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"%2F\",\"href\":\"http://127.0.0.1:9495/pacticipants/%252F\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/%252F/versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "name": ".",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/./version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\".\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between . (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/./version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\".\",\"href\":\"http://127.0.0.1:9495/pacticipants/.\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/./versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":\"EdgeProvider\",\"hr"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\".\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between . (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/./version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\".\",\"href\":\"http://127.0.0.1:9495/pacticipants/.\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/./versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":\"EdgeProvider\",\"hr"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "name": "..",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/../version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"..\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between .. (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/../version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"..\",\"href\":\"http://127.0.0.1:9495/pacticipants/..\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/../versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":\"EdgeProvide"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"..\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between .. (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/../version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"..\",\"href\":\"http://127.0.0.1:9495/pacticipants/..\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/../versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":\"EdgeProvide"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "name": "nul%00",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/nul%2500/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"nul%00\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between nul%00 (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/nul%2500/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"nul%00\",\"href\":\"http://127.0.0.1:9495/pacticipants/nul%2500\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/nul%2500/versions/1\"},\"pb:provider\":{\"title\":"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"nul%00\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between nul%00 (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/nul%2500/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"nul%00\",\"href\":\"http://127.0.0.1:9495/pacticipants/nul%2500\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/nul%2500/versions/1\"},\"pb:provider\":{\"title\":"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "name": "question?",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/question%3F/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"question?\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between question? (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/question%3F/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"question?\",\"href\":\"http://127.0.0.1:9495/pacticipants/question%3F\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/question%3F/versions/1\"},\"pb:p"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"question?\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between question? (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/question%3F/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"question?\",\"href\":\"http://127.0.0.1:9495/pacticipants/question%3F\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/question%3F/versions/1\"},\"pb:p"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9495",
+    "name": "hash#",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/hash%23/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"hash#\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between hash# (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/hash%23/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"hash#\",\"href\":\"http://127.0.0.1:9495/pacticipants/hash%23\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/hash%23/versions/1\"},\"pb:provider\":{\"title\":\"Provi"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"hash#\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between hash# (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9495/pacts/provider/EdgeProvider/consumer/hash%23/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"hash#\",\"href\":\"http://127.0.0.1:9495/pacticipants/hash%23\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9495/pacticipants/hash%23/versions/1\"},\"pb:provider\":{\"title\":\"Provi"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "name": "slash/name",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/slash%2Fname/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"slash/name\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between slash/name (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/slash%2Fname/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"slash/name\",\"href\":\"http://127.0.0.1:9292/pacticipants/slash%2Fname\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/slash%2Fname/versions/1\"}"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"slash/name\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between slash/name (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/slash%2Fname/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"slash/name\",\"href\":\"http://127.0.0.1:9292/pacticipants/slash%2Fname\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/slash%2Fname/versions/1\"}"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "name": "%2F",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/%252F/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"%2F\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between %2F (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/%252F/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"%2F\",\"href\":\"http://127.0.0.1:9292/pacticipants/%252F\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/%252F/versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"%2F\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between %2F (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/%252F/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"%2F\",\"href\":\"http://127.0.0.1:9292/pacticipants/%252F\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/%252F/versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "name": ".",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/./version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\".\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between . (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/./version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\".\",\"href\":\"http://127.0.0.1:9292/pacticipants/.\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/./versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":\"EdgeProvider\",\"hr"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\".\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:34+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between . (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/./version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\".\",\"href\":\"http://127.0.0.1:9292/pacticipants/.\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/./versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":\"EdgeProvider\",\"hr"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "name": "..",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/../version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"..\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:35+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between .. (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/../version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"..\",\"href\":\"http://127.0.0.1:9292/pacticipants/..\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/../versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":\"EdgeProvide"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"..\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:35+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between .. (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/../version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"..\",\"href\":\"http://127.0.0.1:9292/pacticipants/..\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/../versions/1\"},\"pb:provider\":{\"title\":\"Provider\",\"name\":\"EdgeProvide"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "name": "nul%00",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/nul%2500/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"nul%00\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:35+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between nul%00 (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/nul%2500/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"nul%00\",\"href\":\"http://127.0.0.1:9292/pacticipants/nul%2500\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/nul%2500/versions/1\"},\"pb:provider\":{\"title\":"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"nul%00\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:35+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between nul%00 (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/nul%2500/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"nul%00\",\"href\":\"http://127.0.0.1:9292/pacticipants/nul%2500\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/nul%2500/versions/1\"},\"pb:provider\":{\"title\":"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "name": "question?",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/question%3F/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"question?\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:35+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between question? (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/question%3F/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"question?\",\"href\":\"http://127.0.0.1:9292/pacticipants/question%3F\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/question%3F/versions/1\"},\"pb:p"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"question?\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:35+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between question? (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/question%3F/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"question?\",\"href\":\"http://127.0.0.1:9292/pacticipants/question%3F\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/question%3F/versions/1\"},\"pb:p"
+    }
+  },
+  {
+    "broker": "http://127.0.0.1:9292",
+    "name": "hash#",
+    "requestTarget": "/pacts/provider/EdgeProvider/consumer/hash%23/version/1",
+    "PUT": {
+      "status": 201,
+      "body": "{\"consumer\":{\"name\":\"hash#\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:35+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between hash# (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/hash%23/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"hash#\",\"href\":\"http://127.0.0.1:9292/pacticipants/hash%23\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/hash%23/versions/1\"},\"pb:provider\":{\"title\":\"Provi"
+    },
+    "GET": {
+      "status": 200,
+      "body": "{\"consumer\":{\"name\":\"hash#\"},\"provider\":{\"name\":\"EdgeProvider\"},\"interactions\":[],\"metadata\":{\"pactSpecification\":{\"version\":\"2.0.0\"}},\"createdAt\":\"2026-11-02T01:15:35+00:00\",\"_links\":{\"self\":{\"title\":\"Pact\",\"name\":\"Pact between hash# (1) and EdgeProvider\",\"href\":\"http://127.0.0.1:9292/pacts/provider/EdgeProvider/consumer/hash%23/version/1\"},\"pb:consumer\":{\"title\":\"Consumer\",\"name\":\"hash#\",\"href\":\"http://127.0.0.1:9292/pacticipants/hash%23\"},\"pb:consumer-version\":{\"title\":\"Consumer version\",\"name\":\"1\",\"href\":\"http://127.0.0.1:9292/pacticipants/hash%23/versions/1\"},\"pb:provider\":{\"title\":\"Provi"
+    }
+  }
+]

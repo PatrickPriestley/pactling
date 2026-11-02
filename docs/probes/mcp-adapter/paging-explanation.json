@@ -1,0 +1,156 @@
+[
+  {
+    "path": "/integrations?pageSize=1&pageNumber=1",
+    "status": 200,
+    "itemsReturned": 2,
+    "links": [
+      "self"
+    ]
+  },
+  {
+    "path": "/pacticipants?pageSize=1&pageNumber=1",
+    "status": 200,
+    "itemsReturned": 4,
+    "links": [
+      "self",
+      "pb:pacticipants-with-label",
+      "pb:pacticipants",
+      "pacticipants"
+    ]
+  },
+  {
+    "path": "/pactling/v1/can-i-deploy/explanation?pacticipant=ProbeConsumer&version=1&environment=test",
+    "status": 200,
+    "document": {
+      "schemaVersion": "1.0",
+      "decision": "unknown",
+      "summary": "No verification is recorded for this exact ProbeConsumer to ProbeProvider contract and selected provider version.",
+      "compatibility": {
+        "deployable": null,
+        "success": 0,
+        "failed": 0,
+        "unknown": 1,
+        "ignored": 0,
+        "hasIgnores": false
+      },
+      "request": {
+        "query": "pacticipant=ProbeConsumer&version=1&environment=test"
+      },
+      "evaluation": {
+        "id": "1b96d5e9-bf8a-485c-8585-188b830ea551",
+        "startedAt": "2026-11-02T00:58:50.486158+00:00",
+        "evaluatedAt": "2026-11-02T00:58:50.487446+00:00",
+        "brokerVersion": "0.1.1",
+        "engineRevision": null,
+        "snapshot": {
+          "kind": "read_transaction",
+          "retained": false
+        }
+      },
+      "evidence": {
+        "completeness": "incomplete",
+        "coverage": "recorded_only",
+        "currentness": "not_checked"
+      },
+      "resolution": {
+        "selectors": [
+          {
+            "index": 0,
+            "pacticipant": "ProbeConsumer",
+            "versions": [
+              "1"
+            ],
+            "missingReason": null,
+            "requested": {
+              "pacticipant": "ProbeConsumer",
+              "version": "1",
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": false
+            }
+          }
+        ],
+        "target": {
+          "kind": "environment",
+          "name": "test",
+          "uuid": "5b603569-6d14-4f94-afd9-75265f6efbe9",
+          "href": "http://127.0.0.1:9495/environments/5b603569-6d14-4f94-afd9-75265f6efbe9"
+        },
+        "candidates": [],
+        "excluded": [],
+        "ignores": []
+      },
+      "rows": [
+        {
+          "id": "row-1",
+          "consumer": "ProbeConsumer",
+          "consumerVersion": "1",
+          "provider": "ProbeProvider",
+          "providerVersion": null,
+          "candidateRefs": [],
+          "disposition": "considered",
+          "contract": {
+            "hash": {
+              "algorithm": "sha1",
+              "value": "ed7c1aebc3e11064ce9afc29297e1e36203583cd"
+            },
+            "href": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+            "publicationHref": "http://127.0.0.1:9495/pacts/provider/ProbeProvider/consumer/ProbeConsumer/version/1"
+          },
+          "verification": null,
+          "selectorIndices": [
+            0
+          ],
+          "ignoreRefs": []
+        }
+      ],
+      "reasons": [
+        {
+          "code": "VERIFICATION_MISSING",
+          "role": "decisive",
+          "message": "No verification is recorded for this exact ProbeConsumer to ProbeProvider contract and selected provider version.",
+          "evidenceRefs": [
+            "/rows/0/contract",
+            "/rows/0/verification"
+          ],
+          "actionIds": [
+            "action-1"
+          ]
+        },
+        {
+          "code": "TARGET_VERSION_UNRESOLVED",
+          "role": "supporting",
+          "message": "No exact provider version was resolved for this contract's target.",
+          "evidenceRefs": [
+            "/rows/0/contract",
+            "/rows/0/verification"
+          ],
+          "actionIds": [
+            "action-1"
+          ]
+        }
+      ],
+      "nextActions": [
+        {
+          "id": "action-1",
+          "type": "RESOLVE_TARGET_VERSION",
+          "message": "Determine and record the intended provider version for this target before verifying this contract.",
+          "evidenceRefs": [
+            "/rows/0/contract",
+            "/rows/0/verification"
+          ],
+          "target": {
+            "consumer": "ProbeConsumer",
+            "consumerVersion": "1",
+            "provider": "ProbeProvider",
+            "providerVersion": null,
+            "contractSha": "ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+            "environment": "test",
+            "tag": null
+          }
+        }
+      ]
+    }
+  }
+]

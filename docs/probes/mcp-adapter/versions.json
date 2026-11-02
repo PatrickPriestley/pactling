@@ -1,0 +1,13 @@
+{
+  "rustc": "1.99.0 (b940084d7 2026-09-28)",
+  "rmcp": "3.8.0",
+  "axum": "0.8.9",
+  "tokio": "1.54.1",
+  "reqwest": "0.13.5",
+  "codex": "0.166.0",
+  "repositoryCommit": "06dce639025d8c9419b90c205930830d72ac84d6",
+  "prototypeSourceSha256": "f89c22279f96b993f8dfb3eea64df70c121a968ba8289778ab3f671f637f6bee",
+  "prototypeCargoLockSha256": "aec452598b2e109f23fcc1a9bb2ae328eb1ecfccccfca7acafebb54ee48681f5",
+  "realClientCallCount": 1,
+  "resultItems": 2
+}

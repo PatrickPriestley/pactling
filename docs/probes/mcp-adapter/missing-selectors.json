@@ -1,0 +1,252 @@
+[
+  {
+    "path": "/environments",
+    "status": 201,
+    "document": {
+      "uuid": "4682bd4b-0297-4eaa-91e0-928a9ffd987c",
+      "name": "test",
+      "production": false,
+      "createdAt": "2026-11-02T01:23:03+00:00",
+      "_links": {
+        "self": {
+          "title": "Environment",
+          "name": "test",
+          "href": "http://127.0.0.1:9495/environments/4682bd4b-0297-4eaa-91e0-928a9ffd987c"
+        },
+        "pb:currently-deployed-deployed-versions": {
+          "title": "Versions currently deployed to test environment",
+          "href": "http://127.0.0.1:9495/environments/4682bd4b-0297-4eaa-91e0-928a9ffd987c/deployed-versions/currently-deployed"
+        },
+        "pb:currently-supported-released-versions": {
+          "title": "Versions released and supported in test environment",
+          "href": "http://127.0.0.1:9495/environments/4682bd4b-0297-4eaa-91e0-928a9ffd987c/released-versions/currently-supported"
+        },
+        "pb:environments": {
+          "title": "Environments",
+          "href": "http://127.0.0.1:9495/environments"
+        }
+      }
+    }
+  },
+  {
+    "path": "/pacts/provider/P/consumer/C/version/1",
+    "status": 201,
+    "document": {
+      "consumer": {
+        "name": "C"
+      },
+      "provider": {
+        "name": "P"
+      },
+      "interactions": [],
+      "metadata": {},
+      "createdAt": "2026-11-02T01:23:03+00:00",
+      "_links": {
+        "self": {
+          "title": "Pact",
+          "name": "Pact between C (1) and P",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1"
+        },
+        "pb:consumer": {
+          "title": "Consumer",
+          "name": "C",
+          "href": "http://127.0.0.1:9495/pacticipants/C"
+        },
+        "pb:consumer-version": {
+          "title": "Consumer version",
+          "name": "1",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1"
+        },
+        "pb:provider": {
+          "title": "Provider",
+          "name": "P",
+          "href": "http://127.0.0.1:9495/pacticipants/P"
+        },
+        "pb:pact-version": {
+          "title": "Pact content version permalink",
+          "name": "ed7c1aebc3e11064ce9afc29297e1e36203583cd",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd"
+        },
+        "pb:latest-pact-version": {
+          "title": "Latest version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest"
+        },
+        "pb:all-pact-versions": {
+          "title": "All versions of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/versions"
+        },
+        "pb:latest-untagged-pact-version": {
+          "title": "Latest untagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest-untagged"
+        },
+        "pb:latest-tagged-pact-version": {
+          "title": "Latest tagged version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/latest/{tag}",
+          "templated": true
+        },
+        "pb:previous-distinct": {
+          "title": "Previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/previous-distinct"
+        },
+        "pb:diff-previous-distinct": {
+          "title": "Diff with previous distinct version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/diff/previous-distinct"
+        },
+        "pb:diff": {
+          "title": "Diff with another specified version of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/diff/pact-version/{pactVersion}",
+          "templated": true
+        },
+        "pb:pact-webhooks": {
+          "title": "Webhooks for the pact between C and P",
+          "href": "http://127.0.0.1:9495/webhooks/provider/P/consumer/C"
+        },
+        "pb:consumer-webhooks": {
+          "title": "Webhooks for all pacts with provider P",
+          "href": "http://127.0.0.1:9495/webhooks/consumer/P"
+        },
+        "pb:tag-prod-version": {
+          "title": "PUT to this resource to tag this consumer version as 'production'",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1/tags/prod"
+        },
+        "pb:tag-version": {
+          "title": "PUT to this resource to tag this consumer version",
+          "href": "http://127.0.0.1:9495/pacticipants/C/versions/1/tags/{tag}"
+        },
+        "pb:publish-verification-results": {
+          "title": "Publish verification results",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results"
+        },
+        "pb:latest-verification-results": {
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/pact-version/ed7c1aebc3e11064ce9afc29297e1e36203583cd/verification-results/latest"
+        },
+        "pb:triggered-webhooks": {
+          "title": "Webhooks triggered by the publication of this pact",
+          "href": "http://127.0.0.1:9495/pacts/provider/P/consumer/C/version/1/triggered-webhooks"
+        },
+        "pb:matrix-for-consumer-version": {
+          "title": "View matrix rows for the consumer version to which this pact belongs",
+          "href": "http://127.0.0.1:9495/matrix?q%5B%5D%5Bpacticipant%5D=C&q%5B%5D%5Bversion%5D=1&latestby=cvpv"
+        },
+        "curies": [
+          {
+            "name": "pb",
+            "href": "http://127.0.0.1:9495/doc/{rel}?context=pact",
+            "templated": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "path": "/pactling/v1/can-i-deploy/explanation?pacticipant=Absent&version=1&environment=test",
+    "status": 400,
+    "document": {
+      "schemaVersion": "1.0",
+      "error": {
+        "code": "INVALID_QUERY",
+        "details": [
+          "Pacticipant Absent not found"
+        ]
+      }
+    }
+  },
+  {
+    "path": "/pactling/v1/can-i-deploy/explanation?pacticipant=C&version=missing&environment=test",
+    "status": 200,
+    "document": {
+      "schemaVersion": "1.0",
+      "decision": "blocked",
+      "summary": "The requested selector for C resolves to no versions.",
+      "compatibility": {
+        "deployable": false,
+        "success": 0,
+        "failed": 0,
+        "unknown": 0,
+        "ignored": 0,
+        "hasIgnores": false
+      },
+      "request": {
+        "query": "pacticipant=C&version=missing&environment=test"
+      },
+      "evaluation": {
+        "id": "82f3d15d-f4aa-4771-9776-ba0471e903b2",
+        "startedAt": "2026-11-02T01:23:03.856667+00:00",
+        "evaluatedAt": "2026-11-02T01:23:03.857018+00:00",
+        "brokerVersion": "0.1.1",
+        "engineRevision": null,
+        "snapshot": {
+          "kind": "read_transaction",
+          "retained": false
+        }
+      },
+      "evidence": {
+        "completeness": "incomplete",
+        "coverage": "recorded_only",
+        "currentness": "not_checked"
+      },
+      "resolution": {
+        "selectors": [
+          {
+            "index": 0,
+            "pacticipant": "C",
+            "versions": [],
+            "missingReason": "SELECTOR_VERSION_MISSING",
+            "requested": {
+              "pacticipant": "C",
+              "version": "missing",
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": false
+            }
+          }
+        ],
+        "target": {
+          "kind": "environment",
+          "name": "test",
+          "uuid": "4682bd4b-0297-4eaa-91e0-928a9ffd987c",
+          "href": "http://127.0.0.1:9495/environments/4682bd4b-0297-4eaa-91e0-928a9ffd987c"
+        },
+        "candidates": [],
+        "excluded": [],
+        "ignores": []
+      },
+      "rows": [],
+      "reasons": [
+        {
+          "code": "SELECTOR_VERSION_MISSING",
+          "role": "decisive",
+          "message": "The requested selector for C resolves to no versions.",
+          "evidenceRefs": [
+            "/resolution/selectors/0"
+          ],
+          "actionIds": [
+            "action-1"
+          ]
+        }
+      ],
+      "nextActions": [
+        {
+          "id": "action-1",
+          "type": "RESOLVE_SELECTOR",
+          "message": "Correct this selector or publish and record its intended version and required contract results; creating a version alone does not establish compatibility.",
+          "evidenceRefs": [
+            "/resolution/selectors/0"
+          ],
+          "target": {
+            "selectorIndex": 0,
+            "requested": {
+              "pacticipant": "C",
+              "version": "missing",
+              "latest": false,
+              "tag": null,
+              "branch": null,
+              "mainBranch": false
+            }
+          }
+        }
+      ]
+    }
+  }
+]
