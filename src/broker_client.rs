@@ -143,6 +143,19 @@ pub enum ReadRoute {
     },
     Explanation(ExplanationQuery),
 }
+/// Adapter-created evidence links have fixed paths and never accept broker hrefs.
+#[cfg(feature = "mcp")]
+pub(crate) enum CatalogLink<'a> {
+    Pacticipant(&'a str),
+    Matrix {
+        consumer: &'a str,
+        provider: &'a str,
+    },
+    Dashboard {
+        consumer: &'a str,
+        provider: &'a str,
+    },
+}
 #[cfg(feature = "mcp")]
 #[derive(Clone, Copy)]
 pub enum Grouping {
@@ -235,6 +248,19 @@ impl ReadClient {
             _ => {}
         }
         Ok(url)
+    }
+    pub(crate) fn catalog_url(&self, link: CatalogLink<'_>) -> Result<Url, ClientError> {
+        match link {
+            CatalogLink::Pacticipant(name) => append_path(&self.base, &["pacticipants", name]),
+            CatalogLink::Matrix { consumer, provider } => append_path(
+                &self.base,
+                &["matrix", "provider", provider, "consumer", consumer],
+            ),
+            CatalogLink::Dashboard { consumer, provider } => append_path(
+                &self.base,
+                &["dashboard", "provider", provider, "consumer", consumer],
+            ),
+        }
     }
     pub async fn get(&self, route: &ReadRoute) -> Result<ReadResponse, ClientError> {
         let url = self.source_url(route)?;

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "participantA": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "participantB": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "latestby": {
+      "enum": [
+        "cvpv",
+        "cvp",
+        "cp"
+      ]
+    }
+  },
+  "required": [
+    "participantA",
+    "participantB"
+  ],
+  "additionalProperties": false
+}
